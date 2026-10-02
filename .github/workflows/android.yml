@@ -9,6 +9,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Every step here finishes in well under a minute on a warm cache. A job that runs much longer
+    # than this is stalled, not slow, and failing fast surfaces the reason instead of burning an
+    # hour of runner time on a hang.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -20,11 +24,11 @@ jobs:
           gradle-version: '8.9'
           cache-read-only: false
       - name: Unit tests
-        run: gradle testDebugUnitTest
+        run: gradle testDebugUnitTest --no-daemon --stacktrace
       - name: Assemble debug
-        run: gradle assembleDebug
+        run: gradle assembleDebug --no-daemon --stacktrace
       - name: Lint
-        run: gradle lintDebug
+        run: gradle lintDebug --no-daemon --stacktrace
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v4
