@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Debug-only additions.
+
+  This manifest is merged into debug builds and nowhere else, so QaMatrixActivity does not exist in
+  a release APK at all — not disabled, not unreachable, absent. That is the only way to be sure an
+  internal tool cannot be launched by a third party on a shipped build, and it is why the screen
+  lives in its own source set rather than behind a BuildConfig.DEBUG check in main.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name="com.darkframe.icons.qa.QaMatrixActivity"
+            android:exported="false"
+            android:label="@string/qa_title"
+            android:theme="@style/Theme.DarkFrame">
+            <!--
+              Settings finds this screen by resolving the action rather than by naming the class, so
+              the main source set carries no reference to a type that is not in a release build.
+            -->
+            <intent-filter>
+                <action android:name="com.darkframe.icons.action.VISUAL_QA" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

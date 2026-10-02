@@ -63,6 +63,24 @@ class SettingsActivity : DarkFrameActivity() {
                 title = getString(R.string.settings_about),
                 subtitle = getString(R.string.settings_version, BuildConfig.VERSION_NAME),
             )
+            .also { screen -> addVisualQaRow(screen) }
+    }
+
+    /**
+     * The debug-only visual QA matrix, if this build has one.
+     *
+     * Found by resolving an action rather than by naming the Activity, because the Activity only
+     * exists in the debug source set: a direct class reference would not compile for release. This
+     * way the row simply never appears in a release build, and there is no `BuildConfig.DEBUG`
+     * branch whose dead side still has to be shrunk away.
+     */
+    private fun addVisualQaRow(screen: SectionScreen) {
+        val intent = Intent(VISUAL_QA_ACTION).setPackage(packageName)
+        if (packageManager.resolveActivity(intent, 0) == null) return
+        screen.row(
+            title = getString(R.string.settings_qa),
+            subtitle = getString(R.string.settings_qa_sub),
+        ) { startActivity(intent) }
     }
 
     private fun rebuildCache() {
@@ -94,6 +112,8 @@ class SettingsActivity : DarkFrameActivity() {
     }
 
     private companion object {
+        const val VISUAL_QA_ACTION = "com.darkframe.icons.action.VISUAL_QA"
+
         /**
          * Kept in the app rather than linked out, so the notice is available offline and cannot
          * rot. Every entry is a direct dependency declared in app/build.gradle.kts.

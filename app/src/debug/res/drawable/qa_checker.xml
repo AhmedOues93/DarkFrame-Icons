@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Magenta behind every cell, so a transparent gap inside an icon is impossible to miss.
+
+  Deliberately a colour no collection contains: a grey checkerboard reads as part of a dark icon,
+  which defeats the point of having a background to check against at all.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#FFFF00FF" />
+</shape>

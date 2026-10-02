@@ -176,6 +176,8 @@
         it runs no background service.</string>
     <string name="settings_licenses">Open-source licenses</string>
     <string name="settings_licenses_sub">Libraries DarkFrame uses</string>
+    <string name="settings_qa">Visual QA</string>
+    <string name="settings_qa_sub">Every installed app across all six collections. Debug builds only.</string>
     <string name="settings_about">About</string>
     <string name="settings_version">Version %1$s</string>
 

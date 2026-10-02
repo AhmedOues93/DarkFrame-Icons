@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/df_bg"
+    android:orientation="vertical">
+
+    <!-- Fixed header so the controls stay reachable while a long matrix scrolls. -->
+    <LinearLayout
+        android:id="@+id/qa_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/df_surface"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/df_screen_margin"
+        android:paddingEnd="@dimen/df_screen_margin"
+        android:paddingTop="@dimen/df_space_4"
+        android:paddingBottom="@dimen/df_space_3">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/qa_title"
+            style="@style/DF.Text.Title" />
+
+        <TextView
+            android:id="@+id/qa_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_1"
+            android:text="@string/qa_subtitle"
+            style="@style/DF.Text.Caption" />
+
+        <EditText
+            android:id="@+id/qa_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_3"
+            android:autofillHints=""
+            android:background="@drawable/df_card"
+            android:hint="@string/qa_filter_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingStart="@dimen/df_space_4"
+            android:paddingEnd="@dimen/df_space_4"
+            android:paddingTop="@dimen/df_space_3"
+            android:paddingBottom="@dimen/df_space_3"
+            android:textColor="@color/df_text_primary"
+            android:textColorHint="@color/df_text_tertiary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_2"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/qa_sizes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:singleLine="true"
+                app:singleSelection="true" />
+
+            <CheckBox
+                android:id="@+id/qa_checker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/qa_checker_label"
+                android:textColor="@color/df_text_secondary" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/qa_rows"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/df_space_2"
+        android:paddingBottom="@dimen/df_space_5"
+        android:scrollbars="vertical" />
+</LinearLayout>

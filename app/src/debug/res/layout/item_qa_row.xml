@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One app, six collections.
+
+  The cells scroll horizontally so a large cell size stays usable on a phone and a Fold's cover
+  screen; on the inner screen all six fit and the scroll never engages.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/df_screen_margin"
+    android:paddingEnd="@dimen/df_screen_margin"
+    android:paddingTop="@dimen/df_space_3"
+    android:paddingBottom="@dimen/df_space_3">
+
+    <TextView
+        android:id="@+id/qa_row_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        style="@style/DF.Text.Subtitle"
+        tools:text="Example" />
+
+    <TextView
+        android:id="@+id/qa_row_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="middle"
+        style="@style/DF.Text.Caption" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/df_space_2"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/qa_row_cells"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+</LinearLayout>

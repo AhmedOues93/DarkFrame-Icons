@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qa_title">Visual QA</string>
+    <string name="qa_subtitle">Installed apps across all six collections</string>
+    <string name="qa_filter_hint">Filter apps</string>
+    <string name="qa_size_label">Cell size</string>
+    <string name="qa_checker_label">Checkerboard</string>
+    <string name="qa_curated">curated</string>
+    <string name="qa_count">%1$d apps · %2$d curated</string>
+    <string name="qa_cell_description">%1$s in %2$s</string>
+    <string name="qa_loading">Reading installed apps…</string>
+</resources>
