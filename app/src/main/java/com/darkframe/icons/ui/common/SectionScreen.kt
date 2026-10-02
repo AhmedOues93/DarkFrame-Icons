@@ -80,6 +80,59 @@ class SectionScreen(private val activity: DarkFrameActivity) {
         return this
     }
 
+    /**
+     * A numbered step, with its own action and a status line that can be updated later.
+     *
+     * Returns a handle rather than the screen, because a step's state changes while the user is
+     * looking at it — a prepare run reports progress — and rebuilding the whole screen per update
+     * would throw away scroll position and re-inflate every card.
+     */
+    fun step(
+        number: Int,
+        title: String,
+        body: String,
+        actionLabel: String,
+        enabled: Boolean = true,
+        onClick: () -> Unit,
+    ): StepHandle {
+        val view = inflate(R.layout.item_step)
+        view.findViewById<TextView>(R.id.step_number).text = number.toString()
+        view.findViewById<TextView>(R.id.step_title).text = title
+        view.findViewById<TextView>(R.id.step_body).text = body
+        val action = view.findViewById<TextView>(R.id.step_action)
+        action.text = actionLabel
+        action.isEnabled = enabled
+        action.setOnClickListener { if (action.isEnabled) onClick() }
+        add(view)
+        return StepHandle(action, view.findViewById(R.id.step_status))
+    }
+
+    /** Live handles into one step's action and status line. */
+    class StepHandle(private val action: TextView, private val status: TextView) {
+        fun setActionLabel(text: String) {
+            action.text = text
+        }
+
+        /** Replaces the action, for a step whose behaviour is decided after it is laid out. */
+        fun setOnAction(onClick: () -> Unit) {
+            action.setOnClickListener { if (action.isEnabled) onClick() }
+        }
+
+        fun setActionEnabled(enabled: Boolean) {
+            action.isEnabled = enabled
+        }
+
+        /** Null or blank hides the line, so a step with nothing to report shows nothing. */
+        fun setStatus(text: String?) {
+            if (text.isNullOrBlank()) {
+                status.visibility = View.GONE
+            } else {
+                status.text = text
+                status.visibility = View.VISIBLE
+            }
+        }
+    }
+
     /** The screen's primary action. At most one per screen, by design. */
     fun primaryButton(text: String, enabled: Boolean = true, onClick: () -> Unit): SectionScreen {
         add(button(R.style.DF_Button_Primary, text, enabled, onClick))

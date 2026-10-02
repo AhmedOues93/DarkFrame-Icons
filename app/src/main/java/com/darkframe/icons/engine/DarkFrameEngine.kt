@@ -3,6 +3,7 @@ package com.darkframe.icons.engine
 import android.content.Context
 import android.os.Process
 import com.darkframe.icons.engine.apply.IconApplyService
+import com.darkframe.icons.engine.apply.IconSetPreparer
 import com.darkframe.icons.engine.data.CuratedIconRepository
 import com.darkframe.icons.engine.data.IconCache
 import com.darkframe.icons.engine.data.InstalledAppRepository
@@ -36,6 +37,7 @@ class DarkFrameEngine private constructor(context: Context) {
         cache = cache,
     )
     val apply = IconApplyService(context)
+    val iconSets = IconSetPreparer(context, resolver)
     val wallpapers = WallpaperApplier(context)
     val lookPreviews = LookPreviewCache(context)
 

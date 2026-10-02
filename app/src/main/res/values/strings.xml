@@ -64,6 +64,20 @@
     <string name="apply_samsung_install_hint">Theme Park comes from Good Lock in the Galaxy Store.</string>
     <string name="apply_samsung_unavailable">Theme Park is not available on this device.</string>
 
+    <!-- The two Samsung steps. Worded so step 1 is plainly something DarkFrame does and step 2 is
+         plainly something Samsung does: the single-button version implied DarkFrame had already
+         applied the icons, which it had not. -->
+    <string name="apply_prepare_title">Create your DarkFrame icons</string>
+    <string name="apply_prepare_body">DarkFrame renders every app on this device in %1$s at full
+        resolution and keeps the finished set ready. This is the part DarkFrame does itself.</string>
+    <string name="apply_prepare_action">Create icons</string>
+    <string name="apply_prepare_again">Create them again</string>
+    <string name="apply_prepare_starting">Reading your apps…</string>
+    <string name="apply_prepare_progress">%1$d of %2$d</string>
+    <string name="apply_prepare_done">%1$d icons ready</string>
+    <string name="apply_handoff_title">Apply through Samsung Theme Park</string>
+    <string name="apply_share_set">Save the whole set</string>
+    <string name="apply_share_set_empty">Create your icons first.</string>
     <string name="apply_iconpack_heading">%1$s</string>
     <string name="apply_iconpack_body">Your launcher reads icon packs. Open its settings and choose
         DarkFrame as the icon pack. DarkFrame cannot make that choice for you — no launcher offers
