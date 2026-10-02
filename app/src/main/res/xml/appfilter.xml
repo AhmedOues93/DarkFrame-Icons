@@ -1,4 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Component mappings are added only after original icons are approved. -->
+<?xml version="1.0" encoding="utf-8"?><resources>
+<item component="ComponentInfo{com.instagram.android/com.instagram.mainactivity.MainActivity}" drawable="df_instagram"/>
+<item component="ComponentInfo{com.google.android.youtube/com.google.android.youtube.HomeActivity}" drawable="df_youtube"/>
+<item component="ComponentInfo{com.openai.chatgpt/com.openai.chatgpt.MainActivity}" drawable="df_chatgpt"/>
+<item component="ComponentInfo{com.spotify.music/com.spotify.music.MainActivity}" drawable="df_spotify"/>
+<item component="ComponentInfo{com.whatsapp/com.whatsapp.Main}" drawable="df_whatsapp"/>
+<item component="ComponentInfo{com.zhiliaoapp.musically/com.ss.android.ugc.aweme.splash.SplashActivity}" drawable="df_tiktok"/>
 </resources>
