@@ -3,7 +3,7 @@
 
   Authored as a glyph on transparency with no background of its own, so the icon engine can seat
   it on any of the six collection containers and apply that collection's glyph treatment. The
-  tile, keyline and colour all come from the style at render time -- never from this file.
+  tile, keyline and colour all come from the style at render time, never from this file.
 
   White is used as the authoring colour because the engine maps source luma onto the collection
   tint, so pure white lands exactly on the tint and interior shading is preserved.
