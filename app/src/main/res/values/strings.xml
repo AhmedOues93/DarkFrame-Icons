@@ -210,6 +210,26 @@
     <string name="pro_buy">Unlock for %1$s</string>
     <string name="pro_buy_unavailable">Price unavailable</string>
     <string name="pro_restore">Restore purchase</string>
+    <string name="pro_includes">What Pro unlocks</string>
+    <string name="pro_wallpapers">Wallpapers</string>
+    <plurals name="pro_wallpaper_count">
+        <item quantity="one">%1$d Pro wallpaper</item>
+        <item quantity="other">%1$d Pro wallpapers</item>
+    </plurals>
+    <string name="pro_free_note">Everything else stays free, including the icon engine itself: the
+        three free collections work with every app on your device, not a fixed list.</string>
+    <string name="pro_pending_title">Payment in progress</string>
+    <string name="pro_pending_body">Google Play is still settling this purchase. Pro unlocks as soon
+        as it completes — there is nothing to do here, and nothing to pay twice.</string>
+    <string name="pro_price_pending">Waiting for the price from Google Play.</string>
+    <string name="pro_not_ready">Pro is not available from Google Play on this build yet.</string>
+    <string name="pro_ack_retry">Pro is active. Google Play will be notified again shortly.</string>
+    <string name="pro_problem_network">Could not reach Google Play. Your Pro status has not
+        changed.</string>
+    <string name="pro_problem_unavailable">Google Play Billing is not available on this device.</string>
+    <string name="pro_problem_item">Pro is not on sale in this account\'s country yet.</string>
+    <string name="pro_problem_unknown">Google Play could not complete that. Nothing was
+        charged.</string>
     <string name="pro_active">Pro is active on this account.</string>
     <string name="pro_restored">Purchase restored.</string>
     <string name="pro_none_found">No previous purchase found on this Google account.</string>

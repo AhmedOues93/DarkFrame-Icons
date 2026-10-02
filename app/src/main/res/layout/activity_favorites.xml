@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Saved looks, wallpapers and apps — each as its own artwork.
+
+  Three sections, each hidden entirely when it is empty, so a user who only ever saves wallpapers sees
+  a wallpaper screen rather than two headings telling them what they have not done.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/favorites_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/df_bg"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:paddingBottom="@dimen/df_space_6">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/df_space_5">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/df_screen_margin"
+            android:paddingEnd="@dimen/df_screen_margin"
+            android:text="@string/favorites_title"
+            style="@style/DF.Text.Display" />
+
+        <TextView
+            android:id="@+id/favorites_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_4"
+            android:paddingStart="@dimen/df_screen_margin"
+            android:paddingEnd="@dimen/df_screen_margin"
+            android:text="@string/favorites_empty"
+            android:visibility="gone"
+            style="@style/DF.Text.Body" />
+
+        <LinearLayout
+            android:id="@+id/favorites_looks_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_5"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/df_screen_margin"
+                android:paddingEnd="@dimen/df_screen_margin"
+                android:text="@string/favorites_section_looks"
+                style="@style/DF.Text.Title" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/favorites_looks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/df_space_3"
+                android:clipToPadding="false"
+                android:paddingStart="@dimen/df_screen_margin"
+                android:paddingEnd="@dimen/df_screen_margin"
+                android:scrollbars="none" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/favorites_wallpapers_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_5"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/df_screen_margin"
+                android:paddingEnd="@dimen/df_screen_margin"
+                android:text="@string/favorites_section_wallpapers"
+                style="@style/DF.Text.Title" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/favorites_wallpapers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/df_space_3"
+                android:clipToPadding="false"
+                android:paddingStart="@dimen/df_screen_margin"
+                android:paddingEnd="@dimen/df_screen_margin"
+                android:scrollbars="none" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/favorites_apps_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_5"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/df_screen_margin"
+                android:paddingEnd="@dimen/df_screen_margin"
+                android:text="@string/favorites_section_apps"
+                style="@style/DF.Text.Title" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/favorites_apps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/df_space_3"
+                android:clipToPadding="false"
+                android:paddingStart="@dimen/df_space_3"
+                android:paddingEnd="@dimen/df_space_3" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

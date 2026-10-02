@@ -19,6 +19,7 @@
     <dimen name="df_hero_height">240dp</dimen>
     <dimen name="df_palette_height">14dp</dimen>
     <dimen name="df_collection_card_width">148dp</dimen>
+    <dimen name="df_favorite_thumb">120dp</dimen>
     <!-- Target column width on the Collections screen. Wider than the home row's card, because
          this is the screen where the previews are meant to be judged rather than skimmed. -->
     <dimen name="df_collection_grid_target">200dp</dimen>
