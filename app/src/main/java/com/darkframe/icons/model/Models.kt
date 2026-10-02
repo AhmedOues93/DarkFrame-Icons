@@ -1,10 +1,13 @@
 package com.darkframe.icons.model
 
+/** Free or paid. The one axis DarkFrame gates content on. */
 enum class ContentTier { FREE, PRO }
-enum class IconCollection { NOIR, COLOR_POP, FROST, TITANIUM, GLASS, PURE_AMOLED }
-enum class WallpaperCategory { AMOLED, CARBON, GRAPHITE, TITANIUM, GLASS, MINIMAL, ABSTRACT, FOLD, LIGHT }
-enum class WidgetKind { DIGITAL_CLOCK, ANALOG_CLOCK, DATE, CALENDAR, BATTERY, INFO }
 
-data class IconItem(val id:String,val label:String,val drawable:Int,val collection:IconCollection=IconCollection.NOIR,val tier:ContentTier=ContentTier.FREE)
-data class WallpaperItem(val id:String,val title:String,val category:WallpaperCategory,val drawable:Int,val tier:ContentTier=ContentTier.FREE)
-data class StylePack(val id:String,val title:String,val collection:IconCollection,val wallpaperId:String?,val widgetKinds:List<WidgetKind>,val tier:ContentTier)
+/** The six icon collections. Each has exactly one [com.darkframe.icons.engine.domain.IconStyle]. */
+enum class IconCollection { NOIR, COLOR_POP, FROST, TITANIUM, GLASS, PURE_AMOLED }
+
+/** Wallpaper groupings shown as filter chips. Only those with content are ever displayed. */
+enum class WallpaperCategory { AMOLED, CARBON, GRAPHITE, TITANIUM, GLASS, MINIMAL, ABSTRACT, FOLD, LIGHT }
+
+/** The widget shapes a look can recommend. */
+enum class WidgetKind { DIGITAL_CLOCK, ANALOG_CLOCK, DATE, CALENDAR, BATTERY, INFO }

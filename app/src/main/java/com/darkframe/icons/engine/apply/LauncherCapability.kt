@@ -11,6 +11,17 @@ package com.darkframe.icons.engine.apply
  */
 enum class ApplyCapability {
     /**
+     * Samsung One UI. The icon pack is prepared in the standard format and the user finishes in
+     * Samsung's own Theme Park, which is the only component on a Galaxy device that can apply an
+     * icon theme system-wide.
+     *
+     * This replaced [PINNED_SHORTCUT] as the Samsung path after testing on a Galaxy Z Fold8: pinning
+     * produced a second icon next to the original instead of replacing it, leaving the user with
+     * duplicates and an unchanged app drawer.
+     */
+    SAMSUNG_THEME_PARK,
+
+    /**
      * The launcher reads icon packs. DarkFrame ships a standard `appfilter.xml`, and the user
      * selects "DarkFrame" in that launcher's icon-pack setting. The launcher then substitutes
      * icons itself, for every app the pack covers.
@@ -141,12 +152,11 @@ object LauncherCapabilityTable {
                 "icon packs.",
         ),
         LauncherProfile(
-            "com.sec.android.app.launcher", "Samsung One UI Home",
-            ApplyCapability.PINNED_SHORTCUT,
-            requiresManualStep = false,
-            note = "One UI Home themes icons only through Galaxy Themes, which Samsung " +
-                "distributes itself — a third-party app cannot set it. DarkFrame can pin themed " +
-                "shortcuts to your home screen, and can export icons for manual use.",
+            SamsungThemeSupport.ONE_UI_HOME, "Samsung One UI Home",
+            ApplyCapability.SAMSUNG_THEME_PARK,
+            requiresManualStep = true,
+            note = "One UI Home does not read icon packs directly. DarkFrame prepares the icon " +
+                "pack and Samsung's Theme Park applies it across your home screen and app drawer.",
         ),
         LauncherProfile(
             "com.android.launcher3", "Launcher3 / AOSP", ApplyCapability.PINNED_SHORTCUT,
@@ -183,4 +193,8 @@ object LauncherCapabilityTable {
     /** True when the launcher can consume our shipped `appfilter.xml` directly. */
     fun supportsIconPack(packageName: String?): Boolean =
         resolve(packageName).capability == ApplyCapability.ICON_PACK_NATIVE
+
+    /** True when the Samsung Theme Park hand-off is the right flow for this launcher. */
+    fun usesSamsungThemePark(packageName: String?): Boolean =
+        resolve(packageName).capability == ApplyCapability.SAMSUNG_THEME_PARK
 }

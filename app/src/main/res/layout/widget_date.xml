@@ -1,1 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center_vertical" android:background="#000000" android:padding="14dp"><TextClock android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#F4F4F4" android:textSize="22sp" android:textStyle="bold" android:format12Hour="EEEE" android:format24Hour="EEEE"/><TextClock android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#9EA3AD" android:textSize="15sp" android:format12Hour="d MMMM yyyy" android:format24Hour="d MMMM yyyy"/></LinearLayout>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Also TextClock: it renders a date just as well as a time, and rolls over at midnight by itself
+     rather than needing an alarm. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg_noir"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="14dp">
+
+    <TextClock
+        android:id="@+id/widget_primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:format12Hour="d"
+        android:format24Hour="d"
+        android:includeFontPadding="false"
+        android:textColor="#F2F1EE"
+        android:textSize="34sp"/>
+
+    <TextClock
+        android:id="@+id/widget_secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:format12Hour="EEEE"
+        android:format24Hour="EEEE"
+        android:includeFontPadding="false"
+        android:textColor="#B0F2F1EE"
+        android:textSize="13sp"/>
+</LinearLayout>

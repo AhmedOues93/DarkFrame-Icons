@@ -44,16 +44,16 @@ sealed interface ApplyOutcome {
  *    `appfilter.xml` icon-pack format. DarkFrame ships one; the user selects DarkFrame in that
  *    launcher's settings and it substitutes icons itself. We cannot select it for them: there is no
  *    API for that either.
- * 2. **Pinned shortcut** — [ShortcutManagerCompat.requestPinShortcut] places a home-screen
- *    shortcut carrying our bitmap. Fully supported, works on One UI Home and Pixel Launcher, and
- *    honestly limited: it adds an entry, it does not replace the app's icon, the app drawer is
- *    untouched, and some launchers add their own shadow or badge to pinned shortcuts.
- * 3. **Export** — write the rendered PNG out so the user can feed it to whatever their launcher or
+ * 2. **Samsung Theme Park** — on One UI, DarkFrame prepares the icon pack in the standard format
+ *    and hands over to Samsung's Theme Park, the only component on a Galaxy device that applies an
+ *    icon theme across the home screen and app drawer. Samsung performs the final step; DarkFrame
+ *    never claims to have performed it.
+ * 3. **Pinned shortcut** — [ShortcutManagerCompat.requestPinShortcut] places a home-screen shortcut
+ *    carrying our bitmap. Used only where nothing better exists (Pixel Launcher), and never on
+ *    Samsung: testing on a Galaxy Z Fold8 showed it adds a second icon beside the original rather
+ *    than replacing it, which is a worse product than doing nothing.
+ * 4. **Export** — write the rendered PNG out so the user can feed it to whatever their launcher or
  *    theme engine does support.
- *
- * Samsung One UI Home belongs to case 2 and 3. It themes icons only through Galaxy Themes, a
- * channel Samsung controls and does not open to third-party apps, so DarkFrame does not offer a
- * One UI icon-pack switch it cannot deliver.
  */
 class IconApplyService(private val context: Context) {
 
@@ -84,13 +84,65 @@ class IconApplyService(private val context: Context) {
         }.getOrDefault(false)
 
         return when (profile.capability) {
+            ApplyCapability.SAMSUNG_THEME_PARK -> ApplyCapability.SAMSUNG_THEME_PARK
             ApplyCapability.ICON_PACK_NATIVE -> ApplyCapability.ICON_PACK_NATIVE
             ApplyCapability.PER_ICON_PICKER -> ApplyCapability.PER_ICON_PICKER
             ApplyCapability.PINNED_SHORTCUT ->
                 if (canPin) ApplyCapability.PINNED_SHORTCUT else ApplyCapability.EXPORT_ONLY
+            // An unrecognised launcher is upgraded to pinning only once the platform confirms it,
+            // and never on Samsung, where pinning produces duplicate icons.
             ApplyCapability.EXPORT_ONLY ->
                 if (canPin) ApplyCapability.PINNED_SHORTCUT else ApplyCapability.EXPORT_ONLY
         }
+    }
+
+    // ---- Samsung One UI --------------------------------------------------------------------
+
+    /** Whether this device is running Samsung's own home launcher right now. */
+    fun isSamsungHome(): Boolean =
+        SamsungThemeSupport.isOneUiHome(currentLauncher().packageName)
+
+    private fun isInstalled(packageName: String): Boolean = runCatching {
+        context.packageManager.getLaunchIntentForPackage(packageName) != null
+    }.getOrDefault(false)
+
+    /**
+     * Which Samsung step the user is on.
+     *
+     * Every value maps to an intent [samsungIntentFor] can actually fire, so the UI cannot offer a
+     * button with nothing behind it.
+     */
+    fun samsungStep(): SamsungApplyStep = SamsungThemeSupport.stepFor(
+        themeParkInstalled = isInstalled(SamsungThemeSupport.THEME_PARK),
+        goodLockInstalled = isInstalled(SamsungThemeSupport.GOOD_LOCK) ||
+            isInstalled(SamsungThemeSupport.GOOD_LOCK_LEGACY),
+    )
+
+    /**
+     * The intent for [step], or null when nothing on this device can serve it.
+     *
+     * Returning null rather than a best guess matters: the caller disables the action instead of
+     * firing an intent that lands the user on an error screen.
+     */
+    fun samsungIntentFor(step: SamsungApplyStep): Intent? = when (step) {
+        SamsungApplyStep.OPEN_THEME_PARK ->
+            context.packageManager.getLaunchIntentForPackage(SamsungThemeSupport.THEME_PARK)
+
+        SamsungApplyStep.OPEN_GOOD_LOCK ->
+            context.packageManager.getLaunchIntentForPackage(SamsungThemeSupport.GOOD_LOCK)
+                ?: context.packageManager.getLaunchIntentForPackage(SamsungThemeSupport.GOOD_LOCK_LEGACY)
+
+        SamsungApplyStep.INSTALL_GOOD_LOCK -> storeIntent(SamsungThemeSupport.GOOD_LOCK)
+    }
+
+    /** Galaxy Store first, Play Store second — Good Lock is a Galaxy Store product. */
+    private fun storeIntent(packageName: String): Intent? {
+        val galaxy = Intent(Intent.ACTION_VIEW, Uri.parse(SamsungThemeSupport.galaxyStoreUri(packageName)))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (galaxy.resolveActivity(context.packageManager) != null) return galaxy
+        val play = Intent(Intent.ACTION_VIEW, Uri.parse(SamsungThemeSupport.playStoreUri(packageName)))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        return if (play.resolveActivity(context.packageManager) != null) play else null
     }
 
     /**

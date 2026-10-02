@@ -9,19 +9,27 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.darkframe.icons.R
+import com.darkframe.icons.billing.Entitlement
+import com.darkframe.icons.billing.ProEntitlementStore
+import com.darkframe.icons.model.ContentTier
 import com.darkframe.icons.engine.DarkFrameEngine
 import com.darkframe.icons.engine.apply.ApplyCapability
 import com.darkframe.icons.engine.apply.ApplyOutcome
 import com.darkframe.icons.engine.domain.AppIdentity
+import com.darkframe.icons.data.FavoriteKind
+import com.darkframe.icons.data.FavoritesStore
 import com.darkframe.icons.engine.domain.IconStyleCatalog
-import com.darkframe.icons.ui.setup.GuidedSetupActivity
+import com.darkframe.icons.ui.common.DarkFrameActivity
+import com.darkframe.icons.ui.common.applySystemBarPadding
+import com.darkframe.icons.ui.common.spanFromWidth
+import com.darkframe.icons.ui.ProActivity
+import com.darkframe.icons.ui.setup.ApplyActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +42,7 @@ import kotlinx.coroutines.withContext
  * The activity is wiring only: it inflates views, forwards input to [IconBrowserViewModel] and
  * renders state. No icon composition, no package queries, no cache decisions live here.
  */
-class IconBrowserActivity : AppCompatActivity() {
+class IconBrowserActivity : DarkFrameActivity() {
 
     private val viewModel: IconBrowserViewModel by viewModels()
 
@@ -50,6 +58,7 @@ class IconBrowserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_icon_browser)
 
+        findViewById<View>(R.id.browser_root).applySystemBarPadding()
         grid = findViewById(R.id.icon_grid)
         chips = findViewById(R.id.collection_chips)
         coverage = findViewById(R.id.browser_coverage)
@@ -60,7 +69,7 @@ class IconBrowserActivity : AppCompatActivity() {
             loader = viewModel,
             scope = lifecycleScope,
             iconSizePx = iconSizePx,
-            onClick = ::showApplyOptions,
+            onClick = ::showAppActions,
         )
         grid.adapter = adapter
         setUpResponsiveGrid()
@@ -68,7 +77,7 @@ class IconBrowserActivity : AppCompatActivity() {
         setUpSearch()
 
         findViewById<View>(R.id.browser_setup_link).setOnClickListener {
-            startActivity(Intent(this, GuidedSetupActivity::class.java))
+            startActivity(Intent(this, ApplyActivity::class.java))
         }
 
         observeState()
@@ -87,26 +96,20 @@ class IconBrowserActivity : AppCompatActivity() {
      * qualifier-selected span count would get wrong until the activity was recreated.
      */
     private fun setUpResponsiveGrid() {
-        val layoutManager = GridLayoutManager(this, 4)
-        grid.layoutManager = layoutManager
-        val target = resources.getDimensionPixelSize(R.dimen.df_grid_cell_target)
-        grid.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
-            val usable = right - left - grid.paddingStart - grid.paddingEnd
-            if (usable <= 0) return@addOnLayoutChangeListener
-            val span = (usable / target).coerceIn(MIN_SPAN, MAX_SPAN)
-            if (span == layoutManager.spanCount) return@addOnLayoutChangeListener
-            // Posted rather than applied inline: setSpanCount requests a layout, and doing that
-            // from inside a layout pass is deferred by the framework anyway, with a warning.
-            grid.post { layoutManager.spanCount = span }
-        }
+        grid.layoutManager = GridLayoutManager(this, MIN_SPAN)
+        grid.spanFromWidth(
+            targetCellPx = resources.getDimensionPixelSize(R.dimen.df_grid_cell_target),
+            minSpan = MIN_SPAN,
+            maxSpan = MAX_SPAN,
+        )
     }
 
     private fun setUpChips() {
         IconStyleCatalog.all.forEach { style ->
             val chip = Chip(this).apply {
                 id = View.generateViewId()
-                text = if (style.tier.name == "PRO") {
-                    "${style.displayName} · ${getString(R.string.browser_pro_suffix)}"
+                text = if (style.tier == ContentTier.PRO) {
+                    "${style.displayName} · ${getString(R.string.tier_pro)}"
                 } else {
                     style.displayName
                 }
@@ -175,47 +178,77 @@ class IconBrowserActivity : AppCompatActivity() {
     }
 
     /**
-     * Offers only what the current launcher actually supports. On a launcher that reads icon packs
-     * there is nothing per-app to do here, so the user is sent to the instructions instead of being
-     * given a button that would do the wrong thing.
+     * What a user can do with one app's icon.
+     *
+     * The browser is an inspection surface, not an apply surface — applying is a whole-device
+     * action and lives on its own screen. So this offers only things that are true per app, and the
+     * themed-shortcut option is withheld on Samsung and on icon-pack launchers, where it would add
+     * a duplicate icon beside one that is about to be themed properly.
      */
-    private fun showApplyOptions(identity: AppIdentity) {
+    private fun showAppActions(identity: AppIdentity) {
         val capability = viewModel.state.value.capability
-        if (capability == ApplyCapability.ICON_PACK_NATIVE) {
-            startActivity(Intent(this, GuidedSetupActivity::class.java))
-            return
-        }
+        val offerShortcut = capability == ApplyCapability.PINNED_SHORTCUT
+        val favorites = FavoritesStore(this)
+        val saved = favorites.isFavorite(FavoriteKind.APP, identity.componentKey)
 
         val actions = buildList {
-            if (capability == ApplyCapability.PINNED_SHORTCUT) add(getString(R.string.apply_pin))
-            add(getString(R.string.apply_export))
+            add(getString(R.string.browser_app_action_export))
+            if (offerShortcut) add(getString(R.string.browser_app_action_pin))
+            add(
+                if (saved) getString(R.string.browser_app_action_unfavorite)
+                else getString(R.string.browser_app_action_favorite),
+            )
         }
 
         AlertDialog.Builder(this)
-            .setTitle(getString(R.string.apply_title, identity.displayLabel()))
+            .setTitle(identity.displayLabel())
             .setItems(actions.toTypedArray()) { _, which ->
                 when (actions[which]) {
-                    getString(R.string.apply_pin) -> pinShortcut(identity)
-                    getString(R.string.apply_export) -> exportIcon(identity)
+                    getString(R.string.browser_app_action_export) ->
+                        if (requireTier()) exportIcon(identity)
+                    getString(R.string.browser_app_action_pin) ->
+                        if (requireTier()) pinShortcut(identity)
+                    else -> favorites.toggle(FavoriteKind.APP, identity.componentKey)
                 }
             }
-            .setNegativeButton(R.string.apply_cancel, null)
+            .setNegativeButton(R.string.close, null)
             .show()
     }
 
+    /**
+     * Browsing a Pro collection is free — seeing the look is how someone decides to buy it. Taking
+     * a Pro render off the device is not: export and themed shortcuts are gated, and a free user is
+     * sent to the Pro screen rather than shown a silent failure.
+     */
+    private fun requireTier(): Boolean {
+        val style = viewModel.state.value.style
+        if (style.tier != ContentTier.PRO) return true
+        if (ProEntitlementStore(this).current() == Entitlement.PRO) return true
+        AlertDialog.Builder(this)
+            .setTitle(R.string.pro_required_title)
+            .setMessage(getString(R.string.pro_required_message, style.displayName))
+            .setPositiveButton(R.string.pro_required_open) { _, _ ->
+                startActivity(Intent(this, ProActivity::class.java))
+            }
+            .setNegativeButton(R.string.close, null)
+            .show()
+        return false
+    }
+
+    /** Only reachable on a launcher where a pinned shortcut is the best available mechanism. */
     private fun pinShortcut(identity: AppIdentity) {
         lifecycleScope.launch {
             val engine = DarkFrameEngine.get(applicationContext)
-            val icon = viewModel.load(identity, EXPORT_SIZE_PX)
+            val icon = viewModel.loadForExport(identity)
             val outcome = withContext(Dispatchers.IO) { engine.apply.pinThemedShortcut(identity, icon) }
             val text = when (outcome) {
-                ApplyOutcome.Requested -> getString(R.string.apply_requested)
+                ApplyOutcome.Requested -> getString(R.string.browser_pin_requested)
                 is ApplyOutcome.NotSupported -> outcome.reason
                 is ApplyOutcome.Failed -> outcome.reason
             }
             AlertDialog.Builder(this@IconBrowserActivity)
                 .setMessage(text)
-                .setPositiveButton(R.string.apply_cancel, null)
+                .setPositiveButton(R.string.close, null)
                 .show()
         }
     }
@@ -224,19 +257,20 @@ class IconBrowserActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val engine = DarkFrameEngine.get(applicationContext)
             val style = viewModel.state.value.style
-            val icon = viewModel.load(identity, EXPORT_SIZE_PX)
+            // Export is the one place a full-resolution render is legitimate.
+            val icon = viewModel.loadForExport(identity)
             val uri = withContext(Dispatchers.IO) { engine.apply.exportIcon(identity, style, icon) }
             if (uri == null) {
                 AlertDialog.Builder(this@IconBrowserActivity)
-                    .setMessage(R.string.apply_export_failed)
-                    .setPositiveButton(R.string.apply_cancel, null)
+                    .setMessage(R.string.browser_export_failed)
+                    .setPositiveButton(R.string.close, null)
                     .show()
                 return@launch
             }
             startActivity(
                 Intent.createChooser(
                     engine.apply.shareIntent(uri),
-                    getString(R.string.apply_share_title),
+                    getString(R.string.browser_share_title),
                 ),
             )
         }
@@ -245,8 +279,5 @@ class IconBrowserActivity : AppCompatActivity() {
     private companion object {
         const val MIN_SPAN = 3
         const val MAX_SPAN = 10
-
-        /** Exports and shortcut icons are produced at DarkFrame's full design grid. */
-        const val EXPORT_SIZE_PX = 512
     }
 }

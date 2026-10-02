@@ -10,6 +10,7 @@ import com.darkframe.icons.engine.domain.IconStyle
 import com.darkframe.icons.engine.domain.Monogram
 import com.darkframe.icons.engine.render.IconRenderer
 import com.darkframe.icons.engine.render.IconSourceLoader
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * The dynamic icon engine's entry point.
@@ -28,26 +29,33 @@ import com.darkframe.icons.engine.render.IconSourceLoader
  *   -> themed icon
  * ```
  *
- * The important property is the `no` branch: it is the *normal* path, not a fallback. DarkFrame
- * themes an app it has never seen — one installed tomorrow, one that exists only on this user's
- * device — with no curated artwork and no code change, because the app's own icon is a perfectly
- * good source once it has been normalised. Curated artwork raises quality for the apps we have
- * drawn; it never gates coverage.
+ * The `no` branch is the *normal* path, not a fallback: DarkFrame themes an app it has never seen —
+ * one installed tomorrow, one that exists only on this user's device — because the app's own icon is
+ * a perfectly good source once normalised. Curated artwork raises quality; it never gates coverage.
  *
- * Every method here is blocking and must be called off the main thread. Rendering is CPU-bound and
- * the engine deliberately does not hide that behind an internal dispatcher — the caller owns
- * concurrency, so a screen can cancel a burst of work it no longer needs.
+ * Every method here is blocking and must be called off the main thread, on the engine's bounded
+ * render pool rather than on a general-purpose dispatcher — see [DarkFrameEngine.renderDispatcher].
  */
 class IconResolver(
     private val curatedIcons: CuratedIconRepository,
     private val sourceLoader: IconSourceLoader,
     private val cache: IconCache,
-    private val rendererProvider: () -> IconRenderer = { IconRenderer() },
+    rendererProvider: () -> IconRenderer = { IconRenderer() },
 ) {
 
     // IconRenderer is not thread-safe (it reuses Paint and geometry objects), so each thread that
     // renders gets its own. One instance behind a lock would serialise the whole grid.
     private val renderer = ThreadLocal.withInitial(rendererProvider)
+
+    /**
+     * One lock per cache key, so two threads asked for the same icon at the same moment do not both
+     * render it.
+     *
+     * Without this, a scroll that binds a cell, recycles it and binds it again starts two identical
+     * renders, and the grid pays twice for one bitmap. The second caller blocks briefly and then
+     * finds the finished result in the cache.
+     */
+    private val inFlight = ConcurrentHashMap<String, Any>()
 
     /** Non-blocking peek, safe on the main thread. Used to avoid a flicker on already-warm icons. */
     fun peek(identity: AppIdentity, style: IconStyle, sizePx: Int): Bitmap? {
@@ -68,18 +76,30 @@ class IconResolver(
 
         cache.get(key, identity.packageName)?.let { return it }
 
-        val source = sourceLoader.load(identity, style, curatedId)
-        val rendered = renderer.get()!!.render(
-            style = style,
-            source = source,
-            sizePx = sizePx,
-            monogramText = Monogram.initials(identity.label),
-        )
-        cache.put(key, identity.packageName, rendered)
+        val lock = inFlight.computeIfAbsent(key) { Any() }
+        try {
+            synchronized(lock) {
+                // Re-checked inside the lock: while this thread waited, the thread it waited for
+                // very likely finished the exact bitmap being asked for.
+                cache.get(key, identity.packageName)?.let { return it }
 
-        // The source buffer is large (288px ARGB_8888) and is of no further use once composited.
-        source?.bitmap?.let { if (!it.isRecycled) it.recycle() }
-        return rendered
+                val source = sourceLoader.load(identity, style, curatedId, sizePx)
+                val rendered = renderer.get()!!.render(
+                    style = style,
+                    source = source,
+                    sizePx = sizePx,
+                    monogramText = Monogram.initials(identity.label),
+                )
+                cache.put(key, identity.packageName, rendered)
+
+                // The source buffer is of no further use once composited, and at browser scale these
+                // add up to hundreds of megabytes of churn if left to the collector.
+                source?.bitmap?.let { if (!it.isRecycled) it.recycle() }
+                return rendered
+            }
+        } finally {
+            inFlight.remove(key, lock)
+        }
     }
 
     /** True when this app is drawn from DarkFrame's own artwork rather than its installed icon. */

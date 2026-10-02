@@ -28,6 +28,11 @@ jobs:
         run: gradle assembleDebug --stacktrace
       - name: Lint
         run: gradle lintDebug --stacktrace
+      # Builds the shippable artifact with R8 and resource shrinking on. No signing config is
+      # present in CI, so the bundle comes out unsigned — which is what we want: this step proves
+      # the release configuration and the ProGuard rules are sound, not that we can sign.
+      - name: Bundle release
+        run: gradle bundleRelease --stacktrace
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v4
@@ -63,4 +68,12 @@ jobs:
           print(f"lint: {len(issues)} issue(s) across {len(counts)} check(s)")
           for label, count in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])):
               print(f"  x{count:<4} {label}")
+          # Errors fail the build, so print each one in full rather than making the next run guess.
+          errors = [i for i in issues if i.get("severity") == "Error"]
+          for issue in errors:
+              location = issue.find("location")
+              where = location.get("file", "?") if location is not None else "?"
+              line = location.get("line", "?") if location is not None else "?"
+              print(f"\nERROR {issue.get('id')} at {os.path.basename(where)}:{line}")
+              print(f"  {issue.get('message')}")
           PY

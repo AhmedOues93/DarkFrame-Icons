@@ -13,6 +13,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.darkframe.icons.engine.domain.AppIdentity
 import com.darkframe.icons.engine.domain.ContentBounds
 import com.darkframe.icons.engine.domain.IconNormalizer
+import com.darkframe.icons.engine.domain.IconRenderPolicy
 import com.darkframe.icons.engine.domain.IconSourceKind
 import com.darkframe.icons.engine.domain.IconSourcePlan
 import com.darkframe.icons.engine.domain.IconStyle
@@ -49,27 +50,35 @@ class SourceArtwork(
 class IconSourceLoader(private val context: Context) {
 
     /**
-     * Resolution the source is rasterised at before being scaled into place.
+     * Resolution the source is rasterised at, derived from the output size by [IconRenderPolicy].
      *
-     * Fixed rather than derived from the requested output size, so the same source yields the same
-     * measured content bounds no matter which grid density asked for it — a cache served at 192px
-     * and a re-render at 96px must not disagree about how large an app's glyph is.
+     * Previously fixed at 288px for every render, which meant filling a 64px grid cell allocated
+     * two ~330KB buffers and alpha-scanned all of them. Across a few hundred apps that is the bulk
+     * of the work that made a Fold8 warm, so the buffer now scales with what is actually being
+     * produced. Content bounds stay comparable across sizes because placement is computed from the
+     * bounds *relative* to the buffer, never from absolute pixels.
      */
-    private val workSize = 288
+    private fun workSizeFor(targetPx: Int): Int = IconRenderPolicy.workSizePx(targetPx)
 
     /**
      * Walks [IconSourcePlan]'s preference order, returning the first candidate that yields usable
      * artwork. Returns null only for [IconSourceKind.MONOGRAM], which the renderer draws itself.
      */
     @WorkerThread
-    fun load(identity: AppIdentity, style: IconStyle, curatedDrawableId: Int?): SourceArtwork? {
+    fun load(
+        identity: AppIdentity,
+        style: IconStyle,
+        curatedDrawableId: Int?,
+        targetPx: Int,
+    ): SourceArtwork? {
+        val workSize = workSizeFor(targetPx)
         val order = IconSourcePlan.preferenceOrder(hasCuratedOverride = curatedDrawableId != null)
         for (kind in order) {
             val artwork = when (kind) {
                 // A curated row naming artwork that is not in the APK must cost the override, not
                 // the user's icon, so this falls through to INSTALLED rather than failing.
-                IconSourceKind.CURATED -> curatedDrawableId?.let { loadCurated(it) }
-                IconSourceKind.INSTALLED -> loadInstalled(identity, style)
+                IconSourceKind.CURATED -> curatedDrawableId?.let { loadCurated(it, workSize) }
+                IconSourceKind.INSTALLED -> loadInstalled(identity, style, workSize)
                 IconSourceKind.MONOGRAM -> return null
             }
             if (artwork != null) return artwork
@@ -77,7 +86,17 @@ class IconSourceLoader(private val context: Context) {
         return null
     }
 
-    private fun loadCurated(drawableId: Int): SourceArtwork? {
+    /**
+     * Loads a curated drawable directly, with no installed app behind it.
+     *
+     * Used by look previews, which show DarkFrame's own artwork in a collection rather than the
+     * user's apps — so a preview costs no PackageManager work at all.
+     */
+    @WorkerThread
+    fun loadCuratedArtwork(drawableId: Int, targetPx: Int): SourceArtwork? =
+        loadCurated(drawableId, workSizeFor(targetPx))
+
+    private fun loadCurated(drawableId: Int, workSize: Int): SourceArtwork? {
         val drawable = runCatching { AppCompatResources.getDrawable(context, drawableId) }
             .getOrNull() ?: return null
         val bitmap = rasterise(drawable, workSize) ?: return null
@@ -93,16 +112,16 @@ class IconSourceLoader(private val context: Context) {
         )
     }
 
-    private fun loadInstalled(identity: AppIdentity, style: IconStyle): SourceArtwork? {
+    private fun loadInstalled(identity: AppIdentity, style: IconStyle, workSize: Int): SourceArtwork? {
         val drawable = loadActivityIcon(identity) ?: return null
 
         if (drawable is AdaptiveIconDrawable) {
             monochromeLayerOf(drawable, style)?.let { mask ->
-                val bitmap = rasteriseAdaptive(mask) ?: return@let null
+                val bitmap = rasteriseAdaptive(mask, workSize) ?: return@let null
                 val scan = ContentBoundsScanner.scan(bitmap)
                 return SourceArtwork(bitmap, scan.bounds, SourceShape.GLYPH, isMask = true, fromCurated = false)
             }
-            val bitmap = rasteriseAdaptive(drawable) ?: return null
+            val bitmap = rasteriseAdaptive(drawable, workSize) ?: return null
             val scan = ContentBoundsScanner.scan(bitmap)
             // An adaptive icon's background layer is opaque by specification, so after cropping to
             // the visible viewport it is full-bleed essentially by definition.
@@ -145,7 +164,7 @@ class IconSourceLoader(private val context: Context) {
      * Rasterises an adaptive layer and crops the guaranteed-invisible bleed, so the result is the
      * icon as a launcher would actually show it.
      */
-    private fun rasteriseAdaptive(drawable: Drawable): Bitmap? {
+    private fun rasteriseAdaptive(drawable: Drawable, workSize: Int): Bitmap? {
         val full = rasterise(drawable, workSize) ?: return null
         val inset = IconNormalizer.adaptiveCropInset(workSize)
         val cropped = workSize - inset * 2
@@ -164,7 +183,4 @@ class IconSourceLoader(private val context: Context) {
         drawable.draw(canvas)
         bitmap
     }.getOrNull()
-
-    /** Exposed so callers can size work buffers consistently with this loader. */
-    fun workResolution(): Int = workSize
 }

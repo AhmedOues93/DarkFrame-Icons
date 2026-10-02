@@ -6,8 +6,20 @@ import android.content.Context
 import android.widget.RemoteViews
 import com.darkframe.icons.R
 
-class DarkFrameClockWidget:AppWidgetProvider(){
-    override fun onUpdate(context:Context,manager:AppWidgetManager,ids:IntArray){
-        ids.forEach{manager.updateAppWidget(it,RemoteViews(context.packageName,R.layout.widget_clock))}
+/**
+ * Time, in the user's collection.
+ *
+ * Updates itself through [android.widget.TextClock] in the launcher's process, so this provider runs
+ * only when the widget is added, resized, or the collection changes.
+ */
+class DarkFrameClockWidget : AppWidgetProvider() {
+
+    override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
+        val style = WidgetTheme.currentStyle(context)
+        ids.forEach { id ->
+            val views = RemoteViews(context.packageName, R.layout.widget_clock)
+            WidgetTheme.apply(views, style, R.id.widget_root, R.id.widget_primary, R.id.widget_secondary)
+            manager.updateAppWidget(id, views)
+        }
     }
 }

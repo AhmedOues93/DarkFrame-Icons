@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Target width of one grid cell. The browser derives its column count from the measured
-         width divided by this, which is what makes one layout work on a phone, an unfolded Fold
-         and a tablet without a separate layout per form factor. -->
+    <!-- Spacing scale. Every gap in the app is one of these. -->
+    <dimen name="df_space_1">4dp</dimen>
+    <dimen name="df_space_2">8dp</dimen>
+    <dimen name="df_space_3">12dp</dimen>
+    <dimen name="df_space_4">16dp</dimen>
+    <dimen name="df_space_5">24dp</dimen>
+    <dimen name="df_space_6">32dp</dimen>
+    <dimen name="df_space_7">48dp</dimen>
+
+    <!-- Radii. Three values, used by role: control, card, hero. -->
+    <dimen name="df_radius_control">14dp</dimen>
+    <dimen name="df_radius_card">20dp</dimen>
+    <dimen name="df_radius_hero">26dp</dimen>
+
+    <dimen name="df_screen_margin">20dp</dimen>
+    <dimen name="df_control_height">58dp</dimen>
+    <dimen name="df_hero_height">240dp</dimen>
+    <dimen name="df_collection_card_width">148dp</dimen>
+
+    <!-- Target width of one app-grid cell. The browser derives its column count from the measured
+         width divided by this, so one layout serves phones, a Fold's cover and inner screens, and
+         tablets without a separate layout per form factor. -->
     <dimen name="df_grid_cell_target">96dp</dimen>
-    <dimen name="df_icon_size">60dp</dimen>
-    <dimen name="df_screen_margin">16dp</dimen>
+    <dimen name="df_icon_size">56dp</dimen>
     <dimen name="df_gutter">12dp</dimen>
 </resources>

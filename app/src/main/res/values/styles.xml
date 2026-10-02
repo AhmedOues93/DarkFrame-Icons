@@ -1,8 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-<style name="Theme.DarkFrame" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-    <item name="android:fontFamily">sans</item>
-    <item name="android:windowLightStatusBar">false</item>
-    <item name="android:navigationBarColor">#090B0E</item>
-    <item name="android:statusBarColor">#090B0E</item>
-</style>
+    <!--
+      DarkFrame theme.
+
+      Edge-to-edge with transparent system bars: the app draws its own near-black ground all the way
+      out, and each screen insets its content off the status and navigation bars. Light system-bar
+      icons because every surface behind them is dark.
+    -->
+    <style name="Theme.DarkFrame" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:windowBackground">@color/df_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- windowLightNavigationBar is API 27 and false is the platform default, so it is left
+             unset rather than duplicating this theme into values-v27 for no behavioural change. -->
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:colorBackground">@color/df_bg</item>
+        <item name="colorPrimary">@color/df_accent</item>
+        <item name="colorOnPrimary">@color/df_text_on_accent</item>
+        <item name="colorSurface">@color/df_surface</item>
+        <item name="colorOnSurface">@color/df_text_primary</item>
+        <item name="android:textColorPrimary">@color/df_text_primary</item>
+        <item name="android:textColorSecondary">@color/df_text_secondary</item>
+    </style>
+
+    <!-- Splash: the launcher icon on the app's own ground, so the first frame is DarkFrame rather
+         than a white flash. -->
+    <style name="Theme.DarkFrame.Splash" parent="Theme.DarkFrame">
+        <item name="android:windowBackground">@drawable/df_splash</item>
+    </style>
+
+    <!-- Type scale. Five roles, used consistently; nothing in the app sets a size inline. -->
+    <style name="DF.Text" parent="">
+        <item name="android:textColor">@color/df_text_primary</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="DF.Text.Display" parent="DF.Text">
+        <item name="android:textSize">30sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="DF.Text.Title" parent="DF.Text">
+        <item name="android:textSize">21sp</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="DF.Text.Subtitle" parent="DF.Text">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="DF.Text.Body" parent="DF.Text">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/df_text_secondary</item>
+        <item name="android:lineSpacingExtra">3sp</item>
+    </style>
+
+    <style name="DF.Text.Caption" parent="DF.Text">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/df_text_tertiary</item>
+    </style>
+
+    <style name="DF.Text.Label" parent="DF.Text">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/df_text_tertiary</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Controls. The primary action is solid; everything else is a quiet surface. -->
+    <style name="DF.Button" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/df_control_height</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="DF.Button.Primary" parent="DF.Button">
+        <item name="android:background">@drawable/df_button_primary</item>
+        <item name="android:textColor">@color/df_text_on_accent</item>
+    </style>
+
+    <style name="DF.Button.Secondary" parent="DF.Button">
+        <item name="android:background">@drawable/df_button_secondary</item>
+        <item name="android:textColor">@color/df_text_primary</item>
+    </style>
 </resources>

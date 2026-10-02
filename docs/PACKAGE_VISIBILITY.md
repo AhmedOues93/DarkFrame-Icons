@@ -12,15 +12,23 @@
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.HOME" />
     </intent>
+    <package android:name="com.samsung.android.themedesigner" />
+    <package android:name="com.samsung.app.goodlock" />
+    <package android:name="com.samsung.android.goodlock" />
+    <package android:name="com.sec.android.app.samsungapps" />
 </queries>
 ```
 
-That is the entire declaration. Two intent filters, no permissions.
+That is the entire declaration: two intent filters, four named packages, no permissions.
 
 1. **`CATEGORY_LAUNCHER`** — the apps that have a launcher icon. This is exactly the subject of the
    product: DarkFrame themes launcher icons, so it asks about apps that have one.
 2. **`CATEGORY_HOME`** — the home launchers, so DarkFrame can identify the active launcher and offer
    only the apply mechanism that launcher actually supports.
+3. **Four named Samsung packages** — Theme Park, Good Lock (both package names it has used) and the
+   Galaxy Store. Naming a package is the narrowest form of visibility there is: it answers "is this
+   one thing installed?" and reveals nothing else. The Samsung flow needs it to offer the right step
+   instead of guessing, and to disable the button when nothing can serve it.
 
 ## Why not `QUERY_ALL_PACKAGES`
 

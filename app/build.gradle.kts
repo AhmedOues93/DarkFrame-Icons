@@ -11,8 +11,42 @@ android {
         applicationId = "com.darkframe.icons"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "1.0"
+        resourceConfigurations += listOf("en")
+    }
+
+    signingConfigs {
+        // Release signing is supplied by the person running the build, never by the repository.
+        // Put the four values in ~/.gradle/gradle.properties or pass them with -P; see
+        // docs/RELEASE_SIGNING.md. With none of them set, a release build is simply unsigned, which
+        // is what CI wants and what keeps keys out of version control.
+        create("release") {
+            val storePath = providers.gradleProperty("DARKFRAME_STORE_FILE").orNull
+            if (storePath != null) {
+                storeFile = file(storePath)
+                storePassword = providers.gradleProperty("DARKFRAME_STORE_PASSWORD").orNull
+                keyAlias = providers.gradleProperty("DARKFRAME_KEY_ALIAS").orNull
+                keyPassword = providers.gradleProperty("DARKFRAME_KEY_PASSWORD").orNull
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = if (providers.gradleProperty("DARKFRAME_STORE_FILE").isPresent) {
+                signingConfigs.getByName("release")
+            } else {
+                null
+            }
+        }
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
     }
 
     compileOptions {
@@ -25,6 +59,7 @@ android {
 
     buildFeatures {
         viewBinding = false
+        buildConfig = true
     }
 
     lint {

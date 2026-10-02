@@ -1,27 +1,72 @@
 package com.darkframe.icons.ui
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.LinearLayout
-import android.widget.ScrollView
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import com.darkframe.icons.data.DarkFrameCatalog
+import com.darkframe.icons.R
+import com.darkframe.icons.data.FavoriteKind
 import com.darkframe.icons.data.FavoritesStore
+import com.darkframe.icons.engine.domain.LookCatalog
+import com.darkframe.icons.engine.wallpaper.WallpaperCatalog
+import com.darkframe.icons.ui.browser.IconBrowserActivity
+import com.darkframe.icons.ui.common.DarkFrameActivity
+import com.darkframe.icons.ui.common.SectionScreen
+import com.darkframe.icons.ui.look.LookDetailActivity
+import com.darkframe.icons.wallpaper.WallpaperActivity
 
-class FavoritesActivity : AppCompatActivity() {
+/**
+ * Everything the user has saved, in one place.
+ *
+ * Looks, wallpapers and app icons share a store, so this is one useful screen rather than three
+ * partial ones. Sections with nothing in them are omitted entirely.
+ */
+class FavoritesActivity : DarkFrameActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val store=FavoritesStore(this)
-        val root=LinearLayout(this).apply{orientation=LinearLayout.VERTICAL;setPadding(40,56,40,40);setBackgroundColor(0xFF090B0E.toInt())}
-        root.addView(TextView(this).apply{text="Favorites";textSize=30f;setTextColor(0xFFF4F4F4.toInt())})
-        val icons=DarkFrameCatalog.icons.filter{store.isFavorite("icon",it.id)}
-        val hasWallpaper=store.isFavorite("wallpaper","amoled_frame")
-        if(icons.isEmpty()&&!hasWallpaper){
-            root.addView(TextView(this).apply{text="Nothing saved yet";textSize=17f;setTextColor(0xFFC8CBD0.toInt());setPadding(0,24,0,0)})
-        }else{
-            if(icons.isNotEmpty()) root.addView(TextView(this).apply{text="Icons\n"+icons.joinToString("\n"){it.label};textSize=17f;setTextColor(0xFFC8CBD0.toInt());setPadding(0,24,0,0)})
-            if(hasWallpaper) root.addView(TextView(this).apply{text="Wallpapers\nAMOLED Frame";textSize=17f;setTextColor(0xFFC8CBD0.toInt());setPadding(0,28,0,0)})
+        render()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        render()
+    }
+
+    private fun render() {
+        val store = FavoritesStore(this)
+        val looks = LookCatalog.all.filter { store.isFavorite(FavoriteKind.LOOK, it.id) }
+        val wallpapers = WallpaperCatalog.all.filter { store.isFavorite(FavoriteKind.WALLPAPER, it.id) }
+        val apps = store.idsOf(FavoriteKind.APP).sorted()
+
+        val screen = SectionScreen(this).setUp(getString(R.string.favorites_title))
+
+        if (looks.isEmpty() && wallpapers.isEmpty() && apps.isEmpty()) {
+            screen.caption(getString(R.string.favorites_empty))
+            return
         }
-        setContentView(ScrollView(this).apply{addView(root)})
+
+        if (looks.isNotEmpty()) {
+            screen.header(getString(R.string.favorites_section_looks))
+            looks.forEach { look ->
+                screen.row(look.name, look.tagline) {
+                    startActivity(LookDetailActivity.intent(this, look))
+                }
+            }
+        }
+        if (wallpapers.isNotEmpty()) {
+            screen.header(getString(R.string.favorites_section_wallpapers))
+            wallpapers.forEach { spec ->
+                screen.row(spec.title, spec.category.name.lowercase().replaceFirstChar { it.uppercase() }) {
+                    startActivity(Intent(this, WallpaperActivity::class.java))
+                }
+            }
+        }
+        if (apps.isNotEmpty()) {
+            screen.header(getString(R.string.favorites_section_apps))
+            apps.forEach { componentKey ->
+                screen.row(componentKey.substringBefore('/'), componentKey.substringAfter('/')) {
+                    startActivity(Intent(this, IconBrowserActivity::class.java))
+                }
+            }
+        }
     }
 }

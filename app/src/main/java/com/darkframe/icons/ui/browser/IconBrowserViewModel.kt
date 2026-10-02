@@ -12,9 +12,12 @@ import com.darkframe.icons.engine.data.PackageChange
 import com.darkframe.icons.engine.data.StylePreferenceStore
 import com.darkframe.icons.engine.domain.AppCatalogBuilder
 import com.darkframe.icons.engine.domain.AppIdentity
+import com.darkframe.icons.engine.domain.IconRenderPolicy
 import com.darkframe.icons.engine.domain.IconStyle
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,7 +40,6 @@ class IconBrowserViewModel @JvmOverloads constructor(
     // (Application). Kotlin default arguments alone do not emit that overload, so without this the
     // screen fails at runtime with "Cannot create an instance of IconBrowserViewModel".
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val renderDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : AndroidViewModel(application), ThemedIconLoader {
 
     data class UiState(
@@ -53,6 +55,18 @@ class IconBrowserViewModel @JvmOverloads constructor(
 
     private val engine = DarkFrameEngine.get(application)
     private val stylePreferences = StylePreferenceStore(application)
+
+    /** Rendering runs only on the engine's bounded background pool — never on Dispatchers.Default. */
+    private val renderDispatcher = engine.renderDispatcher
+
+    /**
+     * Coalesces package broadcasts.
+     *
+     * Play updates apps in batches, and each install fires its own broadcast. Reloading the whole
+     * catalog per event meant a dozen full PackageManager scans in a few seconds, each of which
+     * re-reads every app's label. One reload after the burst settles is enough.
+     */
+    private var catalogReload: Job? = null
 
     private var catalog: List<AppIdentity> = emptyList()
 
@@ -108,11 +122,24 @@ class IconBrowserViewModel @JvmOverloads constructor(
     }
 
     override fun peek(identity: AppIdentity, sizePx: Int): Bitmap? =
-        engine.resolver.peek(identity, _state.value.style, sizePx)
+        engine.resolver.peek(identity, _state.value.style, IconRenderPolicy.previewSizePx(sizePx))
 
+    /**
+     * Preview sizes are snapped to a bucket before they reach the engine, so a grid cell can never
+     * ask for export resolution and two slightly different cell sizes share one cached bitmap.
+     */
     override suspend fun load(identity: AppIdentity, sizePx: Int): Bitmap {
         val style = _state.value.style
-        return withContext(renderDispatcher) { engine.resolver.resolve(identity, style, sizePx) }
+        val previewPx = IconRenderPolicy.previewSizePx(sizePx)
+        return withContext(renderDispatcher) { engine.resolver.resolve(identity, style, previewPx) }
+    }
+
+    /** Full-resolution render, only for an export or a launcher hand-off. */
+    suspend fun loadForExport(identity: AppIdentity): Bitmap {
+        val style = _state.value.style
+        return withContext(renderDispatcher) {
+            engine.resolver.resolve(identity, style, IconRenderPolicy.EXPORT_PX)
+        }
     }
 
     override fun isCurated(identity: AppIdentity): Boolean = engine.resolver.isCurated(identity)
@@ -127,8 +154,10 @@ class IconBrowserViewModel @JvmOverloads constructor(
      * follows from that.
      */
     private fun onPackageChange(change: PackageChange) {
-        viewModelScope.launch {
+        catalogReload?.cancel()
+        catalogReload = viewModelScope.launch {
             withContext(ioDispatcher) { engine.resolver.invalidate(change.packageName) }
+            delay(PACKAGE_CHANGE_DEBOUNCE_MS)
             refresh()
         }
     }
@@ -136,6 +165,11 @@ class IconBrowserViewModel @JvmOverloads constructor(
     /** Reclaims cache disk once the user leaves a burst of rendering behind. */
     fun trimCache() {
         viewModelScope.launch { withContext(ioDispatcher) { engine.resolver.trimCache() } }
+    }
+
+    private companion object {
+        /** Long enough to swallow a Play update batch, short enough to feel immediate. */
+        const val PACKAGE_CHANGE_DEBOUNCE_MS = 900L
     }
 
     fun clearCache(onDone: () -> Unit) {

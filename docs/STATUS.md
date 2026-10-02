@@ -25,12 +25,25 @@
   translucency bounds)
 
 ### Apply, honestly
+- Samsung One UI: Theme Park hand-off, with the right step detected per device.
+  Pinned shortcuts are no longer the Samsung path — on a real Fold8 they produced
+  duplicate icons rather than replacing anything
 - Icon-pack `appfilter.xml` for launchers that read it
-- Pinned themed shortcuts via the platform API
+- Pinned themed shortcuts only where nothing better exists, and only per app
 - 512px PNG export through a scoped `FileProvider`
 - Per-launcher capability table, narrowed by a runtime probe and never widened
-- Guided setup driven by that capability, so it cannot describe an unavailable mechanism
+- The Apply screen is driven by that capability, so it cannot describe an unavailable
+  mechanism, and its button is disabled rather than firing an intent nothing can serve
 - No claim anywhere that DarkFrame can replace icons system-wide
+
+### Pro
+- Google Play Billing v7 against `darkframe_pro_lifetime`, a one-time purchase:
+  real `ProductDetails` for the price, acknowledgement, restore, and a persistent
+  entitlement read by every gated surface
+- Entitlement is granted only for a `PURCHASED` Play purchase — there is no debug
+  or fake Pro path anywhere in the code
+- Pro collections can be browsed freely and previewed; what the gate withholds is
+  applying a look and exporting or pinning its icons
 
 ### Package visibility
 - Narrow `<queries>` declaration: `CATEGORY_LAUNCHER` and `CATEGORY_HOME` only
@@ -46,12 +59,19 @@
 - Curated artwork re-authored as glyphs on transparency so one drawing serves all
   six collections; the original `df_*` tiles stay as icon-pack artwork
 - Icon request entry point
-- CI: unit tests, debug assemble, lint, with reports uploaded on failure
-- 76 unit tests covering the engine's domain layer
+- CI: unit tests, debug assemble, lint and release bundle, with reports uploaded on failure
+- 121 unit tests covering the engine's domain layer, the catalogs, the capability
+  table and the render-scheduling policy
 
-## RED — remaining
+### Performance
+- Preview renders capped and bucketed, so browsing never produces export-resolution
+  bitmaps and a fold re-uses the cached ones
+- Source raster scales with the output instead of a fixed 288px
+- Rendering on a two-thread background-priority pool, not every core
+- Per-package cache eviction instead of wiping every icon when one app updates
+- Package broadcasts debounced; no services, no polling, no background work
 
-### Open finding — dark tints compress a colour source
+### Fixed — dark tints compressed a colour source
 
 Found by rendering the collections for the first time (SVG reconstruction, not device output).
 
@@ -63,10 +83,11 @@ dark band, and a colourful source loses its internal structure — a mid-green f
 mark end up almost the same value.
 
 It does not affect curated glyphs, which are authored as a single value, so it only shows on
-generated icons. Candidate fix is to remap luma into a range rather than multiplying towards zero
-(for a dark tint, invert so that source white lands on the tint and source black lands on the
-container). Deliberately not changed yet: it is a design decision that needs to be judged on a
-device against real app icons, and it would alter every Frost render.
+generated icons. Fixed: `ColorMatrices.lumaRamp` now ramps from the collection's own container to its tint, so a
+black source lands on the surface and a bright one on the ink. Tests pin the separation, pin that the
+ink end did not move, and pin that the dark collections are unaffected.
+
+## RED — remaining
 
 ### Needs a physical device
 - Visual QA of all six collections across real installed apps (the renderer is
@@ -79,13 +100,19 @@ device against real app icons, and it would alter every Frost render.
 
 ### Product
 - Expand curated artwork well beyond the current 12 glyphs
-- Google Play Billing: `EntitlementProvider` still returns FREE by design; no
-  Pro content is gated by a fake purchase
 - Instrumented tests for the render layer (`IconRenderer`, `IconSourceLoader`,
   `ContentBoundsScanner` need a real `Canvas`)
 - Icon request form to replace the mailto intent
 
+### Needs Google Play Console
+- Billing end to end: `darkframe_pro_lifetime` has to exist as a one-time product
+  and be bought through Internal Testing. The client is finished — real
+  `ProductDetails`, acknowledgement, restore, persistent entitlement, and no debug
+  purchase path at all — but a sideloaded debug APK cannot exercise it
+- Store listing: screenshots, feature graphic, Data Safety form (answers are in
+  `docs/PRIVACY.md`), hosted privacy policy URL
+
 ### Release
-- Store screenshots, feature graphic, privacy policy
-- Release signing and AAB
+- Upload key generated outside the repository and the AAB signed with it; the build
+  reads it from properties and `docs/RELEASE_SIGNING.md` has the steps
 - Galaxy Themes submission is a separate Samsung channel; decide whether to pursue

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/df_collection_card_width"
+    android:layout_height="wrap_content"
+    android:background="@drawable/df_card_clickable"
+    android:orientation="vertical"
+    android:padding="@dimen/df_space_2">
+
+    <ImageView
+        android:id="@+id/collection_preview"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/df_preview_clip"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/df_space_2"
+        android:paddingTop="@dimen/df_space_3"
+        android:paddingEnd="@dimen/df_space_2"
+        android:paddingBottom="@dimen/df_space_1">
+
+        <TextView
+            android:id="@+id/collection_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            style="@style/DF.Text.Subtitle"/>
+
+        <TextView
+            android:id="@+id/collection_tier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/df_pill_pro"
+            android:paddingStart="@dimen/df_space_2"
+            android:paddingTop="2dp"
+            android:paddingEnd="@dimen/df_space_2"
+            android:paddingBottom="2dp"
+            android:text="@string/tier_pro"
+            android:textColor="@color/df_pro"
+            android:visibility="gone"
+            style="@style/DF.Text.Label"/>
+    </LinearLayout>
+</LinearLayout>

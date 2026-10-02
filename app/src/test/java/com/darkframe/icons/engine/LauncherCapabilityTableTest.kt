@@ -24,20 +24,33 @@ class LauncherCapabilityTableTest {
     @Test
     fun stockLaunchersAreNotClaimedToSupportIconPacks() {
         // The single most important honesty check in the product. Neither Pixel Launcher nor One UI
-        // Home lets a third-party app substitute icons, and DarkFrame must never imply they do.
+        // Home lets a third-party app substitute icons directly, and DarkFrame must never imply so.
         listOf("com.google.android.apps.nexuslauncher", "com.sec.android.app.launcher").forEach {
             assertFalse(
                 "$it must not be advertised as icon-pack capable",
                 LauncherCapabilityTable.supportsIconPack(it),
             )
-            assertEquals(ApplyCapability.PINNED_SHORTCUT, LauncherCapabilityTable.resolve(it).capability)
         }
+        assertEquals(
+            ApplyCapability.PINNED_SHORTCUT,
+            LauncherCapabilityTable.resolve("com.google.android.apps.nexuslauncher").capability,
+        )
     }
 
     @Test
-    fun oneUiNoteNamesGalaxyThemesAsTheRealConstraint() {
+    fun samsungUsesThemeParkRatherThanDuplicateShortcuts() {
+        // Testing on a real Galaxy Z Fold8 showed pinning creates a second icon beside the original
+        // instead of replacing it. Samsung's flow must not regress to that.
+        val profile = LauncherCapabilityTable.resolve("com.sec.android.app.launcher")
+        assertEquals(ApplyCapability.SAMSUNG_THEME_PARK, profile.capability)
+        assertTrue(LauncherCapabilityTable.usesSamsungThemePark("com.sec.android.app.launcher"))
+        assertFalse(LauncherCapabilityTable.usesSamsungThemePark("com.teslacoilsw.launcher"))
+    }
+
+    @Test
+    fun oneUiNoteNamesThemeParkAsTheMechanism() {
         val note = LauncherCapabilityTable.resolve("com.sec.android.app.launcher").note
-        assertTrue(note.contains("Galaxy Themes"))
+        assertTrue(note.contains("Theme Park"))
     }
 
     @Test
