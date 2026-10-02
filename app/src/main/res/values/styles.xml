@@ -11,8 +11,9 @@
         <item name="android:windowBackground">@color/df_bg</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- windowLightNavigationBar is API 27 and false is the platform default, so it is left
+             unset rather than duplicating this theme into values-v27 for no behavioural change. -->
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar">false</item>
         <item name="android:colorBackground">@color/df_bg</item>
         <item name="colorPrimary">@color/df_accent</item>
         <item name="colorOnPrimary">@color/df_text_on_accent</item>
