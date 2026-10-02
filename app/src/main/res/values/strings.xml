@@ -84,8 +84,8 @@
     <string name="apply_share_set_empty">Create your icons first.</string>
     <string name="apply_iconpack_heading">%1$s</string>
     <string name="apply_iconpack_body">Your launcher reads icon packs. Open its settings and choose
-        DarkFrame as the icon pack. DarkFrame cannot make that choice for you — no launcher offers
-        an API for it.</string>
+        DarkFrame as the icon pack. DarkFrame cannot make that choice for you: Android gives no app a
+        way to change another launcher\'s settings.</string>
     <string name="apply_open_launcher_settings">Open launcher</string>
 
     <string name="apply_shortcut_heading">%1$s</string>
@@ -242,9 +242,9 @@
     <string name="settings_pro_sub_active">Active</string>
     <string name="settings_apply_help">How to apply</string>
     <string name="settings_apply_help_sub">What your launcher supports</string>
-    <string name="settings_rebuild">Rebuild icon cache</string>
-    <string name="settings_rebuild_sub">Re-render every themed icon</string>
-    <string name="settings_rebuild_done">Icon cache cleared.</string>
+    <string name="settings_rebuild">Redraw your icons</string>
+    <string name="settings_rebuild_sub">Draws them all again. Worth trying if one looks wrong.</string>
+    <string name="settings_rebuild_done">Your icons will be drawn again.</string>
     <string name="settings_privacy">Privacy</string>
     <string name="settings_privacy_sub">What DarkFrame reads, and what it does not</string>
     <string name="settings_privacy_body">DarkFrame reads the list of apps that have a launcher icon,

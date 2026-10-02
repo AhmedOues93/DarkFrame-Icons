@@ -89,6 +89,11 @@ class SettingsActivity : DarkFrameActivity() {
             withContext(engine.renderDispatcher) {
                 engine.resolver.invalidateAll()
                 engine.lookPreviews.clear()
+                // The prepared sets and the single-icon exports are renders too, so leaving them
+                // would have "redraw your icons" quietly keep the old ones around — and the prepared
+                // set is the one a user hands to Theme Park.
+                engine.iconSets.clearAll()
+                engine.apply.clearExports()
             }
             Toast.makeText(this@SettingsActivity, R.string.settings_rebuild_done, Toast.LENGTH_SHORT)
                 .show()
