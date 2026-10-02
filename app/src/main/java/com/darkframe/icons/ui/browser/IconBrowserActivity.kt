@@ -180,66 +180,9 @@ class IconBrowserActivity : AppCompatActivity() {
      * given a button that would do the wrong thing.
      */
     private fun showApplyOptions(identity: AppIdentity) {
-        val capability = viewModel.state.value.capability
-        if (capability == ApplyCapability.ICON_PACK_NATIVE) {
-            startActivity(Intent(this, GuidedSetupActivity::class.java))
-            return
-        }
-
-        val actions = buildList {
-            if (capability == ApplyCapability.PINNED_SHORTCUT) add(getString(R.string.apply_pin))
-            add(getString(R.string.apply_export))
-        }
-
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.apply_title, identity.displayLabel()))
-            .setItems(actions.toTypedArray()) { _, which ->
-                when (actions[which]) {
-                    getString(R.string.apply_pin) -> pinShortcut(identity)
-                    getString(R.string.apply_export) -> exportIcon(identity)
-                }
-            }
-            .setNegativeButton(R.string.apply_cancel, null)
-            .show()
-    }
-
-    private fun pinShortcut(identity: AppIdentity) {
-        lifecycleScope.launch {
-            val engine = DarkFrameEngine.get(applicationContext)
-            val icon = viewModel.load(identity, EXPORT_SIZE_PX)
-            val outcome = withContext(Dispatchers.IO) { engine.apply.pinThemedShortcut(identity, icon) }
-            val text = when (outcome) {
-                ApplyOutcome.Requested -> getString(R.string.apply_requested)
-                is ApplyOutcome.NotSupported -> outcome.reason
-                is ApplyOutcome.Failed -> outcome.reason
-            }
-            AlertDialog.Builder(this@IconBrowserActivity)
-                .setMessage(text)
-                .setPositiveButton(R.string.apply_cancel, null)
-                .show()
-        }
-    }
-
-    private fun exportIcon(identity: AppIdentity) {
-        lifecycleScope.launch {
-            val engine = DarkFrameEngine.get(applicationContext)
-            val style = viewModel.state.value.style
-            val icon = viewModel.load(identity, EXPORT_SIZE_PX)
-            val uri = withContext(Dispatchers.IO) { engine.apply.exportIcon(identity, style, icon) }
-            if (uri == null) {
-                AlertDialog.Builder(this@IconBrowserActivity)
-                    .setMessage(R.string.apply_export_failed)
-                    .setPositiveButton(R.string.apply_cancel, null)
-                    .show()
-                return@launch
-            }
-            startActivity(
-                Intent.createChooser(
-                    engine.apply.shareIntent(uri),
-                    getString(R.string.apply_share_title),
-                ),
-            )
-        }
+        // Browser is a preview/inspection surface. On Samsung One UI we deliberately do not create
+        // duplicate pinned shortcuts: system-wide application belongs to Theme Park.
+        startActivity(Intent(this, GuidedSetupActivity::class.java))
     }
 
     private companion object {
