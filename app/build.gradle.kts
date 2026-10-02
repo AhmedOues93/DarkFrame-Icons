@@ -15,7 +15,7 @@ android {
         versionName = "0.1.0"
     }
 
-    buildFeatures { viewBinding = false }
+    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n    kotlinOptions { jvmTarget = "17" }\n\n    buildFeatures { viewBinding = false }
 }
 
 dependencies {
