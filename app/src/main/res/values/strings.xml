@@ -56,6 +56,21 @@
         broad package access. Apps without a launcher icon, and work-profile or Secure Folder apps,
         are not visible to DarkFrame — only your active home launcher may list those.</string>
 
+    <!-- Widgets -->
+    <string name="widget_battery_placeholder">—</string>
+
+    <!-- Collections -->
+    <string name="styles_title">Collections</string>
+    <string name="styles_subtitle">Pick a collection. Every one works with both DarkFrame artwork and
+        icons generated from your installed apps.</string>
+    <string name="styles_free_suffix">FREE</string>
+    <string name="styles_select">Select and browse your apps</string>
+    <string name="styles_selected">Currently selected · browse your apps</string>
+    <string name="search_curated_title">Curated artwork</string>
+    <string name="search_curated_hint">Search DarkFrame artwork</string>
+    <string name="search_curated_note">These are the apps DarkFrame has handmade artwork for. Every
+        other app on your device is themed too, from its own icon.</string>
+
     <!-- Home -->
     <string name="home_engine_heading">Dynamic icon engine</string>
     <string name="home_engine_body">DarkFrame themes every app Android exposes on this device —

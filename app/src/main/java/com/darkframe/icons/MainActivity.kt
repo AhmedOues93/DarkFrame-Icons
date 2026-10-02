@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        root.addView(Button(this).apply{text="Search DarkFrame";setOnClickListener{startActivity(Intent(this@MainActivity,SearchActivity::class.java))}})
-        root.addView(Button(this).apply{text="Complete Looks";setOnClickListener{startActivity(Intent(this@MainActivity,StylesActivity::class.java))}})
+        root.addView(Button(this).apply{text=getString(R.string.search_curated_title);setOnClickListener{startActivity(Intent(this@MainActivity,SearchActivity::class.java))}})
+        root.addView(Button(this).apply{text=getString(R.string.styles_title);setOnClickListener{startActivity(Intent(this@MainActivity,StylesActivity::class.java))}})
         root.addView(Button(this).apply{text="Wallpapers";setOnClickListener{startActivity(Intent(this@MainActivity,WallpaperActivity::class.java))}})
         root.addView(TextView(this).apply{text="Featured styles";textSize=22f;setTextColor(0xFFF4F4F4.toInt());setPadding(0,32,0,12)})
         DarkFrameCatalog.styles.forEach{style->root.addView(TextView(this).apply{text=style.title+(if(style.tier.name=="PRO")"  PRO" else "");textSize=18f;setTextColor(0xFFE7E7E7.toInt());setPadding(4,18,4,18)})}

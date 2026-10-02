@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
@@ -10,10 +11,13 @@
     android:paddingEnd="4dp"
     android:paddingBottom="14dp">
 
+    <!-- contentDescription is set per row at bind time from the app's label, which is the only
+         place the correct text is known. -->
     <ImageView
         android:id="@+id/icon_image"
         android:layout_width="@dimen/df_icon_size"
-        android:layout_height="@dimen/df_icon_size" />
+        android:layout_height="@dimen/df_icon_size"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/icon_label"
@@ -33,6 +37,6 @@
         android:layout_marginTop="3dp"
         android:text="@string/browser_curated_badge"
         android:textColor="@color/df_text_tertiary"
-        android:textSize="9sp"
+        android:textSize="11sp"
         android:visibility="gone" />
 </LinearLayout>
