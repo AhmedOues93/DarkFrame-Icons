@@ -20,7 +20,14 @@ import com.darkframe.icons.engine.domain.IconStyle
 import com.darkframe.icons.engine.domain.SourceClassifier
 import com.darkframe.icons.engine.domain.SourceShape
 
-/** Rasterised source artwork, ready to be seated on a container. */
+/**
+ * Rasterised source artwork plus everything the renderer needs to seat and recolour it.
+ *
+ * The measurements all come from one [ContentBoundsScanner] pass, and they travel together because
+ * the renderer's optical corrections are only correct in combination: compensating area without
+ * knowing the fill ratio, or separating luminance without knowing the mean luma, would each be a
+ * guess.
+ */
 class SourceArtwork(
     val bitmap: Bitmap,
     val bounds: ContentBounds,
@@ -28,7 +35,44 @@ class SourceArtwork(
     /** True when [bitmap] is an alpha mask with no useful colour of its own. */
     val isMask: Boolean,
     val fromCurated: Boolean,
-)
+    /** Share of the content box that is opaque, in 0..1. Drives area compensation. */
+    val opaqueFraction: Float,
+    /** Alpha-weighted centre of the content, in source pixels. */
+    val massCentreX: Float,
+    val massCentreY: Float,
+    /** Mean gamma-encoded luma of the opaque pixels, in 0..1. */
+    val meanLuma: Float,
+    /** Mean HSV saturation of the opaque pixels, in 0..1. */
+    val meanSaturation: Float,
+) {
+    companion object {
+        /**
+         * Builds artwork from a scan, so every call site carries the same measurements through.
+         *
+         * A mask has no colour of its own, so its luma and saturation are not reported: passing a
+         * monochrome layer's mid-grey through the separation check would have it "corrected" away
+         * from a container it was never going to clash with.
+         */
+        fun from(
+            bitmap: Bitmap,
+            scan: ScanResult,
+            shape: SourceShape,
+            isMask: Boolean,
+            fromCurated: Boolean,
+        ) = SourceArtwork(
+            bitmap = bitmap,
+            bounds = scan.bounds,
+            shape = shape,
+            isMask = isMask,
+            fromCurated = fromCurated,
+            opaqueFraction = scan.opaqueFraction,
+            massCentreX = scan.massCentreX,
+            massCentreY = scan.massCentreY,
+            meanLuma = if (isMask) 0f else scan.meanLuma,
+            meanSaturation = if (isMask) 0f else scan.meanSaturation,
+        )
+    }
+}
 
 /**
  * Produces a normalised bitmap for whatever artwork an app happens to ship.
@@ -101,9 +145,9 @@ class IconSourceLoader(private val context: Context) {
             .getOrNull() ?: return null
         val bitmap = rasterise(drawable, workSize) ?: return null
         val scan = ContentBoundsScanner.scan(bitmap)
-        return SourceArtwork(
+        return SourceArtwork.from(
             bitmap = bitmap,
-            bounds = scan.bounds,
+            scan = scan,
             // Curated artwork is authored as a glyph on transparency by convention, and is
             // trusted as such rather than re-classified.
             shape = SourceShape.GLYPH,
@@ -119,20 +163,20 @@ class IconSourceLoader(private val context: Context) {
             monochromeLayerOf(drawable, style)?.let { mask ->
                 val bitmap = rasteriseAdaptive(mask, workSize) ?: return@let null
                 val scan = ContentBoundsScanner.scan(bitmap)
-                return SourceArtwork(bitmap, scan.bounds, SourceShape.GLYPH, isMask = true, fromCurated = false)
+                return SourceArtwork.from(bitmap, scan, SourceShape.GLYPH, isMask = true, fromCurated = false)
             }
             val bitmap = rasteriseAdaptive(drawable, workSize) ?: return null
             val scan = ContentBoundsScanner.scan(bitmap)
             // An adaptive icon's background layer is opaque by specification, so after cropping to
             // the visible viewport it is full-bleed essentially by definition.
             val shape = SourceClassifier.classify(scan.opaqueFraction, scan.bounds, bitmap.width)
-            return SourceArtwork(bitmap, scan.bounds, shape, isMask = false, fromCurated = false)
+            return SourceArtwork.from(bitmap, scan, shape, isMask = false, fromCurated = false)
         }
 
         val bitmap = rasterise(drawable, workSize) ?: return null
         val scan = ContentBoundsScanner.scan(bitmap)
         val shape = SourceClassifier.classify(scan.opaqueFraction, scan.bounds, bitmap.width)
-        return SourceArtwork(bitmap, scan.bounds, shape, isMask = false, fromCurated = false)
+        return SourceArtwork.from(bitmap, scan, shape, isMask = false, fromCurated = false)
     }
 
     private fun loadActivityIcon(identity: AppIdentity): Drawable? {

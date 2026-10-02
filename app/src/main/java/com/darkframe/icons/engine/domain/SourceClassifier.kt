@@ -34,8 +34,16 @@ object SourceClassifier {
     /** Minimum share of the canvas the content bounds must span to count as full-bleed. */
     const val FULL_BLEED_COVERAGE = 0.9f
 
-    /** Canvas coverage used for full-bleed artwork, replacing the style's glyph scale. */
-    const val FULL_BLEED_TARGET = 0.78f
+    /**
+     * Canvas coverage used for full-bleed artwork, replacing the style's glyph scale.
+     *
+     * Raised from 0.78 after looking at what 0.78 actually produces: a visible second tile inside
+     * ours, which is the "double background" result this treatment exists to avoid. At 0.94 the
+     * artwork is framed by a thin margin of the collection's own surface and the keyline, which
+     * reads as a deliberate edge rather than as one icon dropped inside another — and every tile in
+     * the grid is then the same size, which is what makes a pack look like a pack.
+     */
+    const val FULL_BLEED_TARGET = 0.94f
 
     /**
      * @param opaqueFraction share of sampled pixels inside [bounds] whose alpha is above the
@@ -75,4 +83,13 @@ object SourceClassifier {
      */
     fun innerCornerRadiusRatio(style: IconStyle): Float =
         (style.cornerRadiusRatio / FULL_BLEED_TARGET).coerceAtMost(0.5f)
+
+    /**
+     * Whether a source should be area-compensated at all.
+     *
+     * Full-bleed artwork must not be: it fills its own box by definition, so the compensation would
+     * be 1.0 anyway, and seating it by anything other than [FULL_BLEED_TARGET] is what produces the
+     * mismatched tile sizes this classifier exists to prevent.
+     */
+    fun allowsAreaCompensation(shape: SourceShape): Boolean = shape == SourceShape.GLYPH
 }

@@ -51,15 +51,32 @@ class SourceClassifierTest {
         assertEquals(SourceShape.GLYPH, SourceClassifier.classify(1f, ContentBounds(0, 0, 10, 10), 0))
     }
 
+    /**
+     * Full-bleed artwork is framed by the collection, not nested inside it.
+     *
+     * The margin used to be 22% of the tile, which is what a "double background" looks like: the
+     * app's own tile clearly visible inside DarkFrame's. The frame is now thin enough to read as
+     * one tile with an edge — which also means every tile in a grid is the same size, whether the
+     * app shipped a glyph or a pre-adaptive square.
+     */
     @Test
-    fun fullBleedArtworkIsSeatedLargerThanAGlyph() {
+    fun fullBleedArtworkIsFramedRatherThanNested() {
         IconStyleCatalog.all.forEach { style ->
             val glyph = SourceClassifier.targetFraction(SourceShape.GLYPH, style)
             val full = SourceClassifier.targetFraction(SourceShape.FULL_BLEED, style)
             assertEquals(style.glyphScale, glyph, 0.0001f)
             assertTrue("${style.id}: full-bleed must be seated larger", full > glyph)
-            assertTrue("${style.id}: full-bleed must still leave a visible container margin", full < 0.88f)
+            assertTrue("${style.id}: the frame must stay visible", full < 0.97f)
+            assertTrue("${style.id}: the frame must be a frame, not an inset tile", full > 0.9f)
         }
+    }
+
+    @Test
+    fun onlyGlyphsAreAreaCompensated() {
+        // Full-bleed artwork fills its own box by definition, so compensating it would only break
+        // the one thing the frame treatment buys: every tile the same size.
+        assertTrue(SourceClassifier.allowsAreaCompensation(SourceShape.GLYPH))
+        assertFalse(SourceClassifier.allowsAreaCompensation(SourceShape.FULL_BLEED))
     }
 
     @Test

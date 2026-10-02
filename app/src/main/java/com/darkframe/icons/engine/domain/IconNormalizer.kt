@@ -11,6 +11,8 @@ data class ContentBounds(val left: Int, val top: Int, val right: Int, val bottom
     val width: Int get() = max(0, right - left)
     val height: Int get() = max(0, bottom - top)
     val isEmpty: Boolean get() = width <= 0 || height <= 0
+    val centreX: Float get() = left + width / 2f
+    val centreY: Float get() = top + height / 2f
 
     companion object {
         val EMPTY = ContentBounds(0, 0, 0, 0)
@@ -68,6 +70,10 @@ object IconNormalizer {
      * @param canvasSize edge length of the square output canvas, in pixels.
      * @param targetFraction desired long-edge coverage, i.e. [IconStyle.glyphScale].
      * @param opticalLiftRatio upward shift as a fraction of [canvasSize].
+     * @param areaCompensation from [OpticalMetrics.areaCompensation]; enlarges sparse and circular
+     *   content so its ink area matches a solid shape at the same nominal size.
+     * @param massCentreX/[massCentreY] alpha-weighted centre of the content in source pixels, or
+     *   NaN to centre on the content box.
      */
     fun place(
         content: ContentBounds,
@@ -76,6 +82,9 @@ object IconNormalizer {
         canvasSize: Int,
         targetFraction: Float,
         opticalLiftRatio: Float = 0f,
+        areaCompensation: Float = 1f,
+        massCentreX: Float = Float.NaN,
+        massCentreY: Float = Float.NaN,
     ): GlyphPlacement {
         require(canvasSize > 0) { "canvasSize must be positive" }
         require(targetFraction > 0f) { "targetFraction must be positive" }
@@ -102,13 +111,35 @@ object IconNormalizer {
             targetFraction
         }
 
-        val target = canvasSize * effectiveTarget
+        // Area compensation multiplies the target rather than the scale, so the upscale cap still
+        // means what it says: a tiny sparse glyph is not allowed past MAX_UPSCALE just because its
+        // ink is thin.
+        val target = canvasSize * effectiveTarget * areaCompensation.coerceAtLeast(1f)
         val scale = (target / longEdge).coerceAtMost(MAX_UPSCALE)
 
         val destWidth = bounds.width * scale
         val destHeight = bounds.height * scale
-        val left = (canvasSize - destWidth) / 2f
-        val top = (canvasSize - destHeight) / 2f - canvasSize * opticalLiftRatio
+        var left = (canvasSize - destWidth) / 2f
+        var top = (canvasSize - destHeight) / 2f - canvasSize * opticalLiftRatio
+
+        // Nudge towards the centre of mass. NaN means the caller has no mass centre to offer
+        // (a curated glyph, or a scan that found nothing), and box centring stands.
+        if (!massCentreX.isNaN()) {
+            left += OpticalMetrics.centringShift(
+                boxCentre = bounds.centreX,
+                massCentre = massCentreX,
+                extentPx = destWidth,
+                sourceExtent = bounds.width.toFloat(),
+            )
+        }
+        if (!massCentreY.isNaN()) {
+            top += OpticalMetrics.centringShift(
+                boxCentre = bounds.centreY,
+                massCentre = massCentreY,
+                extentPx = destHeight,
+                sourceExtent = bounds.height.toFloat(),
+            )
+        }
 
         return GlyphPlacement(left, top, left + destWidth, top + destHeight, scale)
     }

@@ -35,6 +35,10 @@ object IconStyleCatalog {
         glyphMode = GlyphMode.TINT,
         glyphTint = 0xFFF2F1EEL,
         glyphSaturation = 0f,
+        // Noir's separation from Pure AMOLED is deliberate: a warm near-white ink on a near-black
+        // surface with a gentle shoulder, against AMOLED's pure white on true black with a hard
+        // one. A linear ramp would make both of them read as the same desaturate filter.
+        glyphContrast = 1.12f,
         glyphScale = 0.52f,
         opticalLiftRatio = 0f,
         preferMonochromeLayer = true,
@@ -69,14 +73,17 @@ object IconStyleCatalog {
         description = "Premium light finish. Off-white container with graphite glyphs.",
         tier = ContentTier.PRO,
         containerColor = 0xFFF2F1EDL,
-        containerEndColor = 0xFFF2F1EDL,
-        finish = SurfaceFinish.FLAT,
+        containerEndColor = 0xFFF8F7F4L,
+        finish = SurfaceFinish.FROSTED,
         cornerRadiusRatio = CORNER_RADIUS_RATIO,
         keylineColor = 0x1A101114L,
         keylineWidthRatio = KEYLINE_WIDTH_RATIO,
         glyphMode = GlyphMode.TINT,
         glyphTint = 0xFF23262BL,
         glyphSaturation = 0f,
+        // Left linear on purpose. Frost's ink and surface are both well inside the channel range,
+        // so a gain would overshoot past both and darken the ink rather than build a shoulder.
+        glyphContrast = 1f,
         glyphScale = 0.52f,
         opticalLiftRatio = 0f,
         preferMonochromeLayer = true,
@@ -97,6 +104,9 @@ object IconStyleCatalog {
         glyphMode = GlyphMode.TINT,
         glyphTint = 0xFFE4E7EBL,
         glyphSaturation = 0f,
+        // Modest: the surface sits at mid-dark, so the dark end of the ramp has nowhere to clamp
+        // to and too much gain would just lift the shadows out of the metal.
+        glyphContrast = 1.06f,
         glyphScale = 0.50f,
         opticalLiftRatio = 0f,
         preferMonochromeLayer = true,
@@ -138,6 +148,9 @@ object IconStyleCatalog {
         glyphMode = GlyphMode.TINT,
         glyphTint = 0xFFFFFFFFL,
         glyphSaturation = 0f,
+        // True black to pure white is exactly the channel range, so the gain's overshoot clamps to
+        // the design colours themselves: a real toe and shoulder at no cost to the palette.
+        glyphContrast = 1.22f,
         glyphScale = 0.58f,
         opticalLiftRatio = 0f,
         preferMonochromeLayer = true,

@@ -22,6 +22,14 @@ enum class SurfaceFinish {
 
     /** Flat fill plus a single restrained top highlight and a hairline inner edge. */
     GLASS,
+
+    /**
+     * Light surface with a soft top bloom and a bright inner edge.
+     *
+     * Frost's own finish rather than a flat fill, because a flat light tile is just paper: it has
+     * no identity of its own and reads as an inverted Noir. The bloom is what makes it a surface.
+     */
+    FROSTED,
 }
 
 /**
@@ -54,8 +62,21 @@ data class IconStyle(
     val glyphMode: GlyphMode,
     /** Tint applied when [glyphMode] is [GlyphMode.TINT]. */
     val glyphTint: Long,
-    /** Saturation multiplier applied when [glyphMode] is [GlyphMode.PRESERVE]. 1f keeps it as-is. */
+    /**
+     * Saturation multiplier applied when [glyphMode] is [GlyphMode.PRESERVE]. 1f keeps it as-is.
+     *
+     * The nominal value, not the one used: it is scaled per icon by
+     * [OpticalMetrics.vibrancy] so already-muted brand palettes are left completely alone and only
+     * genuinely neon artwork is pulled back.
+     */
     val glyphSaturation: Float,
+    /**
+     * Contrast gain applied to the luma ramp when [glyphMode] is [GlyphMode.TINT]. 1f is linear.
+     *
+     * Only meaningful for collections whose ink and surface sit at the channel extremes, which is
+     * where the clamp turns the gain into a real toe and shoulder — see [ColorMatrices.lumaRamp].
+     */
+    val glyphContrast: Float = 1f,
     /** Longest glyph edge as a fraction of the icon's edge length — the optical size anchor. */
     val glyphScale: Float,
     /** Upward optical shift as a fraction of the edge length; compensates for label weight below. */
@@ -69,6 +90,7 @@ data class IconStyle(
 ) {
     init {
         require(glyphScale in 0.2f..0.95f) { "glyphScale out of range for $id" }
+        require(glyphContrast in 0.8f..1.6f) { "glyphContrast out of range for $id" }
         require(cornerRadiusRatio in 0f..0.5f) { "cornerRadiusRatio out of range for $id" }
     }
 
@@ -77,6 +99,6 @@ data class IconStyle(
      * It is part of every cache key, so incrementing it invalidates every cached bitmap.
      */
     companion object {
-        const val RENDER_VERSION = 3
+        const val RENDER_VERSION = 4
     }
 }

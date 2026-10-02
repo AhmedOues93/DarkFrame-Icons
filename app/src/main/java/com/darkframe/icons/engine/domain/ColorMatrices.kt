@@ -47,7 +47,17 @@ object ColorMatrices {
      * near-white mark came out almost the same value. Ramping from the container fixes that without
      * touching the dark collections, where `low` is near-black either way.
      */
-    fun lumaRamp(low: Long, high: Long): FloatArray {
+    /**
+     * @param contrast gain applied around the ramp's midpoint. `1f` is the plain linear ramp.
+     *   Above 1 the midtones separate and the two ends run past [low] and [high], where the
+     *   channel clamp inherent to `ColorMatrix` turns the overshoot into a genuine toe and
+     *   shoulder — which is the difference between a designed monochrome conversion and a
+     *   desaturate filter. Because that clamp happens at 0 and 255 rather than at [low] and
+     *   [high], a gain only preserves the collection's own ink and surface where those sit at or
+     *   near the channel extremes. Noir and Pure AMOLED qualify; Frost emphatically does not, and
+     *   `IconStyleCatalogTest` pins that so a future palette edit cannot quietly give it one.
+     */
+    fun lumaRamp(low: Long, high: Long, contrast: Float = 1f): FloatArray {
         val lr = ((low shr 16) and 0xFF) / 255f
         val lg = ((low shr 8) and 0xFF) / 255f
         val lb = (low and 0xFF) / 255f
@@ -57,12 +67,39 @@ object ColorMatrices {
         val dr = hr - lr
         val dg = hg - lg
         val db = hb - lb
+
+        // result = low + (high - low) * (contrast * (luma - PIVOT) + PIVOT), rearranged so the
+        // luma-dependent part lands in the coefficients and the constant in the offset column.
+        val gain = contrast.coerceIn(0.5f, 2f)
+        val shift = PIVOT * (1f - gain)
         return floatArrayOf(
-            LUMA_R * dr, LUMA_G * dr, LUMA_B * dr, 0f, lr * 255f,
-            LUMA_R * dg, LUMA_G * dg, LUMA_B * dg, 0f, lg * 255f,
-            LUMA_R * db, LUMA_G * db, LUMA_B * db, 0f, lb * 255f,
+            LUMA_R * dr * gain, LUMA_G * dr * gain, LUMA_B * dr * gain, 0f, (lr + dr * shift) * 255f,
+            LUMA_R * dg * gain, LUMA_G * dg * gain, LUMA_B * dg * gain, 0f, (lg + dg * shift) * 255f,
+            LUMA_R * db * gain, LUMA_G * db * gain, LUMA_B * db * gain, 0f, (lb + db * shift) * 255f,
             0f, 0f, 0f, 1f, 0f,
         )
+    }
+
+    /** Midpoint the [lumaRamp] contrast gain pivots around. */
+    const val PIVOT = 0.5f
+
+    /**
+     * Saturation scaling plus a signed luma offset, for the colour-preserving collections.
+     *
+     * The offset is what keeps an app whose artwork sits at the container's own luminance from
+     * vanishing into it — see [OpticalMetrics.separationLift]. Applied as an equal shift to all
+     * three channels so it moves the source's brightness without touching its hue.
+     *
+     * @param level saturation multiplier; `1f` keeps the source as authored.
+     * @param lift luma offset in -1..1, added to every channel.
+     */
+    fun preserve(level: Float, lift: Float): FloatArray {
+        val matrix = saturation(level)
+        val offset = lift.coerceIn(-1f, 1f) * 255f
+        matrix[4] += offset
+        matrix[9] += offset
+        matrix[14] += offset
+        return matrix
     }
 
     /** A [lumaRamp] from black, kept for the dark collections' historical behaviour and its tests. */
@@ -82,6 +119,20 @@ object ColorMatrices {
             0f, 0f, 0f, 0f, tb * 255f,
             0f, 0f, 0f, 1f, 0f,
         )
+    }
+
+    /**
+     * Rec. 709 luma of an ARGB value in *gamma-encoded* sRGB, in 0..1, ignoring alpha.
+     *
+     * This is the quantity a `ColorMatrix` computes, so it is the one to compare a source against
+     * its container with when the correction is going to be applied by a matrix. Use
+     * [relativeLuminance] instead for anything that is a design contrast judgement.
+     */
+    fun gammaLuma(argb: Long): Float {
+        val r = ((argb shr 16) and 0xFF) / 255f
+        val g = ((argb shr 8) and 0xFF) / 255f
+        val b = (argb and 0xFF) / 255f
+        return LUMA_R * r + LUMA_G * g + LUMA_B * b
     }
 
     /**
