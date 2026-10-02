@@ -25,8 +25,11 @@
   translucency bounds)
 
 ### Apply, honestly
+- Samsung One UI: Theme Park hand-off, with the right step detected per device.
+  Pinned shortcuts are no longer the Samsung path — on a real Fold8 they produced
+  duplicate icons rather than replacing anything
 - Icon-pack `appfilter.xml` for launchers that read it
-- Pinned themed shortcuts via the platform API
+- Pinned themed shortcuts only where nothing better exists, and only per app
 - 512px PNG export through a scoped `FileProvider`
 - Per-launcher capability table, narrowed by a runtime probe and never widened
 - Guided setup driven by that capability, so it cannot describe an unavailable mechanism
@@ -51,7 +54,15 @@
 
 ## RED — remaining
 
-### Open finding — dark tints compress a colour source
+### Performance
+- Preview renders capped and bucketed, so browsing never produces export-resolution
+  bitmaps and a fold re-uses the cached ones
+- Source raster scales with the output instead of a fixed 288px
+- Rendering on a two-thread background-priority pool, not every core
+- Per-package cache eviction instead of wiping every icon when one app updates
+- Package broadcasts debounced; no services, no polling, no background work
+
+### Fixed — dark tints compressed a colour source
 
 Found by rendering the collections for the first time (SVG reconstruction, not device output).
 
@@ -63,10 +74,9 @@ dark band, and a colourful source loses its internal structure — a mid-green f
 mark end up almost the same value.
 
 It does not affect curated glyphs, which are authored as a single value, so it only shows on
-generated icons. Candidate fix is to remap luma into a range rather than multiplying towards zero
-(for a dark tint, invert so that source white lands on the tint and source black lands on the
-container). Deliberately not changed yet: it is a design decision that needs to be judged on a
-device against real app icons, and it would alter every Frost render.
+generated icons. Fixed: `ColorMatrices.lumaRamp` now ramps from the collection's own container to its tint, so a
+black source lands on the surface and a bright one on the ink. Tests pin the separation, pin that the
+ink end did not move, and pin that the dark collections are unaffected.
 
 ### Needs a physical device
 - Visual QA of all six collections across real installed apps (the renderer is

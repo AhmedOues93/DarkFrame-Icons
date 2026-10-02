@@ -44,7 +44,30 @@ other — they are two different contracts:
 | Composition | None; drawn as-is | Engine composes container + treatment at runtime |
 | Coverage | The listed apps | Every installed app; entries only upgrade quality |
 
-## Mechanism 2 — Pinned shortcuts
+## Mechanism 2 — Samsung Theme Park
+
+One UI Home does not read third-party icon packs, and **DarkFrame no longer uses pinned shortcuts on
+Samsung**. Testing a build on a real Galaxy Z Fold8 showed exactly what pinning produces there: a
+*second* icon beside the original, an unchanged app drawer, and a home screen full of duplicates. It
+is a supported API and a bad product.
+
+What Samsung does provide is **Theme Park**, a Good Lock module distributed through the Galaxy Store
+that builds an icon theme from an installed icon pack and applies it across the home screen and app
+drawer. DarkFrame declares the standard icon-pack intent actions and ships `appfilter.xml`, so Theme
+Park lists it; the user then builds and applies the theme there.
+
+| Property | Reality |
+| --- | --- |
+| Who applies the icons | Samsung's Theme Park, not DarkFrame |
+| Can DarkFrame apply it for the user? | **No.** There is no API for it, so DarkFrame never reports the icons as applied |
+| What DarkFrame does | Detects One UI, detects whether Theme Park or Good Lock is installed, and opens the right one |
+| If neither is installed | Offers the Galaxy Store listing for Good Lock, falling back to Play |
+| If nothing can serve the step | The button is disabled and says so, rather than firing an intent that errors |
+
+`SamsungThemeSupport.stepFor` reduces this to three states, each of which maps to an intent that can
+actually be fired, so the screen cannot show an action with nothing behind it.
+
+## Mechanism 3 — Pinned shortcuts
 
 `ShortcutManagerCompat.requestPinShortcut()` asks the launcher to place a home-screen shortcut
 carrying a bitmap we supply. This is a fully supported platform API and it works on Pixel Launcher
@@ -58,7 +81,10 @@ Its limits are stated in the UI, not buried here:
 - the launcher normally shows a confirmation dialog, and there is no reliable callback telling us
   whether the icon ended up on the home screen. DarkFrame reports "request sent", never "applied".
 
-## Mechanism 3 — Export
+Pinned shortcuts remain available only where nothing better exists — Pixel Launcher and unknown
+launchers — and only per app, from the app list. They are never offered in bulk and never on Samsung.
+
+## Mechanism 4 — Export
 
 Any themed icon can be written out as a 512px PNG and shared. This is the universal fallback and
 the route for launchers with a per-app icon picker (for example Niagara), and for theme engines
@@ -74,19 +100,16 @@ UI says.
 | Nova, Lawnchair, Microsoft Launcher, Smart Launcher, Action, Apex, Solo, GO | Icon pack | User selects DarkFrame in the launcher's settings |
 | Niagara | Per-app picker | One icon at a time; does not read icon packs |
 | Pixel Launcher | Pinned shortcut + export | No third-party icon-pack support |
-| Samsung One UI Home | Pinned shortcut + export | See below |
+| Samsung One UI Home | Theme Park hand-off | See Mechanism 2 |
 | Launcher3 / AOSP | Pinned shortcut + export | No icon-pack support |
 | Anything unrecognised | Export, upgraded to pinned shortcut only if the platform confirms support | Conservative by default |
 
-### Samsung One UI Home
+### Samsung Galaxy Themes
 
-One UI Home does not read third-party icon packs. It themes icons only through **Galaxy Themes**, a
-distribution channel Samsung controls; an installed app cannot set or install an icon theme into it.
-
-So on a Galaxy device DarkFrame offers pinned shortcuts and export, with a guided explanation — and
-does **not** offer a "apply to One UI" switch, because there is nothing behind it. Publishing a
-Galaxy Themes icon pack is a separate Samsung submission with its own tooling, and is tracked as a
-distribution question rather than an in-app feature.
+Galaxy Themes is a separate Samsung distribution channel with its own submission process, and an
+installed app cannot push a theme into it. It is a publishing question rather than an in-app
+feature, and DarkFrame does not pretend otherwise. Theme Park is the route that works today from an
+installed icon pack.
 
 ### Pixel Launcher and themed icons
 

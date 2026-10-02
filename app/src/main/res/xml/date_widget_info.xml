@@ -1,1 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?><appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="140dp" android:minHeight="70dp" android:minResizeWidth="100dp" android:minResizeHeight="56dp" android:resizeMode="horizontal|vertical" android:updatePeriodMillis="0" android:initialLayout="@layout/widget_date" android:widgetCategory="home_screen"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- updatePeriodMillis is 0 on purpose: nothing here polls. The clock and date widgets keep
+     themselves current in the launcher's process, and the battery widget redraws on real power
+     events. targetCellWidth/Height are honoured from Android 12 and give a sensible default size
+     without constraining older launchers. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_description_date"
+    android:initialLayout="@layout/widget_date"
+    android:minHeight="70dp"
+    android:minResizeHeight="70dp"
+    android:minResizeWidth="100dp"
+    android:minWidth="140dp"
+    android:previewLayout="@layout/widget_date"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellHeight="2"
+    android:targetCellWidth="3"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen"/>

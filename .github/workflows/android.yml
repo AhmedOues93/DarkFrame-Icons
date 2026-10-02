@@ -28,6 +28,11 @@ jobs:
         run: gradle assembleDebug --stacktrace
       - name: Lint
         run: gradle lintDebug --stacktrace
+      # Builds the shippable artifact with R8 and resource shrinking on. No signing config is
+      # present in CI, so the bundle comes out unsigned — which is what we want: this step proves
+      # the release configuration and the ProGuard rules are sound, not that we can sign.
+      - name: Bundle release
+        run: gradle bundleRelease --stacktrace
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v4

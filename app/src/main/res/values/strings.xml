@@ -127,6 +127,9 @@
     <string name="widgets_resizable">All three resize on the home screen.</string>
     <string name="widget_battery_placeholder">—</string>
     <string name="widget_battery_percent">%1$d%%</string>
+    <string name="widget_description_clock">Time and date, in your DarkFrame collection.</string>
+    <string name="widget_description_date">Day and date, in your DarkFrame collection.</string>
+    <string name="widget_description_battery">Charge level, in your DarkFrame collection.</string>
 
     <!-- Favorites -->
     <string name="favorites_title">Favorites</string>
