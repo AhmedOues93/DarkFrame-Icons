@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Full-screen wallpaper preview.
+
+  The image fills the window with no inset at all — it is a wallpaper, so showing it anywhere but
+  edge to edge would be showing something other than what will be applied. The controls float over
+  it on a scrim and can be tapped away.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/df_bg">
+
+    <ImageView
+        android:id="@+id/preview_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/wallpaper_preview_description_fallback"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:id="@+id/preview_chrome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/df_hero_scrim"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/df_screen_margin"
+        android:paddingEnd="@dimen/df_screen_margin"
+        android:paddingTop="@dimen/df_space_7"
+        android:paddingBottom="@dimen/df_space_5">
+
+        <TextView
+            android:id="@+id/preview_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/DF.Text.Title" />
+
+        <TextView
+            android:id="@+id/preview_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_1"
+            style="@style/DF.Text.Caption" />
+
+        <!-- Home is the primary action because it is the one every device supports. -->
+        <TextView
+            android:id="@+id/preview_apply_home"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/df_control_height"
+            android:layout_marginTop="@dimen/df_space_4"
+            android:text="@string/wallpaper_apply_home"
+            style="@style/DF.Button.Primary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_2"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/preview_apply_lock"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/df_control_height"
+                android:layout_weight="1"
+                android:text="@string/wallpaper_apply_lock"
+                style="@style/DF.Button.Secondary" />
+
+            <TextView
+                android:id="@+id/preview_apply_both"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/df_control_height"
+                android:layout_marginStart="@dimen/df_space_2"
+                android:layout_weight="1"
+                android:text="@string/wallpaper_apply_both"
+                style="@style/DF.Button.Secondary" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/preview_favourite"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/df_control_height"
+            android:layout_marginTop="@dimen/df_space_2"
+            style="@style/DF.Button.Secondary" />
+    </LinearLayout>
+</FrameLayout>

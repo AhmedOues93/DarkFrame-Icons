@@ -5,23 +5,14 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.LruCache
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.darkframe.icons.R
-import com.darkframe.icons.billing.Entitlement
-import com.darkframe.icons.billing.ProEntitlementStore
-import com.darkframe.icons.data.FavoriteKind
-import com.darkframe.icons.data.FavoritesStore
 import com.darkframe.icons.engine.DarkFrameEngine
 import com.darkframe.icons.engine.wallpaper.WallpaperCatalog
-import com.darkframe.icons.engine.wallpaper.WallpaperOutcome
 import com.darkframe.icons.engine.wallpaper.WallpaperSpec
-import com.darkframe.icons.engine.wallpaper.WallpaperTarget
-import com.darkframe.icons.model.ContentTier
 import com.darkframe.icons.model.WallpaperCategory
-import com.darkframe.icons.ui.ProActivity
 import com.darkframe.icons.ui.common.DarkFrameActivity
 import com.darkframe.icons.ui.common.applySystemBarPadding
 import com.darkframe.icons.ui.common.spanFromWidth
@@ -41,7 +32,6 @@ import kotlinx.coroutines.withContext
 class WallpaperActivity : DarkFrameActivity(), WallpaperPreviewLoader {
 
     private val engine by lazy { DarkFrameEngine.get(applicationContext) }
-    private val favorites by lazy { FavoritesStore(this) }
 
     private lateinit var grid: RecyclerView
     private lateinit var adapter: WallpaperAdapter
@@ -108,7 +98,7 @@ class WallpaperActivity : DarkFrameActivity(), WallpaperPreviewLoader {
         WallpaperCategory.MINIMAL -> "Minimal"
         WallpaperCategory.ABSTRACT -> "Abstract"
         WallpaperCategory.FOLD -> "Fold"
-        WallpaperCategory.LIGHT -> "Light"
+        WallpaperCategory.FROST -> "Frost"
     }
 
     private fun showCategory(value: WallpaperCategory) {
@@ -127,56 +117,16 @@ class WallpaperActivity : DarkFrameActivity(), WallpaperPreviewLoader {
 
     // ---- applying ----------------------------------------------------------------------------
 
+    /**
+     * Opens the full-screen preview.
+     *
+     * The grid used to raise a dialog of four verbs here. Deciding about a wallpaper from a thumbnail
+     * and a word is not deciding, so the picture comes first and the actions live under it — and the
+     * Pro gate moved with them, because browsing a Pro wallpaper at full size is how someone decides
+     * to buy it.
+     */
     private fun openWallpaper(spec: WallpaperSpec) {
-        if (spec.tier == ContentTier.PRO && ProEntitlementStore(this).current() != Entitlement.PRO) {
-            startActivity(Intent(this, ProActivity::class.java))
-            return
-        }
-        val saved = favorites.isFavorite(FavoriteKind.WALLPAPER, spec.id)
-        val actions = buildList {
-            add(getString(R.string.wallpaper_apply_home))
-            if (engine.wallpapers.supportsSeparateLockScreen()) {
-                add(getString(R.string.wallpaper_apply_lock))
-                add(getString(R.string.wallpaper_apply_both))
-            }
-            add(
-                if (saved) getString(R.string.wallpaper_unfavorite)
-                else getString(R.string.wallpaper_favorite),
-            )
-        }
-        AlertDialog.Builder(this)
-            .setTitle(spec.title)
-            .setItems(actions.toTypedArray()) { _, which ->
-                when (actions[which]) {
-                    getString(R.string.wallpaper_apply_home) -> apply(spec, WallpaperTarget.HOME)
-                    getString(R.string.wallpaper_apply_lock) -> apply(spec, WallpaperTarget.LOCK)
-                    getString(R.string.wallpaper_apply_both) -> apply(spec, WallpaperTarget.BOTH)
-                    else -> favorites.toggle(FavoriteKind.WALLPAPER, spec.id)
-                }
-            }
-            .setNegativeButton(R.string.close, null)
-            .show()
-    }
-
-    private fun apply(spec: WallpaperSpec, target: WallpaperTarget) {
-        lifecycleScope.launch {
-            val outcome = withContext(engine.renderDispatcher) {
-                engine.wallpapers.apply(spec, target)
-            }
-            val message = when (outcome) {
-                is WallpaperOutcome.Applied -> when (outcome.target) {
-                    WallpaperTarget.HOME -> getString(R.string.wallpaper_applied_home)
-                    WallpaperTarget.LOCK -> getString(R.string.wallpaper_applied_lock)
-                    WallpaperTarget.BOTH -> getString(R.string.wallpaper_applied_both)
-                }
-
-                is WallpaperOutcome.Failed -> getString(R.string.wallpaper_failed, outcome.reason)
-            }
-            AlertDialog.Builder(this@WallpaperActivity)
-                .setMessage(message)
-                .setPositiveButton(R.string.close, null)
-                .show()
-        }
+        startActivity(WallpaperPreviewActivity.intent(this, spec))
     }
 
     // ---- previews ----------------------------------------------------------------------------

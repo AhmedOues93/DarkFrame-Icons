@@ -67,14 +67,29 @@ object WallpaperCatalog {
             base = 0xFF141A20L, accent = 0xFF43525FL, intensity = 0.75f, tier = ContentTier.PRO,
         ),
 
+        // Frost — the light surfaces, composed for the Frost collection.
+        //
+        // Note the accents are DARKER than the base, not lighter. Every pattern draws its accent over
+        // the base with alpha, so on paper a light accent is invisible and a dark one is the mark.
+        // The wallpaper this replaced used GLOW with a white accent on an off-white base, which put
+        // the light source nowhere and a faint dark corner where it should have been brightest.
+        WallpaperSpec(
+            "frost_panes", "Frosted", WallpaperCategory.FROST, WallpaperPattern.PANES,
+            base = 0xFFF4F3EFL, accent = 0xFFD5D3CCL, intensity = 0.5f, tier = ContentTier.FREE,
+        ),
+        WallpaperSpec(
+            "frost_paper", "Paper", WallpaperCategory.FROST, WallpaperPattern.FRAME,
+            base = 0xFFEFEDE8L, accent = 0xFFBFBCB4L, intensity = 0.65f, tier = ContentTier.PRO,
+        ),
+
         // Minimal — one hairline, nothing else.
         WallpaperSpec(
             "minimal_hairline", "Hairline", WallpaperCategory.MINIMAL, WallpaperPattern.FRAME,
             base = 0xFF0A0B0DL, accent = 0xFF3A3F47L, intensity = 0.5f, tier = ContentTier.FREE,
         ),
         WallpaperSpec(
-            "minimal_paper", "Off-White", WallpaperCategory.MINIMAL, WallpaperPattern.GLOW,
-            base = 0xFFEDEBE6L, accent = 0xFFFFFFFFL, intensity = 0.4f, tier = ContentTier.PRO,
+            "minimal_void", "Still", WallpaperCategory.MINIMAL, WallpaperPattern.FRAME,
+            base = 0xFF101216L, accent = 0xFF4A505AL, intensity = 0.35f, tier = ContentTier.PRO,
         ),
 
         // Abstract — the only place DarkFrame allows a drawn form.

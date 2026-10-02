@@ -37,6 +37,11 @@
 
     <!-- Look detail -->
     <string name="look_preview_description">Preview of %1$s</string>
+    <string name="look_part_layout">Layout</string>
+    <string name="look_layout_suggested">Suggested</string>
+    <string name="look_layout_with_labels">%1$s grid, labels on</string>
+    <string name="look_layout_without_labels">%1$s grid, labels off</string>
+    <string name="look_palette_description">%1$s palette</string>
     <string name="look_includes">What is included</string>
     <string name="look_part_icons">Icons</string>
     <string name="look_part_icons_sub">Every app on your phone, in %1$s</string>
@@ -128,6 +133,9 @@
     <!-- Wallpapers -->
     <string name="wallpapers_title">Wallpapers</string>
     <string name="wallpaper_preview_description">%1$s wallpaper</string>
+    <string name="wallpaper_preview_description">%1$s, full screen</string>
+    <string name="wallpaper_preview_description_fallback">Wallpaper preview</string>
+    <string name="wallpaper_preview_subtitle">%1$s collection</string>
     <string name="wallpaper_apply_home">Home screen</string>
     <string name="wallpaper_apply_lock">Lock screen</string>
     <string name="wallpaper_apply_both">Both</string>

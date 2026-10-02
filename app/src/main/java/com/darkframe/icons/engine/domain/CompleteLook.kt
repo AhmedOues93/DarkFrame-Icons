@@ -28,10 +28,57 @@ data class CompleteLook(
     val collection: IconCollection,
     val wallpaperId: String,
     val widgets: List<WidgetKind>,
+    val palette: LookPalette,
+    val layout: LayoutRecommendation,
     val tier: ContentTier,
 ) {
     /** The icon style this look uses. */
     val style: IconStyle get() = IconStyleCatalog.forCollection(collection)
+}
+
+/**
+ * The three colours a look is built from, as the user sees them.
+ *
+ * Stated per look rather than read off the icon style, because the two are not the same thing: the
+ * style's container is the colour under a *glyph*, and a look's surface is the colour the whole home
+ * screen sits on, which comes from its wallpaper. Showing the real three is what makes a look
+ * something a user can judge against their own taste before applying any of it.
+ */
+data class LookPalette(
+    /** The ground: what the wallpaper and the icon containers settle to. */
+    val surface: Long,
+    /** The ink: glyphs, widget text, labels. */
+    val ink: Long,
+    /** The one colour allowed to stand out. Kept quiet in every look; DarkFrame is not a bright pack. */
+    val accent: Long,
+) {
+    val swatches: List<Long> get() = listOf(surface, ink, accent)
+}
+
+/**
+ * How to arrange a home screen so a look reads the way it was composed.
+ *
+ * Advice, not an action. Android exposes no way for one app to set another launcher's grid density
+ * or turn its labels off, and One UI's own grid setting lives in its home-screen settings — so this
+ * is written as a recommendation the user can follow in a few taps, and the UI never pretends to
+ * apply it. Being explicit about that is the same principle as the widgets screen: say where the
+ * capability lives.
+ */
+data class LayoutRecommendation(
+    val columns: Int,
+    val rows: Int,
+    /** Whether the look was composed with app labels showing. */
+    val labels: Boolean,
+    /** One line of why, so the recommendation is reasoning rather than a decree. */
+    val note: String,
+) {
+    init {
+        require(columns in 3..8) { "columns out of range" }
+        require(rows in 3..8) { "rows out of range" }
+    }
+
+    /** "4 x 5", the way One UI's own home-screen setting states it. */
+    val grid: String get() = "$columns x $rows"
 }
 
 /** How much of a look DarkFrame can put in place by itself. */

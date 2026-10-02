@@ -115,6 +115,10 @@
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density"
             android:exported="false" />
         <activity
+            android:name=".wallpaper.WallpaperPreviewActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density"
+            android:exported="false" />
+        <activity
             android:name=".ui.WidgetsActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density"
             android:exported="false" />

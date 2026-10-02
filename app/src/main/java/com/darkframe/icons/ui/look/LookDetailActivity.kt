@@ -3,7 +3,9 @@ package com.darkframe.icons.ui.look
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.darkframe.icons.R
@@ -20,6 +22,7 @@ import com.darkframe.icons.engine.wallpaper.WallpaperCatalog
 import com.darkframe.icons.engine.wallpaper.WallpaperOutcome
 import com.darkframe.icons.engine.wallpaper.WallpaperTarget
 import com.darkframe.icons.model.ContentTier
+import com.darkframe.icons.model.WidgetKind
 import com.darkframe.icons.ui.ProActivity
 import com.darkframe.icons.ui.common.DarkFrameActivity
 import com.darkframe.icons.ui.common.SectionScreen
@@ -57,6 +60,7 @@ class LookDetailActivity : DarkFrameActivity() {
         val screen = SectionScreen(this).setUp(look.name, look.tagline)
 
         screen.custom(previewView())
+        screen.custom(paletteView())
 
         if (locked) {
             screen.primaryButton(getString(R.string.look_locked)) {
@@ -93,6 +97,19 @@ class LookDetailActivity : DarkFrameActivity() {
             title = getString(R.string.look_part_widgets),
             subtitle = look.widgets.joinToString(" · ") { widgetLabel(it) },
         )
+        // A recommendation, and labelled as one. Android gives no app a way to set another
+        // launcher's grid or turn its labels off, so this is the layout the look was composed at and
+        // a line of why — never a button that claims to arrange someone's home screen.
+        screen.row(
+            title = getString(R.string.look_part_layout),
+            subtitle = getString(
+                if (look.layout.labels) R.string.look_layout_with_labels
+                else R.string.look_layout_without_labels,
+                look.layout.grid,
+            ),
+            value = getString(R.string.look_layout_suggested),
+        )
+        screen.caption(look.layout.note)
 
         val saved = favorites.isFavorite(FavoriteKind.LOOK, look.id)
         screen.secondaryButton(
@@ -103,18 +120,49 @@ class LookDetailActivity : DarkFrameActivity() {
         }
     }
 
-    private fun widgetLabel(kind: com.darkframe.icons.model.WidgetKind): String = when (kind) {
-        com.darkframe.icons.model.WidgetKind.DIGITAL_CLOCK,
-        com.darkframe.icons.model.WidgetKind.ANALOG_CLOCK,
-        -> getString(R.string.widget_clock)
+    /**
+     * One label per widget, not one per family.
+     *
+     * This used to collapse the six kinds onto three names, from when only three widgets existed — so
+     * a look recommending the analog clock said "Clock" and a user looking for it in the launcher's
+     * picker had no way to know which of the two to add.
+     */
+    private fun widgetLabel(kind: WidgetKind): String = when (kind) {
+        WidgetKind.DIGITAL_CLOCK -> getString(R.string.widget_clock)
+        WidgetKind.ANALOG_CLOCK -> getString(R.string.widget_analog)
+        WidgetKind.DATE -> getString(R.string.widget_date)
+        WidgetKind.CALENDAR -> getString(R.string.widget_calendar)
+        WidgetKind.BATTERY -> getString(R.string.widget_battery)
+        WidgetKind.INFO -> getString(R.string.widget_info)
+    }
 
-        com.darkframe.icons.model.WidgetKind.DATE,
-        com.darkframe.icons.model.WidgetKind.CALENDAR,
-        -> getString(R.string.widget_date)
-
-        com.darkframe.icons.model.WidgetKind.BATTERY,
-        com.darkframe.icons.model.WidgetKind.INFO,
-        -> getString(R.string.widget_battery)
+    /**
+     * The look's three colours, as three bars.
+     *
+     * Deliberately not labelled "surface / ink / accent": those are the words for building a look,
+     * not for choosing one. The bars are in the proportion they appear on a home screen — most of it
+     * is surface — so the row reads as the look's weight rather than as a legend.
+     */
+    private fun paletteView(): View {
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                resources.getDimensionPixelSize(R.dimen.df_palette_height),
+            )
+            contentDescription = getString(R.string.look_palette_description, look.name)
+        }
+        PALETTE_WEIGHTS.forEachIndexed { index, weight ->
+            val swatch = View(this)
+            swatch.setBackgroundColor(look.palette.swatches[index].toInt())
+            swatch.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, weight)
+            row.addView(swatch)
+        }
+        // The background is what gives the row an outline for clipToOutline to clip children to;
+        // without one the swatches would square off the corners.
+        row.setBackgroundResource(R.drawable.df_preview_clip)
+        row.clipToOutline = true
+        return row
     }
 
     private fun previewView(): ImageView {
@@ -124,8 +172,8 @@ class LookDetailActivity : DarkFrameActivity() {
             setBackgroundResource(R.drawable.df_preview_clip)
             clipToOutline = true
             contentDescription = getString(R.string.look_preview_description, look.name)
-            layoutParams = android.widget.LinearLayout.LayoutParams(
-                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
                 height,
             )
         }
@@ -157,6 +205,9 @@ class LookDetailActivity : DarkFrameActivity() {
 
     companion object {
         private const val EXTRA_LOOK_ID = "look_id"
+
+        /** Surface dominates a home screen; the accent is a sliver. The bars say the same thing. */
+        private val PALETTE_WEIGHTS = floatArrayOf(6f, 2f, 1f)
 
         fun intent(context: Context, look: CompleteLook): Intent =
             Intent(context, LookDetailActivity::class.java).putExtra(EXTRA_LOOK_ID, look.id)
