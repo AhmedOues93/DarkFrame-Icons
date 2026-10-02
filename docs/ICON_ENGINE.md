@@ -35,6 +35,7 @@ One call: `IconResolver.resolve(identity, style, sizePx)`.
 | `AppCatalogBuilder` | domain | Dedupe, ordering, multi-launcher disambiguation |
 | `IconStyle`, `IconStyleCatalog` | domain | The six collections, as data |
 | `IconNormalizer` | domain | Optical-size maths; adaptive viewport crop |
+| `OpticalMetrics` | domain | Area, centring and separation corrections |
 | `SourceClassifier` | domain | Glyph vs. legacy full-bleed artwork, and how to seat each |
 | `ColorMatrices` | domain | Perceptual saturation/tint matrices; WCAG contrast |
 | `IconCacheKey`, `StableHash` | domain | Cache identity and stable on-disk naming |
@@ -43,11 +44,12 @@ One call: `IconResolver.resolve(identity, style, sizePx)`.
 | `CuratedIconRepository` | data | Parses `df_curated.xml`, resolves drawable ids |
 | `IconCache` | data | Memory LRU over a package-sharded disk store |
 | `AppCatalogWatcher` | data | Install / update / remove / enable-state changes |
-| `ContentBoundsScanner` | render | Strided alpha scan → content bounds + opacity |
+| `ContentBoundsScanner` | render | One strided pass → bounds, density, mass centre, luma, saturation |
 | `IconSourceLoader` | render | Rasterises whatever the app ships into usable artwork |
 | `IconRenderer` | render | **The only code in the app that draws an icon** |
 | `IconResolver` | engine | The flow above, with caching and a per-thread renderer |
 | `IconApplyService` | apply | The three real apply mechanisms |
+| `IconSetPreparer` | apply | Renders a whole collection out as PNGs, for the Samsung hand-off |
 | `LauncherCapabilityTable` | apply | Per-launcher capability, as tested data |
 
 Everything in `domain/` and `apply/LauncherCapability.kt` is free of Android framework imports, and
@@ -69,14 +71,49 @@ multiplying its luma into the tint would just produce a dim glyph.
 
 ### Legacy icons with a baked-in tile
 A pre-adaptive opaque square or circle. Treated as a glyph, it produces the classic amateur result:
-a small tile floating inside a bigger tile. `SourceClassifier` recognises the case (high opacity
-*and* near-full canvas coverage) and the renderer commits to it — the artwork is seated much larger
-and clipped to DarkFrame's own corner radius, so it reads as one deliberate inset card.
+a small tile floating inside a bigger tile. `SourceClassifier` recognises the case (high opacity *and*
+near-full canvas coverage) and the renderer commits to it — the artwork is seated at 94% of the tile
+and clipped to DarkFrame's own corner radius, so the collection *frames* it rather than nesting it.
+
+The earlier value was 0.78, which is what a double background looks like: the app's own tile clearly
+visible inside DarkFrame's. The thin frame also means every tile in a grid is the same size, whether
+the app shipped a glyph or a square.
 
 ### Transparent and oddly padded icons
 Handled by the premise behind the whole normaliser: size is derived from measured **content bounds**,
 never from the source canvas. A glyph occupying 35% of its canvas and one occupying 95% end up the
 same optical size.
+
+### Circular logos, and sparse ones
+Normalising bounding boxes is only half the job, and it is the half that looks right in a screenshot
+of six hand-picked apps and wrong in a grid of two hundred real ones. A circle inscribed in its box
+covers 78.5% of it, so a circular logo normalised to the same box as a square one reads visibly
+smaller — Android's own keyline grid encodes the same compensation at 176/192 against 152/192.
+
+`OpticalMetrics.areaCompensation` equalises ink *area* instead, scaling by `1/sqrt(fill)`. That is
+exact at the circle end and too aggressive at the sparse end, so it is clamped rather than damped: a
+clamp keeps the circle case exact where a damping exponent would compromise it to "improve" a case
+that should not be corrected at all. A hairline wordmark is therefore not blown up to match the ink
+mass of a solid square.
+
+### Asymmetric glyphs
+A play triangle, a comma, a location pin: the bounding box is centred but the ink is not. The glyph is
+shifted a third of the way towards its alpha-weighted centre of mass, capped at 8% of its own extent.
+Partial on purpose — full centroid alignment over-corrects a shape with one heavy limb, and a cap
+stops one faint far-corner pixel dragging the glyph off the tile.
+
+### Very bright and very dark icons on a colour-preserving collection
+Color Pop and Glass keep the app's own colours, which means an app whose artwork happens to sit at the
+container's own luminance disappears into it. Real on Glass, where dark-mode-first app icons are a
+whole population. `OpticalMetrics.separationLift` pushes a source within 0.14 gamma luma of its ground
+clear of it, away from whichever side the container is on, bounded so a lift cannot blow out to flat
+white or crush to flat black. It returns zero for the overwhelming majority of icons.
+
+### Multicolour icons that would read as neon
+The pull-back is per icon, not global. A global desaturation takes the most character out of exactly
+the muted, carefully chosen brand palettes that needed no help, so `OpticalMetrics.vibrancy` leaves
+anything under 0.28 mean saturation completely alone and applies the style's full value only above
+0.74.
 
 ### Unusual aspect ratios
 Content more elongated than 2.4:1 is treated as a wordmark and fitted slightly tighter so it does not
@@ -132,12 +169,24 @@ how large icons *feel*. What differs is surface and glyph treatment only.
 
 | Collection | Container | Glyph | Tier |
 | --- | --- | --- | --- |
-| **Noir** | `#0B0C0F`, flat, hairline keyline | Luma → warm white `#F2F1EE` | Free |
-| **Color Pop** | `#17191D`, flat, clean neutral | Original brand colours, saturation 0.94 | Free |
-| **Frost** | `#F2F1ED` off-white, dark hairline | Luma → graphite `#23262B` | Pro |
-| **Titanium** | `#2A2D32` → `#474B52`, one 135° sweep | Luma → `#E4E7EB` | Pro |
-| **Glass** | `#CC14171B` translucent, one top highlight | Original colours, saturation 0.90 | Pro |
-| **Pure AMOLED** | True `#000000`, no keyline | Luma → pure white | Free |
+| **Noir** | `#0B0C0F`, flat, hairline keyline | Luma ramp → warm white `#F2F1EE`, gain 1.12 | Free |
+| **Color Pop** | `#17191D`, flat, clean neutral | Original brand colours, up to 0.94 saturation | Free |
+| **Frost** | `#F2F1ED` off-white, top bloom, bright rim | Luma ramp → graphite `#23262B`, linear | Pro |
+| **Titanium** | `#2A2D32` → `#474B52`, 135° sweep, lit and shaded bevel | Luma ramp → `#E4E7EB`, gain 1.06 | Pro |
+| **Glass** | `#CC14171B` translucent, pane highlight and floor | Original colours, up to 0.90 saturation | Pro |
+| **Pure AMOLED** | True `#000000`, no keyline | Luma ramp → pure white, gain 1.22 | Free |
+
+Each collection owns exactly one surface finish, and a unit test enforces that no two share one: a
+shared finish means two collections with the same material identity, which is the failure the six
+exist to avoid. The finishes are drawn **over** the glyph, so content on Glass reads as being behind
+the pane and metal's bevel is the surface's own edge.
+
+The two monochrome collections carry a contrast gain on the luma ramp, which is what separates a
+designed monochrome conversion from a desaturate filter. The gain works by overshooting the ramp's
+ends and letting `ColorMatrix`'s channel clamp turn the overshoot into a real toe and shoulder — so it
+only leaves a palette intact where its ink and surface sit at or near the channel extremes. Noir and
+Pure AMOLED qualify. Frost does not, is explicitly linear, and a test pins how far any gain may move a
+collection's own ink.
 
 Design guard rails are enforced by unit test, not by eye: every tinted collection must clear a 7:1
 WCAG contrast ratio between glyph and container; Titanium's two stops must stay within a narrow

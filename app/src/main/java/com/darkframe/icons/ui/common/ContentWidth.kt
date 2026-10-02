@@ -1,5 +1,6 @@
 package com.darkframe.icons.ui.common
 
+import android.content.res.Resources
 import android.view.View
 import androidx.core.view.updatePadding
 import com.darkframe.icons.R
@@ -28,4 +29,19 @@ fun View.constrainContentWidth() {
         if (view.paddingStart == baseStart + extra) return@addOnLayoutChangeListener
         view.updatePadding(left = baseStart + extra, right = baseEnd + extra)
     }
+}
+
+/**
+ * The width a preview inside a capped column will actually be drawn at.
+ *
+ * Derived from the window rather than from a measured view, because a measured width is 0 on the
+ * first layout pass and real on the second — keying a preview off it renders the same image twice,
+ * and the preview cache is keyed by size, so the first render is pure waste. Capped by the same value
+ * [constrainContentWidth] uses, so a tablet does not allocate a 1200px-wide bitmap to show it at 560.
+ */
+fun Resources.contentColumnWidthPx(): Int {
+    val margin = getDimensionPixelSize(R.dimen.df_screen_margin)
+    val maxWidth = getDimensionPixelSize(R.dimen.df_content_max_width)
+    return (displayMetrics.widthPixels - margin * 2).coerceAtMost(maxWidth - margin * 2)
+        .coerceAtLeast(1)
 }

@@ -12,6 +12,7 @@ import com.darkframe.icons.R
 import com.darkframe.icons.engine.domain.CompleteLook
 import com.darkframe.icons.engine.domain.LookCatalog
 import com.darkframe.icons.ui.common.DarkFrameActivity
+import com.darkframe.icons.ui.common.contentColumnWidthPx
 import com.darkframe.icons.ui.common.SectionScreen
 import com.darkframe.icons.ui.home.EngineLookPreviewLoader
 import kotlinx.coroutines.launch
@@ -63,8 +64,7 @@ class OnboardingActivity : DarkFrameActivity() {
 
     private fun previewView(look: CompleteLook): ImageView {
         val height = resources.getDimensionPixelSize(R.dimen.df_hero_height)
-        val width = resources.displayMetrics.widthPixels -
-            resources.getDimensionPixelSize(R.dimen.df_screen_margin) * 2
+        val width = resources.contentColumnWidthPx()
         val view = ImageView(this).apply {
             scaleType = ImageView.ScaleType.CENTER_CROP
             setBackgroundResource(R.drawable.df_preview_clip)

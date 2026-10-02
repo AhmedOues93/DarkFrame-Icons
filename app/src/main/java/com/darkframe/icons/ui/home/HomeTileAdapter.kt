@@ -12,10 +12,17 @@ data class HomeTile(
     val id: String,
     val title: String,
     val subtitle: String,
+    /**
+     * Marks the Pro tile, which carries the one gold accent on the home screen.
+     *
+     * A flag rather than a second tile layout: the two differ by a text colour, and a near-duplicate
+     * layout is how a design system starts drifting.
+     */
+    val accent: Boolean = false,
     val onClick: () -> Unit,
 )
 
-/** The compact grid under the collections: wallpapers, widgets, apps, favorites. */
+/** The compact grid under the collections: wallpapers, widgets, apps, favourites and Pro. */
 class HomeTileAdapter(private var tiles: List<HomeTile>) :
     RecyclerView.Adapter<HomeTileAdapter.TileHolder>() {
 
@@ -52,6 +59,11 @@ class HomeTileAdapter(private var tiles: List<HomeTile>) :
         fun bind(tile: HomeTile) {
             title.text = tile.title
             subtitle.text = tile.subtitle
+            subtitle.setTextColor(
+                itemView.context.getColor(
+                    if (tile.accent) R.color.df_pro else R.color.df_text_secondary,
+                ),
+            )
             itemView.setOnClickListener { tile.onClick() }
         }
     }

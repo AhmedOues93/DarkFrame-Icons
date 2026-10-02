@@ -12,8 +12,11 @@
 - [ ] Real Play Billing product configured and tested
 - [ ] Restore-purchases behavior tested
 - [ ] Store screenshots/feature graphic
-- [ ] Fold cover/inner display QA
-- [ ] No debug UI or fake purchase state
+- [ ] Fold cover/inner display QA, including a fold while a screen is open
+- [ ] No debug UI or fake purchase state. The Visual QA matrix lives in `src/debug`,
+      so confirm it is absent from the release manifest rather than merely unreachable:
+      `./gradlew bundleRelease` then check the merged manifest for `QaMatrixActivity`
+- [ ] Pending-purchase state tested with a Play test card that settles slowly
 
 ## Claims review
 

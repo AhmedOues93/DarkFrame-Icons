@@ -170,11 +170,6 @@
             android:scrollbars="none"/>
 
         <TextView
-            android:id="@+id/home_pro"
-            android:layout_marginTop="@dimen/df_space_4"
-            style="@style/DF.Button.Secondary"/>
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/df_space_5"

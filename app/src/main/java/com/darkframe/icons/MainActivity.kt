@@ -27,6 +27,7 @@ import com.darkframe.icons.ui.SettingsActivity
 import com.darkframe.icons.ui.WidgetsActivity
 import com.darkframe.icons.ui.browser.IconBrowserActivity
 import com.darkframe.icons.ui.common.DarkFrameActivity
+import com.darkframe.icons.ui.common.contentColumnWidthPx
 import com.darkframe.icons.ui.collections.CollectionsActivity
 import com.darkframe.icons.ui.common.SpacingDecoration
 import com.darkframe.icons.ui.common.applySystemBarPadding
@@ -62,7 +63,6 @@ class MainActivity : DarkFrameActivity() {
     private lateinit var heroTagline: TextView
     private lateinit var applyButton: TextView
     private lateinit var applyHint: TextView
-    private lateinit var proButton: TextView
     private lateinit var collections: RecyclerView
     private lateinit var tiles: RecyclerView
 
@@ -90,7 +90,6 @@ class MainActivity : DarkFrameActivity() {
         heroTagline = findViewById(R.id.home_hero_tagline)
         applyButton = findViewById(R.id.home_apply)
         applyHint = findViewById(R.id.home_apply_hint)
-        proButton = findViewById(R.id.home_pro)
         collections = findViewById(R.id.home_collections)
         tiles = findViewById(R.id.home_tiles)
 
@@ -105,9 +104,6 @@ class MainActivity : DarkFrameActivity() {
         }
         applyButton.setOnClickListener {
             startActivity(Intent(this, ApplyActivity::class.java))
-        }
-        proButton.setOnClickListener {
-            startActivity(Intent(this, ProActivity::class.java))
         }
 
         setUpCollections()
@@ -131,7 +127,6 @@ class MainActivity : DarkFrameActivity() {
         super.onResume()
         if (!hasOnboarded()) return
         bindHero(lookStore.selected())
-        bindPro()
         bindApplyAction()
         tileAdapter?.submit(buildTiles())
         collectionAdapter?.notifyItemRangeChanged(0, LookCatalog.all.size)
@@ -147,8 +142,7 @@ class MainActivity : DarkFrameActivity() {
         heroTagline.text = look.tagline
         // Derived from the window rather than from the view: a measured width is 0 on the first
         // pass and real on the second, which would key two separate renders of the same preview.
-        val width = resources.displayMetrics.widthPixels -
-            resources.getDimensionPixelSize(R.dimen.df_screen_margin) * 2
+        val width = resources.contentColumnWidthPx()
         val height = resources.getDimensionPixelSize(R.dimen.df_hero_height)
         val warm = previews.peek(look, width, height)
         if (warm != null) {
@@ -185,13 +179,6 @@ class MainActivity : DarkFrameActivity() {
                 else -> getString(R.string.home_apply_hint_generic, profile.displayName)
             }
         }
-    }
-
-    private fun bindPro() {
-        val isPro = ProEntitlementStore(this).current() == Entitlement.PRO
-        proButton.text =
-            if (isPro) getString(R.string.home_pro_active) else getString(R.string.home_unlock_pro)
-        proButton.isEnabled = !isPro
     }
 
     // ---- collections --------------------------------------------------------------------------
@@ -266,7 +253,27 @@ class MainActivity : DarkFrameActivity() {
             ),
             onClick = { startActivity(Intent(this, FavoritesActivity::class.java)) },
         ),
+        proTile(),
     )
+
+    /**
+     * Pro, as a tile rather than a button of its own.
+     *
+     * It used to be a full-width secondary button under the grid, which gave a shop link its own
+     * dedicated control on the home screen. As a tile it sits with the other four places to go, and
+     * the only thing that marks it out is the one gold accent in the app.
+     */
+    private fun proTile(): HomeTile {
+        val isPro = ProEntitlementStore(this).current() == Entitlement.PRO
+        return HomeTile(
+            id = "pro",
+            title = getString(R.string.pro_title),
+            subtitle = if (isPro) getString(R.string.settings_pro_sub_active)
+            else getString(R.string.home_unlock_pro),
+            accent = !isPro,
+            onClick = { startActivity(Intent(this, ProActivity::class.java)) },
+        )
+    }
 
     private companion object {
         /** Preview cards are taller than wide, like the phone they are showing. */

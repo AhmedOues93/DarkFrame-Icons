@@ -25,6 +25,7 @@ import com.darkframe.icons.model.ContentTier
 import com.darkframe.icons.model.WidgetKind
 import com.darkframe.icons.ui.ProActivity
 import com.darkframe.icons.ui.common.DarkFrameActivity
+import com.darkframe.icons.ui.common.contentColumnWidthPx
 import com.darkframe.icons.ui.common.SectionScreen
 import com.darkframe.icons.ui.setup.ApplyActivity
 import kotlinx.coroutines.launch
@@ -177,8 +178,7 @@ class LookDetailActivity : DarkFrameActivity() {
                 height,
             )
         }
-        val width = resources.displayMetrics.widthPixels -
-            resources.getDimensionPixelSize(R.dimen.df_screen_margin) * 2
+        val width = resources.contentColumnWidthPx()
         engine.lookPreviews.peek(look, width, height)?.let { view.setImageBitmap(it) }
             ?: lifecycleScope.launch {
                 val bitmap = withContext(engine.renderDispatcher) {

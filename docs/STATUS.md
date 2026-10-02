@@ -40,6 +40,13 @@
 - Google Play Billing v7 against `darkframe_pro_lifetime`, a one-time purchase:
   real `ProductDetails` for the price, acknowledgement, restore, and a persistent
   entitlement read by every gated surface
+- Pending purchases handled as their own state: a cash or carrier payment neither
+  grants nor revokes, and the screen shows it rather than offering checkout again
+- A failed query never revokes, so Pro survives being offline; an answered query
+  with no purchase does revoke, so refunds are honoured
+- Entitlement rules live in a pure `EntitlementPolicy` covered by eleven tests,
+  including an exhaustive sweep proving no input grants Pro without a completed
+  owned purchase
 - Entitlement is granted only for a `PURCHASED` Play purchase — there is no debug
   or fake Pro path anywhere in the code
 - Pro collections can be browsed freely and previewed; what the gate withholds is
@@ -60,8 +67,8 @@
   six collections; the original `df_*` tiles stay as icon-pack artwork
 - Icon request entry point
 - CI: unit tests, debug assemble, lint and release bundle, with reports uploaded on failure
-- 121 unit tests covering the engine's domain layer, the catalogs, the capability
-  table and the render-scheduling policy
+- 162 unit tests covering the engine's domain layer, the optical corrections, the
+  catalogs, the capability table, the render-scheduling policy and the billing rules
 
 ### Performance
 - Preview renders capped and bucketed, so browsing never produces export-resolution
@@ -90,8 +97,12 @@ ink end did not move, and pin that the dark collections are unaffected.
 ## RED — remaining
 
 ### Needs a physical device
-- Visual QA of all six collections across real installed apps (the renderer is
-  structurally tested; its *output* has not been looked at on a screen yet)
+- Visual QA of all six collections across real installed apps. The renderer is
+  structurally tested and the optical corrections are unit-tested, but no output
+  has been looked at on a screen. The debug-only Visual QA matrix (Settings →
+  Visual QA, debug builds only) exists for exactly this: every installed app
+  across all six collections, with a cell-size control and a magenta ground for
+  spotting clipping and transparent gaps
 - Samsung Galaxy and Fold QA: cover screen, inner screen, fold/unfold transition
 - Verify pinned-shortcut appearance on One UI Home and Pixel Launcher, including
   how each badges or shadows a pinned icon
@@ -100,6 +111,8 @@ ink end did not move, and pin that the dark collections are unaffected.
 
 ### Product
 - Expand curated artwork well beyond the current 12 glyphs
+- Instrumented coverage for the three optical corrections: they are unit-tested as
+  maths, and what they do to a real `Canvas` has not been asserted
 - Instrumented tests for the render layer (`IconRenderer`, `IconSourceLoader`,
   `ContentBoundsScanner` need a real `Canvas`)
 - Icon request form to replace the mailto intent
