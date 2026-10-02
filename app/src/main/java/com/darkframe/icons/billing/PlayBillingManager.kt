@@ -129,8 +129,16 @@ class PlayBillingManager(
             PRO_PRODUCT_ID in it.products && it.purchaseState == Purchase.PurchaseState.PURCHASED
         }
         if (pro == null) {
+            val pending = purchases.any {
+                PRO_PRODUCT_ID in it.products && it.purchaseState == Purchase.PurchaseState.PENDING
+            }
+            // A pending Play transaction is not an entitlement. Keep the user Free, explain the
+            // state, and let Play deliver the PURCHASED transition later through this same listener.
             ProEntitlementStore(appContext).setPro(false)
             listener.onEntitlementChanged(Entitlement.FREE)
+            if (pending) {
+                listener.onBillingMessage("Your Pro purchase is pending in Google Play. Pro unlocks automatically after payment completes.")
+            }
             return
         }
 
