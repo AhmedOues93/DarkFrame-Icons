@@ -1,0 +1,17 @@
+<!--
+  DarkFrame curated glyph. Original artwork.
+
+  Authored as a glyph on transparency with no background of its own, so the icon engine can seat
+  it on any of the six collection containers and apply that collection's glyph treatment. The
+  tile, keyline and colour all come from the style at render time -- never from this file.
+
+  White is used as the authoring colour because the engine maps source luma onto the collection
+  tint, so pure white lands exactly on the tint and interior shading is preserved.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="6" android:pathData="M54,28c10,-8 22,2 18,13c12,1 15,16 5,22c5,11 -8,21 -17,14c-8,10 -22,3 -21,-8c-12,-1 -15,-16 -5,-22c-5,-11 8,-21 17,-14z"/>
+</vector>

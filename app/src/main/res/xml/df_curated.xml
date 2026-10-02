@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  DarkFrame curated icon overrides — the engine's internal override map.
+
+  THIS IS NOT A SUPPORTED-APP LIST. DarkFrame themes every app the device exposes, whether or not
+  it appears in this file. An entry here only means "DarkFrame has handmade artwork for this app,
+  prefer it over the installed icon". An app that is absent is themed from its own icon instead,
+  including apps that do not exist yet.
+
+  Deliberately separate from res/xml/appfilter.xml, which is a different mechanism for a different
+  consumer: appfilter.xml is the public icon-pack contract that third-party launchers read, and maps
+  components to complete pre-composed tiles (df_*). This file maps components to glyphs on
+  transparency (dfg_*) that DarkFrame's own renderer composes at runtime. See
+  docs/LAUNCHER_SUPPORT.md.
+
+  Both forms are accepted:
+    <item component="ComponentInfo{package/activity}" drawable="dfg_name"/>   one launcher activity
+    <item package="package" drawable="dfg_name"/>                             every activity of a package
+
+  Package-level entries are preferred for curated artwork, because an app's launcher activity name
+  changes between releases far more often than its package name does, and a stale component entry
+  silently stops matching.
+-->
+<resources>
+    <item package="com.instagram.android" drawable="dfg_instagram"/>
+    <item package="com.google.android.youtube" drawable="dfg_youtube"/>
+    <item package="com.openai.chatgpt" drawable="dfg_chatgpt"/>
+    <item package="com.spotify.music" drawable="dfg_spotify"/>
+    <item package="com.whatsapp" drawable="dfg_whatsapp"/>
+    <item package="com.whatsapp.w4b" drawable="dfg_whatsapp"/>
+    <item package="com.zhiliaoapp.musically" drawable="dfg_tiktok"/>
+    <item package="com.ss.android.ugc.trill" drawable="dfg_tiktok"/>
+    <item package="com.google.android.gm" drawable="dfg_gmail"/>
+    <item package="com.android.chrome" drawable="dfg_chrome"/>
+    <item package="com.chrome.beta" drawable="dfg_chrome"/>
+    <item package="com.google.android.apps.maps" drawable="dfg_maps"/>
+
+    <!-- Camera, phone and messaging apps are vendor-specific, so the common implementations
+         across Pixel, Samsung and AOSP each map to the same curated glyph. -->
+    <item package="com.google.android.GoogleCamera" drawable="dfg_camera"/>
+    <item package="com.sec.android.app.camera" drawable="dfg_camera"/>
+    <item package="com.android.camera2" drawable="dfg_camera"/>
+    <item package="com.google.android.dialer" drawable="dfg_phone"/>
+    <item package="com.samsung.android.dialer" drawable="dfg_phone"/>
+    <item package="com.android.dialer" drawable="dfg_phone"/>
+    <item package="com.google.android.apps.messaging" drawable="dfg_messages"/>
+    <item package="com.samsung.android.messaging" drawable="dfg_messages"/>
+</resources>

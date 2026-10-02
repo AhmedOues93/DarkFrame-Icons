@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/df_background"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/browser_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/df_screen_margin"
+        android:paddingTop="24dp"
+        android:paddingEnd="@dimen/df_screen_margin"
+        android:text="@string/browser_title"
+        android:textColor="@color/df_text_primary"
+        android:textSize="28sp" />
+
+    <TextView
+        android:id="@+id/browser_coverage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/df_screen_margin"
+        android:paddingTop="4dp"
+        android:paddingEnd="@dimen/df_screen_margin"
+        android:textColor="@color/df_text_secondary"
+        android:textSize="13sp" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/df_screen_margin"
+        android:paddingEnd="@dimen/df_screen_margin"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/collection_chips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleLine="true"
+            app:singleSelection="true"
+            app:selectionRequired="true" />
+    </HorizontalScrollView>
+
+    <EditText
+        android:id="@+id/browser_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/df_screen_margin"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="@dimen/df_screen_margin"
+        android:autofillHints=""
+        android:background="@color/df_surface"
+        android:hint="@string/browser_search_hint"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:maxLines="1"
+        android:minHeight="48dp"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:textColor="@color/df_text_primary"
+        android:textColorHint="@color/df_text_tertiary"
+        android:textSize="15sp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/icon_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/df_gutter"
+            android:paddingTop="12dp"
+            android:paddingEnd="@dimen/df_gutter"
+            android:paddingBottom="24dp"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/browser_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="32dp"
+            android:textColor="@color/df_text_secondary"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/browser_setup_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/df_surface"
+        android:minHeight="52dp"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/df_screen_margin"
+        android:paddingEnd="@dimen/df_screen_margin"
+        android:text="@string/setup_open"
+        android:textColor="@color/df_accent"
+        android:textSize="15sp" />
+</LinearLayout>
