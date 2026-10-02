@@ -1,7 +1,6 @@
 package com.darkframe.icons
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -27,12 +26,14 @@ import com.darkframe.icons.ui.SettingsActivity
 import com.darkframe.icons.ui.WidgetsActivity
 import com.darkframe.icons.ui.browser.IconBrowserActivity
 import com.darkframe.icons.ui.common.DarkFrameActivity
+import com.darkframe.icons.ui.collections.CollectionsActivity
+import com.darkframe.icons.ui.common.SpacingDecoration
 import com.darkframe.icons.ui.common.applySystemBarPadding
 import com.darkframe.icons.ui.common.spanFromWidth
 import com.darkframe.icons.ui.home.CollectionCardAdapter
 import com.darkframe.icons.ui.home.HomeTile
 import com.darkframe.icons.ui.home.HomeTileAdapter
-import com.darkframe.icons.ui.home.LookPreviewLoader
+import com.darkframe.icons.ui.home.EngineLookPreviewLoader
 import com.darkframe.icons.ui.look.LookDetailActivity
 import com.darkframe.icons.ui.setup.ApplyActivity
 import com.darkframe.icons.wallpaper.WallpaperActivity
@@ -47,9 +48,10 @@ import kotlinx.coroutines.withContext
  * Everything else is secondary and sits below. There is deliberately no maintenance action here —
  * rebuilding the icon cache is a Settings concern, not something a user should meet on first launch.
  */
-class MainActivity : DarkFrameActivity(), LookPreviewLoader {
+class MainActivity : DarkFrameActivity() {
 
     private val engine by lazy { DarkFrameEngine.get(applicationContext) }
+    private val previews by lazy { EngineLookPreviewLoader(this) }
     private val lookStore by lazy { LookPreferenceStore(this) }
     private val favorites by lazy { FavoritesStore(this) }
 
@@ -87,6 +89,9 @@ class MainActivity : DarkFrameActivity(), LookPreviewLoader {
         collections = findViewById(R.id.home_collections)
         tiles = findViewById(R.id.home_tiles)
 
+        findViewById<View>(R.id.home_collections_all).setOnClickListener {
+            startActivity(CollectionsActivity.intent(this))
+        }
         findViewById<View>(R.id.home_settings).setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
@@ -127,13 +132,13 @@ class MainActivity : DarkFrameActivity(), LookPreviewLoader {
         val width = resources.displayMetrics.widthPixels -
             resources.getDimensionPixelSize(R.dimen.df_screen_margin) * 2
         val height = resources.getDimensionPixelSize(R.dimen.df_hero_height)
-        val warm = peek(look, width, height)
+        val warm = previews.peek(look, width, height)
         if (warm != null) {
             heroImage.setImageBitmap(warm)
             return
         }
         lifecycleScope.launch {
-            val bitmap = load(look, width, height)
+            val bitmap = previews.load(look, width, height)
             heroImage.setImageBitmap(bitmap)
         }
     }
@@ -178,7 +183,7 @@ class MainActivity : DarkFrameActivity(), LookPreviewLoader {
             resources.getDimensionPixelSize(R.dimen.df_space_2) * 2
         val height = (width * PREVIEW_ASPECT).toInt()
         val adapter = CollectionCardAdapter(
-            loader = this,
+            loader = previews,
             scope = lifecycleScope,
             previewWidthPx = width,
             previewHeightPx = height,
@@ -245,30 +250,8 @@ class MainActivity : DarkFrameActivity(), LookPreviewLoader {
         ),
     )
 
-    // ---- previews -----------------------------------------------------------------------------
-
-    override fun peek(look: CompleteLook, widthPx: Int, heightPx: Int): Bitmap? =
-        engine.lookPreviews.peek(look, widthPx, heightPx)
-
-    override suspend fun load(look: CompleteLook, widthPx: Int, heightPx: Int): Bitmap =
-        withContext(engine.renderDispatcher) {
-            engine.lookPreviews.get(look, widthPx, heightPx)
-        }
-
     private companion object {
         /** Preview cards are taller than wide, like the phone they are showing. */
         const val PREVIEW_ASPECT = 1.35f
-    }
-}
-
-/** Even gaps between grid items, without per-item margins that double at the edges. */
-private class SpacingDecoration(private val gap: Int) : RecyclerView.ItemDecoration() {
-    override fun getItemOffsets(
-        outRect: android.graphics.Rect,
-        view: View,
-        parent: RecyclerView,
-        state: RecyclerView.State,
-    ) {
-        outRect.set(gap / 2, gap / 2, gap / 2, gap / 2)
     }
 }

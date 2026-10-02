@@ -103,6 +103,14 @@
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density"
             android:exported="false" />
         <activity
+            android:name=".ui.detail.IconDetailActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density"
+            android:exported="false" />
+        <activity
+            android:name=".ui.collections.CollectionsActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density"
+            android:exported="false" />
+        <activity
             android:name=".wallpaper.WallpaperActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density"
             android:exported="false" />

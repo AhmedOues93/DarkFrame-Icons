@@ -89,17 +89,23 @@
     <string name="browser_title">Your apps</string>
     <string name="browser_search_hint">Search your apps</string>
     <string name="browser_loading">Reading your apps…</string>
-    <string name="browser_empty">No apps match that search.</string>
+    <string name="browser_empty">DarkFrame cannot see any launchable apps on this device.</string>
     <string name="browser_icon_description">Themed icon for %1$s</string>
     <string name="browser_curated_badge">Curated</string>
     <plurals name="browser_coverage">
         <item quantity="one">%1$d app themed · %2$d with DarkFrame artwork</item>
         <item quantity="other">%1$d apps themed · %2$d with DarkFrame artwork</item>
     </plurals>
-    <string name="browser_app_action_export">Export this icon</string>
-    <string name="browser_app_action_pin">Add themed shortcut</string>
-    <string name="browser_app_action_favorite">Save to favorites</string>
-    <string name="browser_app_action_unfavorite">Remove from favorites</string>
+    <string name="browser_apply_chip">Apply</string>
+    <string name="browser_chip_pro">%1$s · %2$s</string>
+    <string name="browser_search_clear">Clear search</string>
+    <!-- A multiplication sign, not a lowercase x: it is the typographic close mark. -->
+    <string name="browser_search_clear_glyph">\u00D7</string>
+    <string name="browser_no_matches">Nothing matches \u201C%1$s\u201D.</string>
+    <plurals name="browser_matches">
+        <item quantity="one">%1$d of %2$d apps</item>
+        <item quantity="other">%1$d of %2$d apps</item>
+    </plurals>
     <string name="browser_export_failed">Could not export this icon.</string>
     <string name="browser_share_title">Save themed icon</string>
     <string name="browser_pin_requested">Shortcut request sent to your launcher.</string>
@@ -145,6 +151,21 @@
     <string name="favorites_section_apps">Apps</string>
 
     <!-- Pro -->
+    <!-- Collections -->
+    <string name="collections_title">Collections</string>
+    <string name="collections_summary">%1$d complete looks · %2$d free</string>
+    <string name="home_collections_all">See all</string>
+
+    <!-- Icon detail -->
+    <string name="detail_subtitle_curated">Hand-drawn DarkFrame artwork</string>
+    <string name="detail_subtitle_generated">Generated from this app\'s own icon</string>
+    <string name="detail_preview_description">Icon preview</string>
+    <string name="detail_swatch_description">%1$s in %2$s</string>
+    <string name="detail_swatch_fallback">Collection preview</string>
+    <string name="detail_favourite">Save to favourites</string>
+    <string name="detail_unfavourite">Saved to favourites</string>
+    <string name="detail_export">Export as PNG</string>
+    <string name="detail_shortcut">Add themed shortcut</string>
     <string name="pro_required_title">Pro collection</string>
     <string name="pro_required_message">%1$s is part of DarkFrame Pro. You can browse it freely; exporting and applying its icons needs the one-time unlock.</string>
     <string name="pro_required_open">See Pro</string>

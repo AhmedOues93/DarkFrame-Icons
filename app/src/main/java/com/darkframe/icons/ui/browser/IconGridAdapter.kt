@@ -30,9 +30,22 @@ import kotlinx.coroutines.launch
 class IconGridAdapter(
     private val loader: ThemedIconLoader,
     private val scope: CoroutineScope,
-    private val iconSizePx: Int,
+    private var iconSizePx: Int,
     private val onClick: (AppIdentity) -> Unit,
 ) : ListAdapter<AppIdentity, IconGridAdapter.IconViewHolder>(DIFF) {
+
+    /**
+     * Icon size follows the column width, so a wide screen gets larger icons rather than wider gaps.
+     *
+     * The engine buckets preview sizes, so neighbouring column widths usually resolve to the same
+     * cached bitmap and a fold does not reliably cost a re-render — which is why this can be driven
+     * from layout at all.
+     */
+    fun setIconSize(px: Int) {
+        if (px == iconSizePx || px <= 0) return
+        iconSizePx = px
+        notifyItemRangeChanged(0, itemCount)
+    }
 
     /**
      * Incremented whenever the selected collection changes. A holder compares it against the
@@ -72,6 +85,12 @@ class IconGridAdapter(
         fun bind(identity: AppIdentity) {
             cancel()
             boundKey = identity.componentKey
+            if (image.layoutParams.width != iconSizePx) {
+                image.layoutParams = image.layoutParams.apply {
+                    width = iconSizePx
+                    height = iconSizePx
+                }
+            }
             label.text = identity.displayLabel()
             curated.visibility = if (loader.isCurated(identity)) View.VISIBLE else View.GONE
             image.contentDescription = image.context.getString(

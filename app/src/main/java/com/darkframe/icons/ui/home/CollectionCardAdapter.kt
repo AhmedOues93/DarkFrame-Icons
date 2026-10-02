@@ -34,6 +34,14 @@ class CollectionCardAdapter(
     private val scope: CoroutineScope,
     private val previewWidthPx: Int,
     private val previewHeightPx: Int,
+    /**
+     * Card width in pixels, or null to keep the layout's own.
+     *
+     * The home row wants a fixed card width so the next card peeks in and invites a swipe; the
+     * Collections grid wants the card to fill its column. One card layout serves both rather than a
+     * second near-identical one, because two layouts is how a design system starts drifting.
+     */
+    private val cardWidthPx: Int? = null,
     private val onClick: (CompleteLook) -> Unit,
 ) : ListAdapter<CompleteLook, CollectionCardAdapter.CardHolder>(DIFF) {
 
@@ -69,6 +77,9 @@ class CollectionCardAdapter(
             preview.contentDescription =
                 preview.context.getString(R.string.look_preview_description, look.name)
             preview.layoutParams = preview.layoutParams.apply { height = previewHeightPx }
+            cardWidthPx?.let { width ->
+                itemView.layoutParams = itemView.layoutParams.apply { this.width = width }
+            }
             itemView.setOnClickListener { onClick(look) }
 
             val warm = loader.peek(look, previewWidthPx, previewHeightPx)

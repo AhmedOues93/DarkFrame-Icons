@@ -1,42 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  One app in the grid.
+
+  No background of its own: a card per cell turns a dense grid into a page of boxes, and the icons
+  are already containers. The pressed state is the one thing a cell needs, and it comes from the
+  design system's own ripple rather than from the platform default.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
+    android:background="@drawable/df_cell"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingStart="4dp"
-    android:paddingTop="10dp"
-    android:paddingEnd="4dp"
-    android:paddingBottom="14dp">
+    android:paddingStart="@dimen/df_space_1"
+    android:paddingEnd="@dimen/df_space_1"
+    android:paddingTop="@dimen/df_space_3"
+    android:paddingBottom="@dimen/df_space_3">
 
-    <!-- contentDescription is set per row at bind time from the app's label, which is the only
-         place the correct text is known. -->
+    <!-- Width and height are set at bind time from the measured column width, so a Fold's inner
+         screen gets larger icons instead of the same phone-sized icons with wider gaps.
+         contentDescription is set per row from the app's label. -->
     <ImageView
         android:id="@+id/icon_image"
         android:layout_width="@dimen/df_icon_size"
         android:layout_height="@dimen/df_icon_size"
+        android:scaleType="fitCenter"
         tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/icon_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/df_space_2"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="2"
-        android:textColor="@color/df_text_secondary"
-        android:textSize="11sp" />
+        style="@style/DF.Text.Caption" />
 
     <TextView
         android:id="@+id/icon_curated"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="@dimen/df_space_1"
         android:text="@string/browser_curated_badge"
-        android:textColor="@color/df_text_tertiary"
-        android:textSize="11sp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        style="@style/DF.Text.Label" />
 </LinearLayout>

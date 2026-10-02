@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Pressed state for a grid cell: the app's own ripple on a rounded mask, with no resting fill.
+
+  Separate from df_card_clickable, which carries a surface. A cell in a dense grid must not, or the
+  grid reads as a page of boxes rather than as a set of icons.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/df_ripple">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/df_radius_control" />
+            <solid android:color="@color/df_text_primary" />
+        </shape>
+    </item>
+</ripple>

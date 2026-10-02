@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One collection, showing the app the detail screen is about.
+
+  The selected state is carried by the card background rather than by a border or a tick, so the
+  strip stays quiet: six outlined boxes side by side is the "unnecessary borders" look.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/df_card_selected"
+    android:gravity="center_horizontal"
+    android:layout_marginEnd="@dimen/df_space_2"
+    android:minWidth="84dp"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/df_space_3"
+    android:paddingEnd="@dimen/df_space_3"
+    android:paddingTop="@dimen/df_space_3"
+    android:paddingBottom="@dimen/df_space_3">
+
+    <ImageView
+        android:id="@+id/swatch_image"
+        android:layout_width="@dimen/df_swatch_icon"
+        android:layout_height="@dimen/df_swatch_icon"
+        android:contentDescription="@string/detail_swatch_fallback"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:id="@+id/swatch_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/df_space_2"
+        android:gravity="center"
+        android:maxLines="1"
+        style="@style/DF.Text.Caption" />
+
+    <TextView
+        android:id="@+id/swatch_pro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/df_space_1"
+        android:background="@drawable/df_pill_pro"
+        android:paddingStart="@dimen/df_space_2"
+        android:paddingEnd="@dimen/df_space_2"
+        android:text="@string/tier_pro"
+        android:visibility="gone"
+        style="@style/DF.Text.Label" />
+</LinearLayout>

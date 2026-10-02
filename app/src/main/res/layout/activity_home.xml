@@ -112,13 +112,35 @@
             android:gravity="center"
             style="@style/DF.Text.Caption"/>
 
-        <!-- Collections -->
-        <TextView
+        <!-- Collections. The heading carries its own "see all", because the row shows two and a
+             half cards and the remaining ones should not be reachable only by guessing to swipe. -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/df_space_6"
-            android:text="@string/home_collections"
-            style="@style/DF.Text.Title"/>
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/home_collections"
+                style="@style/DF.Text.Title"/>
+
+            <TextView
+                android:id="@+id/home_collections_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/df_pill"
+                android:gravity="center"
+                android:minHeight="36dp"
+                android:paddingStart="@dimen/df_space_4"
+                android:paddingEnd="@dimen/df_space_4"
+                android:text="@string/home_collections_all"
+                style="@style/DF.Text.Label"/>
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/home_collections"

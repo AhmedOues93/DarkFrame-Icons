@@ -18,11 +18,22 @@
     <dimen name="df_control_height">58dp</dimen>
     <dimen name="df_hero_height">240dp</dimen>
     <dimen name="df_collection_card_width">148dp</dimen>
+    <!-- Target column width on the Collections screen. Wider than the home row's card, because
+         this is the screen where the previews are meant to be judged rather than skimmed. -->
+    <dimen name="df_collection_grid_target">200dp</dimen>
 
     <!-- Target width of one app-grid cell. The browser derives its column count from the measured
          width divided by this, so one layout serves phones, a Fold's cover and inner screens, and
          tablets without a separate layout per form factor. -->
     <dimen name="df_grid_cell_target">96dp</dimen>
+    <!-- Icon detail: the swatch strip cell, and the ceiling on the large preview. The preview
+         is sized from the window so it grows on a Fold's inner screen, but past this it would
+         only be a larger upscale of the same bucketed render. -->
+    <dimen name="df_swatch_icon">44dp</dimen>
+    <dimen name="df_detail_preview_max">200dp</dimen>
+    <!-- Floor and ceiling for a grid icon. The size itself comes from the measured column
+         width; these only stop a very narrow or very wide column producing something silly. -->
     <dimen name="df_icon_size">56dp</dimen>
+    <dimen name="df_icon_size_max">88dp</dimen>
     <dimen name="df_gutter">12dp</dimen>
 </resources>
