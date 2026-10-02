@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.darkframe.icons.data.DarkFrameCatalog
 import com.darkframe.icons.ui.OnboardingActivity
 import com.darkframe.icons.ui.SearchActivity
+import com.darkframe.icons.ui.StylesActivity
+import com.darkframe.icons.wallpaper.WallpaperActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,6 +23,8 @@ class MainActivity : AppCompatActivity() {
         root.addView(TextView(this).apply{text="DARKFRAME";textSize=30f;setTextColor(0xFFF4F4F4.toInt())})
         root.addView(TextView(this).apply{text="Complete dark customization";textSize=15f;setTextColor(0xFF9EA3AD.toInt());setPadding(0,8,0,28)})
         root.addView(Button(this).apply{text="Search DarkFrame";setOnClickListener{startActivity(Intent(this@MainActivity,SearchActivity::class.java))}})
+        root.addView(Button(this).apply{text="Complete Looks";setOnClickListener{startActivity(Intent(this@MainActivity,StylesActivity::class.java))}})
+        root.addView(Button(this).apply{text="Wallpapers";setOnClickListener{startActivity(Intent(this@MainActivity,WallpaperActivity::class.java))}})
         root.addView(TextView(this).apply{text="Featured styles";textSize=22f;setTextColor(0xFFF4F4F4.toInt());setPadding(0,32,0,12)})
         DarkFrameCatalog.styles.forEach{style->root.addView(TextView(this).apply{text=style.title+(if(style.tier.name=="PRO")"  PRO" else "");textSize=18f;setTextColor(0xFFE7E7E7.toInt());setPadding(4,18,4,18)})}
         root.addView(TextView(this).apply{text="Classic Outline icons";textSize=22f;setTextColor(0xFFF4F4F4.toInt());setPadding(0,34,0,14)})
