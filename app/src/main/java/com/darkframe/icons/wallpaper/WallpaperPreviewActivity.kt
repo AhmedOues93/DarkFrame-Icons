@@ -64,7 +64,7 @@ class WallpaperPreviewActivity : DarkFrameActivity() {
         findViewById<TextView>(R.id.preview_title).text = spec.title
         findViewById<TextView>(R.id.preview_category).text = categoryLabel()
 
-        image.contentDescription = getString(R.string.wallpaper_preview_description, spec.title)
+        image.contentDescription = getString(R.string.wallpaper_fullscreen_description, spec.title)
         image.setOnClickListener { toggleChrome() }
 
         bindFavourite()

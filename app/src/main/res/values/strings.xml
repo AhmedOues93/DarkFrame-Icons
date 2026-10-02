@@ -132,8 +132,10 @@
 
     <!-- Wallpapers -->
     <string name="wallpapers_title">Wallpapers</string>
+    <!-- The grid thumbnail and the full-screen preview describe the same picture at different
+         sizes, so they are two strings rather than one shared by both. -->
     <string name="wallpaper_preview_description">%1$s wallpaper</string>
-    <string name="wallpaper_preview_description">%1$s, full screen</string>
+    <string name="wallpaper_fullscreen_description">%1$s, full screen</string>
     <string name="wallpaper_preview_description_fallback">Wallpaper preview</string>
     <string name="wallpaper_preview_subtitle">%1$s collection</string>
     <string name="wallpaper_apply_home">Home screen</string>
