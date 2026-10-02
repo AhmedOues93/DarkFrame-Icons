@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Exported icons only. Scoped to one cache subdirectory so the provider cannot be used to
+     reach anything else DarkFrame stores. -->
+<paths>
+    <cache-path name="exports" path="exports/"/>
+</paths>

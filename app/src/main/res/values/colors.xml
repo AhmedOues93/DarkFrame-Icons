@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DarkFrame product surface palette. Distinct from the icon collection palettes in
+     IconStyleCatalog: this is the app's own chrome, those are the rendered artwork. -->
+<resources>
+    <color name="df_background">#FF07080A</color>
+    <color name="df_surface">#FF101216</color>
+    <color name="df_surface_raised">#FF171A1F</color>
+    <color name="df_outline">#1FFFFFFF</color>
+    <color name="df_text_primary">#FFF4F4F2</color>
+    <color name="df_text_secondary">#FF9BA1AB</color>
+    <color name="df_text_tertiary">#FF6E747E</color>
+    <color name="df_accent">#FFD8DCE3</color>
+    <color name="df_chip_selected">#FF2A2E35</color>
+    <color name="df_pro">#FFC9A227</color>
+</resources>

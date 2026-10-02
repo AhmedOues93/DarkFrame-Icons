@@ -14,3 +14,20 @@
 - [ ] Store screenshots/feature graphic
 - [ ] Fold cover/inner display QA
 - [ ] No debug UI or fake purchase state
+
+## Claims review
+
+Store listing and screenshots must not promise what Android does not allow. Specifically:
+
+- [ ] No claim that DarkFrame replaces icons system-wide, automatically, or without user steps
+- [ ] Icon-pack support described as applying to launchers that support icon packs, not to all
+- [ ] Pinned shortcuts described as adding a themed shortcut, not as replacing an app's icon
+- [ ] No implication that Samsung One UI Home or Pixel Launcher can be themed by DarkFrame directly
+- [ ] Screenshots that show a fully themed home screen state which launcher produced it
+- [ ] Coverage described as "every app your device exposes", with the documented gaps not hidden
+
+## Permissions review
+
+- [ ] No `QUERY_ALL_PACKAGES` in the merged manifest
+- [ ] `<queries>` limited to `CATEGORY_LAUNCHER` and `CATEGORY_HOME`
+- [ ] Data Safety form states that installed-app metadata is read on device and never transmitted

@@ -1,8 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?><resources>
-<item component="ComponentInfo{com.instagram.android/com.instagram.mainactivity.MainActivity}" drawable="df_instagram"/>
-<item component="ComponentInfo{com.google.android.youtube/com.google.android.youtube.HomeActivity}" drawable="df_youtube"/>
-<item component="ComponentInfo{com.openai.chatgpt/com.openai.chatgpt.MainActivity}" drawable="df_chatgpt"/>
-<item component="ComponentInfo{com.spotify.music/com.spotify.music.MainActivity}" drawable="df_spotify"/>
-<item component="ComponentInfo{com.whatsapp/com.whatsapp.Main}" drawable="df_whatsapp"/>
-<item component="ComponentInfo{com.zhiliaoapp.musically/com.ss.android.ugc.aweme.splash.SplashActivity}" drawable="df_tiktok"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Launcher-facing icon-pack contract.
+
+  Third-party launchers that support icon packs (Nova, Lawnchair, Smart Launcher, Action, Apex and
+  others) read this file directly and substitute icons themselves. Its format is fixed by that
+  convention, not by DarkFrame: entries must be component-based and must point at complete,
+  pre-composed tile drawables (df_*) that are ready to draw with no further processing.
+
+  This is a DIFFERENT mechanism from DarkFrame's own dynamic engine, with different limits:
+    - it only covers apps listed here, because a launcher can only use drawables in our APK;
+    - it only works on launchers that implement it — it does nothing on Pixel Launcher or One UI Home;
+    - it cannot carry dynamically generated icons, which are per-device bitmaps.
+
+  DarkFrame's in-app theming covers every installed app regardless of this file. See
+  res/xml/df_curated.xml for the engine's own override map, and docs/LAUNCHER_SUPPORT.md.
+-->
+<resources>
+    <item component="ComponentInfo{com.instagram.android/com.instagram.mainactivity.MainActivity}" drawable="df_instagram"/>
+    <item component="ComponentInfo{com.google.android.youtube/com.google.android.youtube.HomeActivity}" drawable="df_youtube"/>
+    <item component="ComponentInfo{com.openai.chatgpt/com.openai.chatgpt.MainActivity}" drawable="df_chatgpt"/>
+    <item component="ComponentInfo{com.spotify.music/com.spotify.music.MainActivity}" drawable="df_spotify"/>
+    <item component="ComponentInfo{com.whatsapp/com.whatsapp.Main}" drawable="df_whatsapp"/>
+    <item component="ComponentInfo{com.zhiliaoapp.musically/com.ss.android.ugc.aweme.splash.SplashActivity}" drawable="df_tiktok"/>
+    <item component="ComponentInfo{com.google.android.gm/com.google.android.gm.ConversationListActivityGmail}" drawable="df_gmail"/>
+    <item component="ComponentInfo{com.android.chrome/com.google.android.apps.chrome.Main}" drawable="df_chrome"/>
+    <item component="ComponentInfo{com.google.android.apps.maps/com.google.android.maps.MapsActivity}" drawable="df_maps"/>
+    <item component="ComponentInfo{com.google.android.GoogleCamera/com.android.camera.CameraLauncher}" drawable="df_camera"/>
+    <item component="ComponentInfo{com.google.android.dialer/com.google.android.dialer.extensions.GoogleDialtactsActivity}" drawable="df_phone"/>
+    <item component="ComponentInfo{com.google.android.apps.messaging/com.google.android.apps.messaging.ui.ConversationListActivity}" drawable="df_messages"/>
 </resources>

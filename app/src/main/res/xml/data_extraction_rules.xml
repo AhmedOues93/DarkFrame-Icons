@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+ backup and device-transfer rules.
+
+  Include-only on purpose: the user's choices travel, nothing else does. Rendered icons are
+  deliberately not backed up even though they are the app's largest data — they are derived from the
+  apps installed on *this* device, so restoring them onto another one would transfer a cache that is
+  wrong for it. They live in cacheDir and are regenerated on demand.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="sharedpref" path="darkframe_style.xml"/>
+        <include domain="sharedpref" path="darkframe.xml"/>
+        <include domain="sharedpref" path="darkframe_favorites.xml"/>
+    </cloud-backup>
+    <device-transfer>
+        <include domain="sharedpref" path="darkframe_style.xml"/>
+        <include domain="sharedpref" path="darkframe.xml"/>
+        <include domain="sharedpref" path="darkframe_favorites.xml"/>
+    </device-transfer>
+</data-extraction-rules>

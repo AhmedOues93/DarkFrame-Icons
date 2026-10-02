@@ -3,9 +3,15 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Lets a feature branch be validated before it has a pull request open.
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    # A full run takes a couple of minutes on a warm cache. This is a safety net against a genuinely
+    # wedged runner, not a performance target.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -15,8 +21,46 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - run: gradle testDebugUnitTest assembleDebug lint
+          cache-read-only: false
+      - name: Unit tests
+        run: gradle testDebugUnitTest --stacktrace
+      - name: Assemble debug
+        run: gradle assembleDebug --stacktrace
+      - name: Lint
+        run: gradle lintDebug --stacktrace
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: darkframe-test-report
+          path: app/build/reports/tests/
+          if-no-files-found: ignore
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: darkframe-lint-report
+          path: |
+            app/build/reports/lint-results-debug.html
+            app/build/reports/lint-results-debug.xml
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
         with:
           name: darkframe-debug
           path: app/build/outputs/apk/debug/*.apk
+      - name: Lint summary
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import os, xml.etree.ElementTree as ET
+          from collections import Counter
+          path = "app/build/reports/lint-results-debug.xml"
+          if not os.path.exists(path):
+              print("No lint report produced.")
+              raise SystemExit(0)
+          issues = list(ET.parse(path).getroot().iter("issue"))
+          counts = Counter(f"{i.get('severity')} {i.get('id')}" for i in issues)
+          print(f"lint: {len(issues)} issue(s) across {len(counts)} check(s)")
+          for label, count in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])):
+              print(f"  x{count:<4} {label}")
+          PY

@@ -1,1 +1,86 @@
-<resources><string name="app_name">DarkFrame Icons</string></resources>
+<resources>
+    <string name="app_name">DarkFrame Icons</string>
+
+    <!-- Icon browser -->
+    <string name="browser_title">Your apps</string>
+    <string name="browser_search_hint">Search your apps</string>
+    <string name="browser_loading">Reading your installed apps…</string>
+    <string name="browser_empty">No apps match that search.</string>
+    <string name="browser_icon_description">Themed icon for %1$s</string>
+    <string name="browser_curated_badge">Curated</string>
+    <string name="browser_open_browser">Browse your apps</string>
+    <string name="browser_collection_label">Collection</string>
+    <string name="browser_pro_suffix">PRO</string>
+
+    <!-- Apply -->
+    <string name="apply_title">%1$s</string>
+    <string name="apply_pin">Add themed shortcut to home screen</string>
+    <string name="apply_export">Export icon as PNG</string>
+    <string name="apply_cancel">Close</string>
+    <string name="apply_requested">Shortcut request sent to your launcher.</string>
+    <string name="apply_export_failed">Could not export this icon.</string>
+    <string name="apply_share_title">Save themed icon</string>
+
+    <!-- Guided setup -->
+    <string name="setup_title">Applying DarkFrame icons</string>
+    <string name="setup_open">How to apply these icons</string>
+    <string name="setup_launcher_heading">Your launcher</string>
+    <string name="setup_honesty_heading">What Android allows</string>
+    <string name="setup_honesty_body">Android has no way for an app to replace another app\'s icon
+        across your whole phone. The launcher decides what it draws. DarkFrame therefore does not
+        claim to restyle your home screen silently — it supports every mechanism Android actually
+        provides, and tells you which one applies to your launcher.</string>
+    <string name="setup_iconpack_heading">Icon pack</string>
+    <string name="setup_iconpack_body">Your launcher reads icon packs. Select DarkFrame in its
+        settings and it will substitute icons itself. DarkFrame cannot make that selection for you —
+        no launcher exposes an API for it.</string>
+    <string name="setup_shortcut_heading">Themed shortcuts</string>
+    <string name="setup_shortcut_body">Your launcher does not read icon packs, so DarkFrame can add
+        a themed shortcut to your home screen for each app. The shortcut opens the app normally. It
+        sits alongside the original entry rather than replacing it, your app drawer is unchanged,
+        and some launchers add their own shadow or badge to pinned shortcuts.</string>
+    <string name="setup_picker_heading">Per-app icon picker</string>
+    <string name="setup_picker_body">Your launcher lets you change one app\'s icon at a time.
+        Export the DarkFrame icon, then pick it in your launcher\'s own edit flow.</string>
+    <string name="setup_export_heading">Export</string>
+    <string name="setup_export_body">DarkFrame has not verified icon theming on your launcher. You
+        can export any themed icon as a PNG and apply it however your launcher or theme engine
+        allows.</string>
+    <string name="setup_export_extra_heading">Export</string>
+    <string name="setup_export_extra_body">Whatever your launcher supports, you can always export a
+        themed icon as a PNG from its entry in the app list, and use it wherever you need it.</string>
+    <string name="setup_visibility_heading">Which apps DarkFrame can see</string>
+    <string name="setup_visibility_body">DarkFrame asks Android only for apps that have a launcher
+        icon, which is the narrowest question that answers what it needs. It does not request
+        broad package access. Apps without a launcher icon, and work-profile or Secure Folder apps,
+        are not visible to DarkFrame — only your active home launcher may list those.</string>
+
+    <!-- Widgets -->
+    <string name="widget_battery_placeholder">—</string>
+    <string name="widget_battery_percent">%1$d%%</string>
+
+    <!-- Collections -->
+    <string name="styles_title">Collections</string>
+    <string name="styles_subtitle">Pick a collection. Every one works with both DarkFrame artwork and
+        icons generated from your installed apps.</string>
+    <string name="styles_free_suffix">FREE</string>
+    <string name="styles_select">Select and browse your apps</string>
+    <string name="styles_selected">Currently selected · browse your apps</string>
+    <string name="search_curated_title">Curated artwork</string>
+    <string name="search_curated_hint">Search DarkFrame artwork</string>
+    <string name="search_curated_note">These are the apps DarkFrame has handmade artwork for. Every
+        other app on your device is themed too, from its own icon.</string>
+
+    <!-- Home -->
+    <string name="home_engine_heading">Dynamic icon engine</string>
+    <string name="home_engine_body">DarkFrame themes every app Android exposes on this device —
+        including apps you install later. Handmade DarkFrame artwork is used where it exists;
+        everything else is generated from the app\'s own icon.</string>
+    <string name="home_rebuild_cache">Rebuild icon cache</string>
+    <string name="home_rebuild_done">Icon cache cleared.</string>
+
+    <plurals name="browser_coverage">
+        <item quantity="one">%1$d app themed · %2$d with DarkFrame artwork</item>
+        <item quantity="other">%1$d apps themed · %2$d with DarkFrame artwork</item>
+    </plurals>
+</resources>

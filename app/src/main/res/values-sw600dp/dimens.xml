@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tablets and unfolded foldables: larger icons and wider margins rather than more, smaller
+     columns. Stretching phone density across a 7-inch pane is what makes an app look ported. -->
+<resources>
+    <dimen name="df_grid_cell_target">116dp</dimen>
+    <dimen name="df_icon_size">76dp</dimen>
+    <dimen name="df_screen_margin">28dp</dimen>
+    <dimen name="df_gutter">16dp</dimen>
+</resources>
