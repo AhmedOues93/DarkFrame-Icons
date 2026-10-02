@@ -145,8 +145,9 @@ class IconBrowserActivity : AppCompatActivity() {
                     lastStyleId = state.style.id
                     syncChipSelection(state.style.id)
 
-                    coverage.text = getString(
-                        R.string.browser_coverage,
+                    coverage.text = resources.getQuantityString(
+                        R.plurals.browser_coverage,
+                        state.totalApps,
                         state.totalApps,
                         state.curatedApps,
                     )

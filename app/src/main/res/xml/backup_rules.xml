@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 11 and below equivalent of data_extraction_rules.xml. Same intent: preferences only. -->
+<full-backup-content>
+    <include domain="sharedpref" path="darkframe_style.xml"/>
+    <include domain="sharedpref" path="darkframe.xml"/>
+    <include domain="sharedpref" path="darkframe_favorites.xml"/>
+</full-backup-content>

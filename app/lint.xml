@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!--
+      DarkFrame's icon drawables are referenced by *name* rather than by R id: appfilter.xml is read
+      by third-party launchers, and df_curated.xml is resolved through Resources.getIdentifier at
+      runtime. Lint cannot follow either, so it reports every one of them as unused.
+
+      Scoped by regexp rather than disabling the check: a genuinely unused drawable outside these two
+      naming conventions should still be reported.
+    -->
+    <issue id="UnusedResources">
+        <ignore regexp="res/drawable/dfg?_.*\.xml"/>
+    </issue>
+</lint>

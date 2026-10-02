@@ -9,7 +9,6 @@
     <string name="browser_icon_description">Themed icon for %1$s</string>
     <string name="browser_curated_badge">Curated</string>
     <string name="browser_open_browser">Browse your apps</string>
-    <string name="browser_coverage">%1$d apps themed · %2$d with DarkFrame artwork</string>
     <string name="browser_collection_label">Collection</string>
     <string name="browser_pro_suffix">PRO</string>
 
@@ -58,6 +57,7 @@
 
     <!-- Widgets -->
     <string name="widget_battery_placeholder">—</string>
+    <string name="widget_battery_percent">%1$d%%</string>
 
     <!-- Collections -->
     <string name="styles_title">Collections</string>
@@ -78,4 +78,9 @@
         everything else is generated from the app\'s own icon.</string>
     <string name="home_rebuild_cache">Rebuild icon cache</string>
     <string name="home_rebuild_done">Icon cache cleared.</string>
+
+    <plurals name="browser_coverage">
+        <item quantity="one">%1$d app themed · %2$d with DarkFrame artwork</item>
+        <item quantity="other">%1$d apps themed · %2$d with DarkFrame artwork</item>
+    </plurals>
 </resources>
