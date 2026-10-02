@@ -25,6 +25,26 @@ jobs:
         run: gradle assembleDebug
       - name: Lint
         run: gradle lintDebug
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: darkframe-test-report
+          path: app/build/reports/tests/
+          if-no-files-found: ignore
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: darkframe-lint-report
+          path: |
+            app/build/reports/lint-results-debug.html
+            app/build/reports/lint-results-debug.xml
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: darkframe-debug
+          path: app/build/outputs/apk/debug/*.apk
       - name: Lint summary
         if: always()
         run: |
@@ -46,23 +66,3 @@ jobs:
               print(f"           e.g. {os.path.relpath(where, os.getcwd()) if where.startswith('/') else where}")
               print(f"           {example.get('message')}")
           PY
-      - name: Upload test report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: darkframe-test-report
-          path: app/build/reports/tests/
-          if-no-files-found: ignore
-      - name: Upload lint report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: darkframe-lint-report
-          path: |
-            app/build/reports/lint-results-debug.html
-            app/build/reports/lint-results-debug.xml
-          if-no-files-found: ignore
-      - uses: actions/upload-artifact@v4
-        with:
-          name: darkframe-debug
-          path: app/build/outputs/apk/debug/*.apk

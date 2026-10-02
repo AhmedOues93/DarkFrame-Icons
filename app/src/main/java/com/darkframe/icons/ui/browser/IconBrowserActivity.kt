@@ -94,7 +94,10 @@ class IconBrowserActivity : AppCompatActivity() {
             val usable = right - left - grid.paddingStart - grid.paddingEnd
             if (usable <= 0) return@addOnLayoutChangeListener
             val span = (usable / target).coerceIn(MIN_SPAN, MAX_SPAN)
-            if (span != layoutManager.spanCount) layoutManager.spanCount = span
+            if (span == layoutManager.spanCount) return@addOnLayoutChangeListener
+            // Posted rather than applied inline: setSpanCount requests a layout, and doing that
+            // from inside a layout pass is deferred by the framework anyway, with a warning.
+            grid.post { layoutManager.spanCount = span }
         }
     }
 
