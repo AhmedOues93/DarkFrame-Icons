@@ -145,6 +145,9 @@
     <string name="favorites_section_apps">Apps</string>
 
     <!-- Pro -->
+    <string name="pro_required_title">Pro collection</string>
+    <string name="pro_required_message">%1$s is part of DarkFrame Pro. You can browse it freely; exporting and applying its icons needs the one-time unlock.</string>
+    <string name="pro_required_open">See Pro</string>
     <string name="pro_title">DarkFrame Pro</string>
     <string name="pro_body">A one-time purchase. Unlocks the Frost, Titanium and Glass collections
         and every Pro wallpaper. No subscription.</string>

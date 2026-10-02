@@ -144,4 +144,32 @@ class LookAndWallpaperCatalogTest {
             }
         }
     }
+
+    /**
+     * The tier of a collection is the product's pricing promise, and two separate screens gate on
+     * it (the look detail and the icon browser's export). Pinned here so a rename or a reshuffle of
+     * the catalog cannot silently move a Pro collection into the free set or the reverse.
+     */
+    @Test
+    fun `collection tiers match the published free and pro split`() {
+        val tiers = IconStyleCatalog.all.associate { it.id to it.tier }
+        assertEquals(ContentTier.FREE, tiers["noir"])
+        assertEquals(ContentTier.FREE, tiers["color_pop"])
+        assertEquals(ContentTier.PRO, tiers["frost"])
+        assertEquals(ContentTier.PRO, tiers["titanium"])
+        assertEquals(ContentTier.PRO, tiers["glass"])
+        assertEquals(ContentTier.FREE, tiers["pure_amoled"])
+        assertEquals(6, tiers.size)
+    }
+
+    /**
+     * A look is sold as its collection: a free look whose icons are Pro (or a Pro look over free
+     * icons) would make one of the two gates lie about the other.
+     */
+    @Test
+    fun `every look carries the tier of its collection`() {
+        LookCatalog.all.forEach { look ->
+            assertEquals(look.id, look.tier, look.style.tier)
+        }
+    }
 }
