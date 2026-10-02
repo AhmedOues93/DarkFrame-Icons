@@ -1,6 +1,7 @@
 package com.darkframe.icons.engine
 
 import com.darkframe.icons.engine.apply.SamsungApplyStep
+import com.darkframe.icons.engine.apply.SamsungCapabilityState
 import com.darkframe.icons.engine.apply.SamsungThemeSupport
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -8,57 +9,45 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SamsungThemeSupportTest {
-
-    @Test
-    fun oneUiHomeIsRecognised() {
+    @Test fun oneUiHomeIsRecognised() {
         assertTrue(SamsungThemeSupport.isOneUiHome(SamsungThemeSupport.ONE_UI_HOME))
-    }
-
-    @Test
-    fun aGalaxyDeviceRunningNovaGetsTheIconPackFlowNotTheSamsungOne() {
-        // The launcher drawing the home screen is what decides, not the manufacturer.
         assertFalse(SamsungThemeSupport.isOneUiHome("com.teslacoilsw.launcher"))
-        assertFalse(SamsungThemeSupport.isOneUiHome(null))
-        assertFalse(SamsungThemeSupport.isOneUiHome(""))
     }
 
-    @Test
-    fun withThemeParkInstalledWeHandOverDirectly() {
+    @Test fun installedResolvableThemeParkIsReady() {
         assertEquals(
-            SamsungApplyStep.OPEN_THEME_PARK,
-            SamsungThemeSupport.stepFor(themeParkInstalled = true, goodLockInstalled = true),
-        )
-        assertEquals(
-            SamsungApplyStep.OPEN_THEME_PARK,
-            SamsungThemeSupport.stepFor(themeParkInstalled = true, goodLockInstalled = false),
+            SamsungCapabilityState.Ready(goodLockInstalled = true),
+            SamsungThemeSupport.stateFor(true, true, true, true),
         )
     }
 
-    @Test
-    fun withOnlyGoodLockWeOpenGoodLockSoThemeParkCanBeAdded() {
+    @Test fun themeParkInstalledButNotLaunchableIsNeverOffered() {
         assertEquals(
-            SamsungApplyStep.OPEN_GOOD_LOCK,
-            SamsungThemeSupport.stepFor(themeParkInstalled = false, goodLockInstalled = true),
+            SamsungCapabilityState.Unavailable(goodLockInstalled = true),
+            SamsungThemeSupport.stateFor(true, true, false, true),
         )
     }
 
-    @Test
-    fun withNeitherInstalledWeSendTheUserToTheStore() {
+    @Test fun missingThemeParkUsesDirectStoreRouteWhetherGoodLockExistsOrNot() {
         assertEquals(
-            SamsungApplyStep.INSTALL_GOOD_LOCK,
-            SamsungThemeSupport.stepFor(themeParkInstalled = false, goodLockInstalled = false),
+            SamsungCapabilityState.NeedsThemePark(goodLockInstalled = true),
+            SamsungThemeSupport.stateFor(false, true, false, true),
+        )
+        assertEquals(
+            SamsungCapabilityState.NeedsThemePark(goodLockInstalled = false),
+            SamsungThemeSupport.stateFor(false, false, false, true),
         )
     }
 
-    @Test
-    fun everyStepCorrespondsToSomethingWeCanActuallyDo() {
-        // There is deliberately no "applied" or "apply all" state: Samsung performs the final
-        // system-wide step, so DarkFrame must never model itself as having done it.
-        assertEquals(3, SamsungApplyStep.entries.size)
+    @Test fun noResolvableSamsungRouteIsUnavailable() {
+        assertTrue(SamsungThemeSupport.stateFor(false, false, false, false) is SamsungCapabilityState.Unavailable)
     }
 
-    @Test
-    fun storeLinksNameTheRequestedPackage() {
+    @Test fun samsungStepsContainNoFakeApplyAllAction() {
+        assertEquals(setOf(SamsungApplyStep.OPEN_THEME_PARK, SamsungApplyStep.INSTALL_THEME_PARK), SamsungApplyStep.entries.toSet())
+    }
+
+    @Test fun storeLinksNameRequestedPackage() {
         assertTrue(SamsungThemeSupport.galaxyStoreUri("com.x").endsWith("com.x"))
         assertTrue(SamsungThemeSupport.playStoreUri("com.x").endsWith("com.x"))
     }

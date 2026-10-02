@@ -106,17 +106,27 @@ class IconApplyService(private val context: Context) {
         context.packageManager.getLaunchIntentForPackage(packageName) != null
     }.getOrDefault(false)
 
-    /**
-     * Which Samsung step the user is on.
-     *
-     * Every value maps to an intent [samsungIntentFor] can actually fire, so the UI cannot offer a
-     * button with nothing behind it.
-     */
-    fun samsungStep(): SamsungApplyStep = SamsungThemeSupport.stepFor(
-        themeParkInstalled = isInstalled(SamsungThemeSupport.THEME_PARK),
-        goodLockInstalled = isInstalled(SamsungThemeSupport.GOOD_LOCK) ||
-            isInstalled(SamsungThemeSupport.GOOD_LOCK_LEGACY),
-    )
+    /** Runtime Samsung state. Every offered action is proven resolvable before it reaches the UI. */
+    fun samsungState(): SamsungCapabilityState {
+        val themeParkInstalled = isInstalled(SamsungThemeSupport.THEME_PARK)
+        val goodLockInstalled = isInstalled(SamsungThemeSupport.GOOD_LOCK) ||
+            isInstalled(SamsungThemeSupport.GOOD_LOCK_LEGACY)
+        val launchResolvable = context.packageManager
+            .getLaunchIntentForPackage(SamsungThemeSupport.THEME_PARK) != null
+        val storeResolvable = storeIntent(SamsungThemeSupport.THEME_PARK) != null
+        return SamsungThemeSupport.stateFor(
+            themeParkInstalled = themeParkInstalled,
+            goodLockInstalled = goodLockInstalled,
+            themeParkLaunchResolvable = launchResolvable,
+            themeParkStoreResolvable = storeResolvable,
+        )
+    }
+
+    fun samsungStep(state: SamsungCapabilityState = samsungState()): SamsungApplyStep? = when (state) {
+        is SamsungCapabilityState.Ready -> SamsungApplyStep.OPEN_THEME_PARK
+        is SamsungCapabilityState.NeedsThemePark -> SamsungApplyStep.INSTALL_THEME_PARK
+        is SamsungCapabilityState.Unavailable -> null
+    }
 
     /**
      * The intent for [step], or null when nothing on this device can serve it.
@@ -128,11 +138,7 @@ class IconApplyService(private val context: Context) {
         SamsungApplyStep.OPEN_THEME_PARK ->
             context.packageManager.getLaunchIntentForPackage(SamsungThemeSupport.THEME_PARK)
 
-        SamsungApplyStep.OPEN_GOOD_LOCK ->
-            context.packageManager.getLaunchIntentForPackage(SamsungThemeSupport.GOOD_LOCK)
-                ?: context.packageManager.getLaunchIntentForPackage(SamsungThemeSupport.GOOD_LOCK_LEGACY)
-
-        SamsungApplyStep.INSTALL_GOOD_LOCK -> storeIntent(SamsungThemeSupport.GOOD_LOCK)
+        SamsungApplyStep.INSTALL_THEME_PARK -> storeIntent(SamsungThemeSupport.THEME_PARK)
     }
 
     /** Galaxy Store first, Play Store second — Good Lock is a Galaxy Store product. */

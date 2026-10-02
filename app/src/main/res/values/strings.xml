@@ -13,7 +13,7 @@
     <string name="home_unlock_pro">Unlock DarkFrame Pro</string>
     <string name="home_pro_active">DarkFrame Pro is active</string>
 
-    <string name="home_apply_samsung">Apply on Samsung</string>
+    <string name="home_apply_samsung">Prepare for Theme Park</string>
     <string name="home_apply_icon_pack">Apply icon pack</string>
     <string name="home_apply_generic">How to apply</string>
     <string name="home_apply_hint_samsung">One UI detected. Samsung Theme Park applies the icons.</string>
@@ -51,18 +51,18 @@
     <!-- Apply -->
     <string name="apply_title">Apply DarkFrame</string>
     <string name="apply_samsung_heading">Samsung One UI</string>
-    <string name="apply_samsung_body">One UI Home does not read icon packs directly. Samsung\'s
-        Theme Park applies an icon theme across your home screen and app drawer, and DarkFrame is
-        ready for it as an icon pack.</string>
+    <string name="apply_samsung_body">Samsung Theme Park can apply an installed icon pack in one batch. DarkFrame appears there as an icon pack. Samsung does not expose a public API for DarkFrame to inject per-device generated PNGs or press Apply for you.</string>
     <string name="apply_samsung_step_open">Open Theme Park</string>
-    <string name="apply_samsung_step_goodlock">Open Good Lock</string>
-    <string name="apply_samsung_step_install">Get Good Lock</string>
-    <string name="apply_samsung_how">In Theme Park choose Icon, pick DarkFrame as the icon pack, then
-        save and apply. Samsung performs that last step, not DarkFrame.</string>
-    <string name="apply_samsung_goodlock_hint">Theme Park is a Good Lock module. Open Good Lock and
-        install Theme Park, then come back.</string>
-    <string name="apply_samsung_install_hint">Theme Park comes from Good Lock in the Galaxy Store.</string>
-    <string name="apply_samsung_unavailable">Theme Park is not available on this device.</string>
+    <string name="apply_samsung_step_install_theme_park">Get Theme Park</string>
+    <string name="apply_samsung_how">Theme Park → Icon → Create New → Iconpack → Third party icon packs → DarkFrame → Save → Apply. This is one batch; do not choose apps one by one.</string>
+    <string name="apply_samsung_install_theme_park_hint">Theme Park is missing. Install Samsung Theme Park, then return here.</string>
+    <string name="apply_goodlock_detected">Good Lock detected. No extra Good Lock step is needed.</string>
+    <string name="apply_goodlock_not_required">Good Lock is not required to open an already installed Theme Park module.</string>
+    <string name="apply_samsung_unavailable">Theme Park unavailable</string>
+    <string name="apply_samsung_unavailable_detail">DarkFrame will not open a broken link or pretend it can change One UI icons directly.</string>
+    <string name="apply_selected_collection">Selected collection</string>
+    <string name="apply_accessible_apps">Accessible installed apps</string>
+    <string name="apply_coverage_detail">%1$d curated · %2$d dynamically themed in DarkFrame</string>
 
     <string name="apply_iconpack_heading">%1$s</string>
     <string name="apply_iconpack_body">Your launcher reads icon packs. Open its settings and choose
