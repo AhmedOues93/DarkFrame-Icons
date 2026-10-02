@@ -31,6 +31,10 @@ android {
         abortOnError = true
         warningsAsErrors = false
         checkDependencies = false
+        // Printed to the build log as well as the HTML report, so warnings are visible in CI
+        // output instead of only inside a downloadable artifact nobody opens.
+        textReport = true
+        textOutput = file("stdout")
     }
 
     testOptions {
