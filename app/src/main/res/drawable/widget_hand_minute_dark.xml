@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Minute hand: longer and narrower than the hour hand, which is how the two stay readable at a
+     glance without a colour difference doing the work. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FF23262B" android:pathData="M23.1,7 h1.8 v19 h-1.8 z" />
+</vector>

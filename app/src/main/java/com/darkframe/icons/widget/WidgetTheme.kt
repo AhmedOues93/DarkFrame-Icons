@@ -6,6 +6,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import com.darkframe.icons.R
 import com.darkframe.icons.engine.data.LookPreferenceStore
+import com.darkframe.icons.engine.domain.ColorMatrices
 import com.darkframe.icons.engine.domain.IconStyle
 
 /**
@@ -45,6 +46,32 @@ object WidgetTheme {
 
     /** The user's current collection, read fresh so a widget follows a look change. */
     fun currentStyle(context: Context): IconStyle = LookPreferenceStore(context).selected().style
+
+    /**
+     * Whether this collection's surface is light, and therefore wants dark ink drawn on it.
+     *
+     * Text colour is set from the provider, so most widgets need no such branch. The analog clock
+     * does: `AnalogClock` exposes no RemoteViews-settable dial or hands, so its ink is baked into a
+     * layout and the provider has to pick between two.
+     */
+    fun hasLightSurface(style: IconStyle): Boolean =
+        ColorMatrices.relativeLuminance(style.containerColor) > LIGHT_SURFACE_LUMINANCE
+
+    /** Applies the collection to a widget with three text roles. */
+    fun apply(
+        views: RemoteViews,
+        style: IconStyle,
+        @IdRes rootId: Int,
+        @IdRes primaryId: Int,
+        @IdRes secondaryId: Int,
+        @IdRes tertiaryId: Int,
+    ) {
+        apply(views, style, rootId, primaryId, secondaryId)
+        views.setTextColor(tertiaryId, secondaryInkColor(style))
+    }
+
+    /** Frost is the one light collection; the threshold sits well clear of every dark one. */
+    private const val LIGHT_SURFACE_LUMINANCE = 0.4f
 
     /** Applies the collection to a widget's root and its two text roles. */
     fun apply(

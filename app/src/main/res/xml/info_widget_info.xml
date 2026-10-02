@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- updatePeriodMillis is 0 on purpose: nothing here polls. See info_widget_info's layout for how this
+     widget stays current. targetCellWidth/Height are honoured from Android 12 and give a sensible
+     default size without constraining older launchers; resizeMode lets the user take it from there. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_description_info"
+    android:initialLayout="@layout/widget_info"
+    android:minHeight="70dp"
+    android:minResizeHeight="70dp"
+    android:minResizeWidth="180dp"
+    android:minWidth="180dp"
+    android:previewLayout="@layout/widget_info"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellHeight="1"
+    android:targetCellWidth="4"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen"/>

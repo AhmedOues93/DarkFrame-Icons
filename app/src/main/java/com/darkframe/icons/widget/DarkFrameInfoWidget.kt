@@ -9,13 +9,12 @@ import android.widget.RemoteViews
 import com.darkframe.icons.R
 
 /**
- * Charge level, in the user's collection.
+ * Time, date and charge on one line — the whole status of the phone in the smallest tile.
  *
- * Redraws on the four power events the system delivers to a manifest receiver, plus whenever the
- * widget host asks. The reasoning, and the read itself, live in [BatteryLevel], which the info
- * widget shares.
+ * The time and date keep themselves current in the launcher's process; only the charge figure comes
+ * from here, on the same four real power events the battery widget uses. Nothing polls.
  */
-class DarkFrameBatteryWidget : AppWidgetProvider() {
+class DarkFrameInfoWidget : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
         render(context, manager, ids)
@@ -25,7 +24,7 @@ class DarkFrameBatteryWidget : AppWidgetProvider() {
         super.onReceive(context, intent)
         if (intent.action in BatteryLevel.POWER_EVENTS) {
             val manager = AppWidgetManager.getInstance(context)
-            val ids = manager.getAppWidgetIds(ComponentName(context, DarkFrameBatteryWidget::class.java))
+            val ids = manager.getAppWidgetIds(ComponentName(context, DarkFrameInfoWidget::class.java))
             if (ids.isNotEmpty()) render(context, manager, ids)
         }
     }
@@ -34,10 +33,17 @@ class DarkFrameBatteryWidget : AppWidgetProvider() {
         val style = WidgetTheme.currentStyle(context)
         val level = BatteryLevel.read(context)
         ids.forEach { id ->
-            val views = RemoteViews(context.packageName, R.layout.widget_battery)
-            WidgetTheme.apply(views, style, R.id.widget_root, R.id.widget_primary, R.id.widget_secondary)
+            val views = RemoteViews(context.packageName, R.layout.widget_info)
+            WidgetTheme.apply(
+                views = views,
+                style = style,
+                rootId = R.id.widget_root,
+                primaryId = R.id.widget_primary,
+                secondaryId = R.id.widget_secondary,
+                tertiaryId = R.id.widget_tertiary,
+            )
             views.setTextViewText(
-                R.id.widget_primary,
+                R.id.widget_secondary,
                 if (level != null) {
                     context.getString(R.string.widget_battery_percent, level)
                 } else {

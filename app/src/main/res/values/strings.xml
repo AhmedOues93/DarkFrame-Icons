@@ -26,7 +26,7 @@
         <item quantity="other">%1$d wallpapers in %2$d categories</item>
     </plurals>
     <string name="home_tile_widgets">Widgets</string>
-    <string name="home_tile_widgets_sub">Clock, date and battery</string>
+    <string name="home_tile_widgets_sub">Six, in your collection</string>
     <string name="home_tile_apps">Your apps</string>
     <string name="home_tile_apps_sub">Preview every themed icon</string>
     <string name="home_tile_favorites">Favorites</string>
@@ -126,21 +126,34 @@
 
     <!-- Widgets -->
     <string name="widgets_title">Widgets</string>
+    <string name="widgets_add_heading">Adding them</string>
     <string name="widgets_body">DarkFrame widgets follow the collection you picked. Android does not
         let an app place a widget for you, so add them the usual way: long-press your home screen,
         choose Widgets, then DarkFrame.</string>
-    <string name="widget_clock">Clock</string>
-    <string name="widget_clock_sub">Time, in your collection\'s colours</string>
+    <string name="widget_clock">Digital clock</string>
+    <string name="widget_clock_sub">Time and date</string>
+    <string name="widget_analog">Analog clock</string>
+    <string name="widget_analog_sub">A face, in your collection\'s ink</string>
     <string name="widget_date">Date</string>
-    <string name="widget_date_sub">Day and date</string>
+    <string name="widget_date_sub">Day and weekday</string>
+    <string name="widget_calendar">Calendar</string>
+    <string name="widget_calendar_sub">Month and date; opens your calendar</string>
     <string name="widget_battery">Battery</string>
     <string name="widget_battery_sub">Charge level</string>
-    <string name="widgets_resizable">All three resize on the home screen.</string>
+    <string name="widget_info">Minimal info</string>
+    <string name="widget_info_sub">Time, date and charge in one line</string>
+    <string name="widgets_resizable">Every widget resizes on the home screen, and none of them runs
+        anything in the background: the clocks and dates keep themselves current inside your
+        launcher, and the charge figure updates when the power state actually changes.</string>
     <string name="widget_battery_placeholder">—</string>
     <string name="widget_battery_percent">%1$d%%</string>
     <string name="widget_description_clock">Time and date, in your DarkFrame collection.</string>
     <string name="widget_description_date">Day and date, in your DarkFrame collection.</string>
     <string name="widget_description_battery">Charge level, in your DarkFrame collection.</string>
+    <string name="widget_description_analog">An analog face, in your DarkFrame collection.</string>
+    <string name="widget_description_calendar">Month and date, in your DarkFrame collection.</string>
+    <string name="widget_description_info">Time, date and charge, in your DarkFrame collection.</string>
+    <string name="widgets_preview_description">%1$s widget preview</string>
 
     <!-- Favorites -->
     <string name="favorites_title">Favorites</string>

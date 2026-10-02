@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Analog clock.
+
+  AnalogClock has no RemoteViews-settable dial or hands, so the ink cannot be themed from the
+  provider the way text colour is — which is why there are two of these layouts rather than one. The
+  provider picks whichever matches the collection's surface, and the background is still set at
+  runtime like every other widget.
+
+  AnalogClock itself is deprecated in favour of TextClock, which cannot draw a face. It remains in
+  the RemoteViews allowlist, keeps itself ticking in the launcher's process, and costs DarkFrame no
+  background work at all — so it is the right tool here despite the deprecation.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg_noir"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <AnalogClock
+        android:id="@+id/widget_primary"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:contentDescription="@string/widget_analog"
+        android:dial="@drawable/widget_dial_dark"
+        android:hand_hour="@drawable/widget_hand_hour_dark"
+        android:hand_minute="@drawable/widget_hand_minute_dark" />
+
+    <TextClock
+        android:id="@+id/widget_secondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/df_space_1"
+        android:format12Hour="EEE d"
+        android:format24Hour="EEE d"
+        android:includeFontPadding="false"
+        android:textColor="#23262B"
+        android:textSize="11sp" />
+</LinearLayout>

@@ -25,6 +25,11 @@
     <!-- Target width of one app-grid cell. The browser derives its column count from the measured
          width divided by this, so one layout serves phones, a Fold's cover and inner screens, and
          tablets without a separate layout per form factor. -->
+    <!-- Widget preview plates, matching the providers' own targetCellWidth/Height so a widget
+         that is four cells by one looks four-by-one on the Widgets screen too. -->
+    <dimen name="df_widget_preview_square">128dp</dimen>
+    <dimen name="df_widget_preview_wide">220dp</dimen>
+    <dimen name="df_widget_preview_short">76dp</dimen>
     <dimen name="df_grid_cell_target">96dp</dimen>
     <!-- Icon detail: the swatch strip cell, and the ceiling on the large preview. The preview
          is sized from the window so it grows on a Fold's inner screen, but past this it would

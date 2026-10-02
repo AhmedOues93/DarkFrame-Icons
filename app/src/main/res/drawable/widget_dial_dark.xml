@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Analog dial for a dark-ink collection.
+
+  A thin ring and four marks, which is the whole face: numerals and a sixty-tick track do not
+  survive being drawn at widget size, and a cluttered dial is what makes an analog clock widget
+  read as a stock Android sample.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#4D23262B"
+        android:strokeWidth="1"
+        android:pathData="M24,2.5 A21.5,21.5 0 1,1 23.99,2.5" />
+    <path android:fillColor="#FF23262B" android:pathData="M23.3,5 h1.4 v4 h-1.4 z" />
+    <path android:fillColor="#FF23262B" android:pathData="M23.3,39 h1.4 v4 h-1.4 z" />
+    <path android:fillColor="#FF23262B" android:pathData="M5,23.3 h4 v1.4 h-4 z" />
+    <path android:fillColor="#FF23262B" android:pathData="M39,23.3 h4 v1.4 h-4 z" />
+</vector>

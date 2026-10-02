@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hour hand. AnalogClock rotates this around the centre of its own bounds, so the drawable is the
+     full square with the hand drawn upward from the middle. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FFF2F1EE" android:pathData="M22.6,13 h2.8 v13 h-2.8 z" />
+    <path android:fillColor="#FFF2F1EE" android:pathData="M24,21.6 m-2.4,0 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 z" />
+</vector>
