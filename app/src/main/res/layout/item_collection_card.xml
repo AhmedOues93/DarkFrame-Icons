@@ -12,7 +12,6 @@
         android:layout_height="150dp"
         android:adjustViewBounds="true"
         android:background="@drawable/df_preview_clip"
-        android:clipToOutline="true"
         android:contentDescription="@null"
         android:scaleType="centerCrop"/>
 

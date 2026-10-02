@@ -51,7 +51,10 @@ class CollectionCardAdapter(
     }
 
     inner class CardHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val preview: ImageView = view.findViewById(R.id.collection_preview)
+        // In code rather than in the layout: android:clipToOutline is an API 31 attribute, while
+        // the setter has existed since API 21 and DarkFrame's minSdk is 26.
+        private val preview: ImageView =
+            view.findViewById<ImageView>(R.id.collection_preview).apply { clipToOutline = true }
         private val name: TextView = view.findViewById(R.id.collection_name)
         private val tier: TextView = view.findViewById(R.id.collection_tier)
 

@@ -59,7 +59,9 @@ class WallpaperAdapter(
     }
 
     inner class WallpaperHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val image: ImageView = view.findViewById(R.id.wallpaper_image)
+        // See CollectionCardAdapter: android:clipToOutline is API 31, the setter is API 21.
+        private val image: ImageView =
+            view.findViewById<ImageView>(R.id.wallpaper_image).apply { clipToOutline = true }
         private val title: TextView = view.findViewById(R.id.wallpaper_title)
         private val tier: TextView = view.findViewById(R.id.wallpaper_tier)
 

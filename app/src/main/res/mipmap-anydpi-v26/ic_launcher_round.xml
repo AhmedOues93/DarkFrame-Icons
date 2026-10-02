@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  The monochrome layer is what themed-icon launchers (Pixel's Themed icons, One UI) tint. It is
+  declared here rather than behind a -v33 qualifier because older platforms ignore the element, and
+  splitting it across two folders only duplicates the icon for no behavioural difference.
+-->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@color/ic_launcher_background"/>
     <foreground android:drawable="@drawable/ic_launcher_foreground"/>
+    <monochrome android:drawable="@drawable/ic_launcher_foreground"/>
 </adaptive-icon>
