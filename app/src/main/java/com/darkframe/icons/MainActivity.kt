@@ -1,34 +1,38 @@
 package com.darkframe.icons
 
-import android.os.Bundle
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.view.Gravity
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.darkframe.icons.data.DarkFrameCatalog
+import com.darkframe.icons.ui.OnboardingActivity
+import com.darkframe.icons.ui.SearchActivity
 
 class MainActivity : AppCompatActivity() {
-    private val icons = listOf("Instagram","YouTube","ChatGPT","Spotify","WhatsApp","TikTok","Gmail","Chrome","Maps","Camera","Phone","Messages")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val scroll = ScrollView(this)
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL; setPadding(48,64,48,64); setBackgroundColor(0xFF090B0E.toInt())
+        if (!getSharedPreferences("darkframe", MODE_PRIVATE).getBoolean("onboarded", false)) {
+            startActivity(Intent(this, OnboardingActivity::class.java)); finish(); return
         }
-        root.addView(TextView(this).apply { text="DARKFRAME"; textSize=32f; setTextColor(0xFFF4F4F4.toInt()) })
-        root.addView(TextView(this).apply { text="Classic Outline"; textSize=16f; setTextColor(0xFF9EA3AD.toInt()); setPadding(0,8,0,32) })
-        val grid=GridLayout(this).apply { columnCount=4; alignmentMode=GridLayout.ALIGN_BOUNDS }
-        icons.forEachIndexed { i,name ->
-            val box=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; gravity=Gravity.CENTER; setPadding(8,12,8,18) }
-            box.addView(ImageView(this).apply { setImageResource(iconRes(i)); layoutParams=LinearLayout.LayoutParams(120,120) })
-            box.addView(TextView(this).apply { text=name; textSize=11f; gravity=Gravity.CENTER; setTextColor(0xFFD8D8D8.toInt()) })
-            grid.addView(box, GridLayout.LayoutParams().apply { width=0; columnSpec=GridLayout.spec(GridLayout.UNDEFINED,1f) })
+        val scroll=ScrollView(this)
+        val root=LinearLayout(this).apply{orientation=LinearLayout.VERTICAL;setPadding(40,56,40,56);setBackgroundColor(0xFF090B0E.toInt())}
+        root.addView(TextView(this).apply{text="DARKFRAME";textSize=30f;setTextColor(0xFFF4F4F4.toInt())})
+        root.addView(TextView(this).apply{text="Complete dark customization";textSize=15f;setTextColor(0xFF9EA3AD.toInt());setPadding(0,8,0,28)})
+        root.addView(Button(this).apply{text="Search DarkFrame";setOnClickListener{startActivity(Intent(this@MainActivity,SearchActivity::class.java))}})
+        root.addView(TextView(this).apply{text="Featured styles";textSize=22f;setTextColor(0xFFF4F4F4.toInt());setPadding(0,32,0,12)})
+        DarkFrameCatalog.styles.forEach{style->root.addView(TextView(this).apply{text=style.title+(if(style.tier.name=="PRO")"  PRO" else "");textSize=18f;setTextColor(0xFFE7E7E7.toInt());setPadding(4,18,4,18)})}
+        root.addView(TextView(this).apply{text="Classic Outline icons";textSize=22f;setTextColor(0xFFF4F4F4.toInt());setPadding(0,34,0,14)})
+        val grid=GridLayout(this).apply{columnCount=4}
+        DarkFrameCatalog.icons.forEach{item->
+            val box=LinearLayout(this).apply{orientation=LinearLayout.VERTICAL;gravity=Gravity.CENTER;setPadding(6,10,6,16)}
+            box.addView(ImageView(this).apply{setImageResource(item.drawable);layoutParams=LinearLayout.LayoutParams(116,116)})
+            box.addView(TextView(this).apply{text=item.label;textSize=10f;gravity=Gravity.CENTER;setTextColor(0xFFD8D8D8.toInt())})
+            grid.addView(box,GridLayout.LayoutParams().apply{width=0;columnSpec=GridLayout.spec(GridLayout.UNDEFINED,1f)})
         }
         root.addView(grid)
-        root.addView(Button(this).apply { text="Request an icon"; setOnClickListener {
-            startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:darkframe.icons@gmail.com?subject=DarkFrame%20icon%20request")))
-        }})
-        scroll.addView(root); setContentView(scroll)
+        root.addView(Button(this).apply{text="Request missing icon";setOnClickListener{startActivity(Intent(Intent.ACTION_SENDTO,Uri.parse("mailto:darkframe.icons@gmail.com?subject=DarkFrame%20icon%20request")))}})
+        scroll.addView(root);setContentView(scroll)
     }
-    private fun iconRes(i:Int)= listOf(R.drawable.df_instagram,R.drawable.df_youtube,R.drawable.df_chatgpt,R.drawable.df_spotify,R.drawable.df_whatsapp,R.drawable.df_tiktok,R.drawable.df_gmail,R.drawable.df_chrome,R.drawable.df_maps,R.drawable.df_camera,R.drawable.df_phone,R.drawable.df_messages)[i]
 }
