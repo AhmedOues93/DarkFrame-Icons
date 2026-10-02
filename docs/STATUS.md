@@ -51,6 +51,23 @@
 
 ## RED — remaining
 
+### Open finding — dark tints compress a colour source
+
+Found by rendering the collections for the first time (SVG reconstruction, not device output).
+
+`ColorMatrices.tintToLuma` maps a source's luma onto the collection tint by multiplication, so the
+result spans `0 … tint`. That is right for Noir, Titanium and Pure AMOLED, whose tints are near
+white: the full black-to-white range of the source stays visible. For **Frost**, whose tint is
+graphite `#23262B`, the same multiplication squeezes everything from black to white into a narrow
+dark band, and a colourful source loses its internal structure — a mid-green field and a near-white
+mark end up almost the same value.
+
+It does not affect curated glyphs, which are authored as a single value, so it only shows on
+generated icons. Candidate fix is to remap luma into a range rather than multiplying towards zero
+(for a dark tint, invert so that source white lands on the tint and source black lands on the
+container). Deliberately not changed yet: it is a design decision that needs to be judged on a
+device against real app icons, and it would alter every Frost render.
+
 ### Needs a physical device
 - Visual QA of all six collections across real installed apps (the renderer is
   structurally tested; its *output* has not been looked at on a screen yet)
