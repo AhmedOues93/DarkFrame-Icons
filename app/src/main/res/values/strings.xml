@@ -21,13 +21,19 @@
     <string name="home_apply_hint_generic">We will show you what %1$s supports.</string>
 
     <string name="home_tile_wallpapers">Wallpapers</string>
-    <string name="home_tile_wallpapers_sub">%1$d in %2$d categories</string>
+    <plurals name="home_tile_wallpapers_sub">
+        <item quantity="one">%1$d wallpaper in %2$d categories</item>
+        <item quantity="other">%1$d wallpapers in %2$d categories</item>
+    </plurals>
     <string name="home_tile_widgets">Widgets</string>
     <string name="home_tile_widgets_sub">Clock, date and battery</string>
     <string name="home_tile_apps">Your apps</string>
     <string name="home_tile_apps_sub">Preview every themed icon</string>
     <string name="home_tile_favorites">Favorites</string>
-    <string name="home_tile_favorites_sub">%1$d saved</string>
+    <plurals name="home_tile_favorites_sub">
+        <item quantity="one">%1$d item saved</item>
+        <item quantity="other">%1$d items saved</item>
+    </plurals>
 
     <!-- Look detail -->
     <string name="look_preview_description">Preview of %1$s</string>
@@ -109,7 +115,6 @@
     <string name="wallpaper_applied_lock">Lock screen wallpaper set.</string>
     <string name="wallpaper_applied_both">Wallpaper set on both screens.</string>
     <string name="wallpaper_failed">Could not set the wallpaper: %1$s</string>
-    <string name="wallpaper_lock_unsupported">This version of Android cannot set the lock screen separately.</string>
     <string name="wallpaper_favorite">Save</string>
     <string name="wallpaper_unfavorite">Saved</string>
 

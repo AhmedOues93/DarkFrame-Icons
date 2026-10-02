@@ -3,7 +3,6 @@ package com.darkframe.icons.engine.wallpaper
 import android.app.WallpaperManager
 import android.content.Context
 import android.graphics.Point
-import android.os.Build
 import androidx.annotation.WorkerThread
 import kotlin.math.max
 
@@ -14,9 +13,6 @@ enum class WallpaperTarget { HOME, LOCK, BOTH }
 sealed interface WallpaperOutcome {
     data class Applied(val target: WallpaperTarget) : WallpaperOutcome
     data class Failed(val reason: String) : WallpaperOutcome
-
-    /** The lock screen can only be set separately from Android 7; below that, both go together. */
-    data object LockNotSupported : WallpaperOutcome
 }
 
 /**
@@ -48,23 +44,15 @@ class WallpaperApplier(private val context: Context) {
 
     @WorkerThread
     fun apply(spec: WallpaperSpec, target: WallpaperTarget): WallpaperOutcome {
-        if (target == WallpaperTarget.LOCK && Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            return WallpaperOutcome.LockNotSupported
-        }
         val size = desiredSize()
         return runCatching {
             val bitmap = renderer.render(spec, size.x, size.y)
-            val manager = WallpaperManager.getInstance(context)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                val flags = when (target) {
-                    WallpaperTarget.HOME -> WallpaperManager.FLAG_SYSTEM
-                    WallpaperTarget.LOCK -> WallpaperManager.FLAG_LOCK
-                    WallpaperTarget.BOTH -> WallpaperManager.FLAG_SYSTEM or WallpaperManager.FLAG_LOCK
-                }
-                manager.setBitmap(bitmap, null, true, flags)
-            } else {
-                manager.setBitmap(bitmap)
+            val flags = when (target) {
+                WallpaperTarget.HOME -> WallpaperManager.FLAG_SYSTEM
+                WallpaperTarget.LOCK -> WallpaperManager.FLAG_LOCK
+                WallpaperTarget.BOTH -> WallpaperManager.FLAG_SYSTEM or WallpaperManager.FLAG_LOCK
             }
+            WallpaperManager.getInstance(context).setBitmap(bitmap, null, true, flags)
             bitmap.recycle()
             WallpaperOutcome.Applied(target) as WallpaperOutcome
         }.getOrElse { error ->
@@ -77,6 +65,11 @@ class WallpaperApplier(private val context: Context) {
     fun preview(spec: WallpaperSpec, widthPx: Int, heightPx: Int) =
         renderer.render(spec, widthPx, heightPx)
 
-    /** True when the lock screen can be set independently on this device. */
-    fun supportsSeparateLockScreen(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+    /**
+     * True when the lock screen can be set independently.
+     *
+     * Always true at DarkFrame's minSdk of 26 — separate lock wallpapers arrived in API 24 — so this
+     * is kept as a named concept for the UI rather than as a version check.
+     */
+    fun supportsSeparateLockScreen(): Boolean = true
 }

@@ -171,7 +171,6 @@ class WallpaperActivity : DarkFrameActivity(), WallpaperPreviewLoader {
                 }
 
                 is WallpaperOutcome.Failed -> getString(R.string.wallpaper_failed, outcome.reason)
-                WallpaperOutcome.LockNotSupported -> getString(R.string.wallpaper_lock_unsupported)
             }
             AlertDialog.Builder(this@WallpaperActivity)
                 .setMessage(message)

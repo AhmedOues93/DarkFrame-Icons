@@ -210,8 +210,9 @@ class MainActivity : DarkFrameActivity(), LookPreviewLoader {
         HomeTile(
             id = "wallpapers",
             title = getString(R.string.home_tile_wallpapers),
-            subtitle = getString(
-                R.string.home_tile_wallpapers_sub,
+            subtitle = resources.getQuantityString(
+                R.plurals.home_tile_wallpapers_sub,
+                WallpaperCatalog.all.size,
                 WallpaperCatalog.all.size,
                 WallpaperCatalog.categoriesWithContent().size,
             ),
@@ -232,7 +233,11 @@ class MainActivity : DarkFrameActivity(), LookPreviewLoader {
         HomeTile(
             id = "favorites",
             title = getString(R.string.home_tile_favorites),
-            subtitle = getString(R.string.home_tile_favorites_sub, favorites.totalCount()),
+            subtitle = resources.getQuantityString(
+                R.plurals.home_tile_favorites_sub,
+                favorites.totalCount(),
+                favorites.totalCount(),
+            ),
             onClick = { startActivity(Intent(this, FavoritesActivity::class.java)) },
         ),
     )

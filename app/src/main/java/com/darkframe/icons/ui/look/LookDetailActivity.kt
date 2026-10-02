@@ -150,7 +150,6 @@ class LookDetailActivity : DarkFrameActivity() {
             val message = when (outcome) {
                 is WallpaperOutcome.Applied -> getString(R.string.look_applied_wallpaper)
                 is WallpaperOutcome.Failed -> getString(R.string.wallpaper_failed, outcome.reason)
-                WallpaperOutcome.LockNotSupported -> getString(R.string.wallpaper_lock_unsupported)
             }
             Toast.makeText(this@LookDetailActivity, message, Toast.LENGTH_SHORT).show()
         }

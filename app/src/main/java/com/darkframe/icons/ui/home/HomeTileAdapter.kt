@@ -19,9 +19,20 @@ data class HomeTile(
 class HomeTileAdapter(private var tiles: List<HomeTile>) :
     RecyclerView.Adapter<HomeTileAdapter.TileHolder>() {
 
+    /**
+     * The tile set is fixed; only the subtitles change (a saved count, a wallpaper total). Rebinding
+     * the existing range says that precisely, instead of telling RecyclerView that everything it
+     * knows is invalid.
+     */
     fun submit(next: List<HomeTile>) {
+        val previousCount = tiles.size
         tiles = next
-        notifyDataSetChanged()
+        if (previousCount == next.size) {
+            notifyItemRangeChanged(0, next.size)
+        } else {
+            notifyItemRangeRemoved(0, previousCount)
+            notifyItemRangeInserted(0, next.size)
+        }
     }
 
     override fun getItemCount(): Int = tiles.size
