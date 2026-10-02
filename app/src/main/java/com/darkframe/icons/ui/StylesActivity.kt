@@ -8,6 +8,8 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.darkframe.icons.R
+import com.darkframe.icons.billing.Entitlement
+import com.darkframe.icons.billing.ProEntitlementStore
 import com.darkframe.icons.engine.data.StylePreferenceStore
 import com.darkframe.icons.engine.domain.IconStyle
 import com.darkframe.icons.engine.domain.IconStyleCatalog
@@ -27,6 +29,7 @@ class StylesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val preferences = StylePreferenceStore(this)
         val selected = preferences.selectedStyle()
+        val entitlement = ProEntitlementStore(this).current()
 
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -38,8 +41,12 @@ class StylesActivity : AppCompatActivity() {
 
         IconStyleCatalog.all.forEach { style ->
             root.addView(card(style, isSelected = style.id == selected.id) {
-                preferences.setSelectedStyle(style)
-                startActivity(Intent(this, IconBrowserActivity::class.java))
+                if (style.tier == ContentTier.PRO && entitlement != Entitlement.PRO) {
+                    startActivity(Intent(this, ProActivity::class.java))
+                } else {
+                    preferences.setSelectedStyle(style)
+                    startActivity(Intent(this, IconBrowserActivity::class.java))
+                }
             })
         }
 
