@@ -1,6 +1,7 @@
 package com.darkframe.icons
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -29,6 +30,7 @@ import com.darkframe.icons.ui.common.DarkFrameActivity
 import com.darkframe.icons.ui.collections.CollectionsActivity
 import com.darkframe.icons.ui.common.SpacingDecoration
 import com.darkframe.icons.ui.common.applySystemBarPadding
+import com.darkframe.icons.ui.common.constrainContentWidth
 import com.darkframe.icons.ui.common.spanFromWidth
 import com.darkframe.icons.ui.home.CollectionCardAdapter
 import com.darkframe.icons.ui.home.HomeTile
@@ -79,7 +81,10 @@ class MainActivity : DarkFrameActivity() {
         }
         setContentView(R.layout.activity_home)
 
-        findViewById<NestedScrollView>(R.id.home_scroll).applySystemBarPadding()
+        findViewById<NestedScrollView>(R.id.home_scroll).apply {
+            applySystemBarPadding()
+            constrainContentWidth()
+        }
         heroImage = findViewById(R.id.home_hero_image)
         heroName = findViewById(R.id.home_hero_name)
         heroTagline = findViewById(R.id.home_hero_tagline)
@@ -107,6 +112,19 @@ class MainActivity : DarkFrameActivity() {
 
         setUpCollections()
         setUpTiles()
+    }
+
+    /**
+     * A fold does not recreate this Activity — `configChanges` covers it — so nothing would otherwise
+     * ask the hero for a preview at the new width, and `centerCrop` would stretch the old one.
+     *
+     * Re-binding costs one render per width, after which the preview cache answers both, so folding
+     * back and forth is free. That is the whole reason the cache is keyed by size.
+     */
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (!hasOnboarded()) return
+        bindHero(lookStore.selected())
     }
 
     override fun onResume() {

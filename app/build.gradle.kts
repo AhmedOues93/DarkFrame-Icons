@@ -11,8 +11,10 @@ android {
         applicationId = "com.darkframe.icons"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.0"
+        // Bumped together: the optical-correction pass changes every rendered icon, the six
+        // collections gained their own materials, and the widget set went from three to six.
+        versionCode = 3
+        versionName = "1.1"
         resourceConfigurations += listOf("en")
     }
 

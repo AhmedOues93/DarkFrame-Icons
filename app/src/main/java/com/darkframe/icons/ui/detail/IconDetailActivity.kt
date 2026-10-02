@@ -2,6 +2,7 @@ package com.darkframe.icons.ui.detail
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -27,6 +28,7 @@ import com.darkframe.icons.model.ContentTier
 import com.darkframe.icons.ui.ProActivity
 import com.darkframe.icons.ui.common.DarkFrameActivity
 import com.darkframe.icons.ui.common.applySystemBarPadding
+import com.darkframe.icons.ui.common.constrainContentWidth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -76,7 +78,10 @@ class IconDetailActivity : DarkFrameActivity() {
         )
 
         setContentView(R.layout.activity_icon_detail)
-        findViewById<View>(R.id.detail_scroll).applySystemBarPadding()
+        findViewById<View>(R.id.detail_scroll).apply {
+            applySystemBarPadding()
+            constrainContentWidth()
+        }
 
         preview = findViewById(R.id.detail_preview)
         preview.clipToOutline = true
@@ -105,6 +110,12 @@ class IconDetailActivity : DarkFrameActivity() {
             shortcut.visibility =
                 if (capability == ApplyCapability.PINNED_SHORTCUT) View.VISIBLE else View.GONE
         }
+    }
+
+    /** Same reason as the home hero: a fold changes the width without recreating the Activity. */
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        bindStyle()
     }
 
     private fun subtitle(): String {

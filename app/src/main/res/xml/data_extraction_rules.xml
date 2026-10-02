@@ -6,15 +6,21 @@
   deliberately not backed up even though they are the app's largest data — they are derived from the
   apps installed on *this* device, so restoring them onto another one would transfer a cache that is
   wrong for it. They live in cacheDir and are regenerated on demand.
+
+  darkframe_billing is absent for a different reason: the Pro entitlement is a cache of a Google Play
+  answer, and carrying it across a restore would move an entitlement between accounts. Play re-grants
+  it on the new device, which is both correct and the only trustworthy source.
 -->
 <data-extraction-rules>
     <cloud-backup>
         <include domain="sharedpref" path="darkframe_style.xml"/>
+        <include domain="sharedpref" path="darkframe_look.xml"/>
         <include domain="sharedpref" path="darkframe.xml"/>
         <include domain="sharedpref" path="darkframe_favorites.xml"/>
     </cloud-backup>
     <device-transfer>
         <include domain="sharedpref" path="darkframe_style.xml"/>
+        <include domain="sharedpref" path="darkframe_look.xml"/>
         <include domain="sharedpref" path="darkframe.xml"/>
         <include domain="sharedpref" path="darkframe_favorites.xml"/>
     </device-transfer>

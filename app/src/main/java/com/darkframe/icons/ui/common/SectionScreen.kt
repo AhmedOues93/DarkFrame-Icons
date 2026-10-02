@@ -21,7 +21,11 @@ class SectionScreen(private val activity: DarkFrameActivity) {
 
     fun setUp(title: String, subtitle: String? = null): SectionScreen {
         activity.setContentView(R.layout.activity_simple)
-        activity.findViewById<NestedScrollView>(R.id.simple_scroll).applySystemBarPadding()
+        activity.findViewById<NestedScrollView>(R.id.simple_scroll).apply {
+            applySystemBarPadding()
+            // One call here caps every screen built on this scaffold, which is most of them.
+            constrainContentWidth()
+        }
         activity.findViewById<TextView>(R.id.simple_title).text = title
         activity.findViewById<TextView>(R.id.simple_subtitle).apply {
             if (subtitle.isNullOrBlank()) {

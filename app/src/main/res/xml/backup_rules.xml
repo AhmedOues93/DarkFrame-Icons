@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 11 and below equivalent of data_extraction_rules.xml. Same intent: preferences only. -->
+<!--
+  Android 11 and below equivalent of data_extraction_rules.xml. Same intent: preferences only.
+
+  Note what is absent: darkframe_billing. The Pro entitlement is a cache of a Google Play answer, and
+  carrying it across a restore would move an entitlement between accounts. Play re-grants it on the
+  new device, which is both correct and the only trustworthy source.
+-->
 <full-backup-content>
     <include domain="sharedpref" path="darkframe_style.xml"/>
+    <include domain="sharedpref" path="darkframe_look.xml"/>
     <include domain="sharedpref" path="darkframe.xml"/>
     <include domain="sharedpref" path="darkframe_favorites.xml"/>
 </full-backup-content>

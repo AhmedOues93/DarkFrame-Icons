@@ -15,6 +15,10 @@
     <dimen name="df_radius_hero">26dp</dimen>
 
     <dimen name="df_screen_margin">20dp</dimen>
+    <!-- Widest a single column of content is allowed to get. Past this a card is a long thin band
+         with a word in the middle of it, which is what a stretched phone layout looks like on a
+         Fold's inner screen. Grids answer extra width with extra columns instead. -->
+    <dimen name="df_content_max_width">560dp</dimen>
     <dimen name="df_control_height">58dp</dimen>
     <dimen name="df_hero_height">240dp</dimen>
     <dimen name="df_palette_height">14dp</dimen>

@@ -22,6 +22,7 @@ import com.darkframe.icons.ui.browser.IconGridAdapter
 import com.darkframe.icons.ui.common.DarkFrameActivity
 import com.darkframe.icons.ui.common.SpacingDecoration
 import com.darkframe.icons.ui.common.applySystemBarPadding
+import com.darkframe.icons.ui.common.constrainContentWidth
 import com.darkframe.icons.ui.common.spanFromWidth
 import com.darkframe.icons.ui.detail.IconDetailActivity
 import com.darkframe.icons.ui.home.CollectionCardAdapter
@@ -63,7 +64,10 @@ class FavoritesActivity : DarkFrameActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorites)
-        findViewById<View>(R.id.favorites_scroll).applySystemBarPadding()
+        findViewById<View>(R.id.favorites_scroll).apply {
+            applySystemBarPadding()
+            constrainContentWidth()
+        }
 
         empty = findViewById(R.id.favorites_empty)
         looksSection = findViewById(R.id.favorites_looks_section)
