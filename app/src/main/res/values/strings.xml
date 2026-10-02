@@ -1,86 +1,184 @@
 <resources>
-    <string name="app_name">DarkFrame Icons</string>
+    <string name="app_name">DarkFrame</string>
+    <string name="app_brand">DARKFRAME</string>
+    <string name="tier_pro">Pro</string>
 
-    <!-- Icon browser -->
+    <!-- Home -->
+    <string name="home_current_look">Your look</string>
+    <string name="home_hero_description">Preview of the selected DarkFrame look</string>
+    <string name="home_collections">Collections</string>
+    <string name="home_more">More</string>
+    <string name="home_settings">Settings</string>
+    <string name="home_footer">DarkFrame changes how your phone looks. It runs nothing in the background.</string>
+    <string name="home_unlock_pro">Unlock DarkFrame Pro</string>
+    <string name="home_pro_active">DarkFrame Pro is active</string>
+
+    <string name="home_apply_samsung">Apply on Samsung</string>
+    <string name="home_apply_icon_pack">Apply icon pack</string>
+    <string name="home_apply_generic">How to apply</string>
+    <string name="home_apply_hint_samsung">One UI detected. Samsung Theme Park applies the icons.</string>
+    <string name="home_apply_hint_icon_pack">%1$s reads icon packs. Two taps in its settings.</string>
+    <string name="home_apply_hint_generic">We will show you what %1$s supports.</string>
+
+    <string name="home_tile_wallpapers">Wallpapers</string>
+    <string name="home_tile_wallpapers_sub">%1$d in %2$d categories</string>
+    <string name="home_tile_widgets">Widgets</string>
+    <string name="home_tile_widgets_sub">Clock, date and battery</string>
+    <string name="home_tile_apps">Your apps</string>
+    <string name="home_tile_apps_sub">Preview every themed icon</string>
+    <string name="home_tile_favorites">Favorites</string>
+    <string name="home_tile_favorites_sub">%1$d saved</string>
+
+    <!-- Look detail -->
+    <string name="look_preview_description">Preview of %1$s</string>
+    <string name="look_includes">What is included</string>
+    <string name="look_part_icons">Icons</string>
+    <string name="look_part_icons_sub">Every app on your phone, in %1$s</string>
+    <string name="look_part_wallpaper">Wallpaper</string>
+    <string name="look_part_widgets">Widgets</string>
+    <string name="look_use_look">Use this look</string>
+    <string name="look_selected">Selected</string>
+    <string name="look_set_wallpaper">Set wallpaper</string>
+    <string name="look_locked">Unlock with Pro</string>
+    <string name="look_applied_wallpaper">Wallpaper applied.</string>
+
+    <!-- Apply -->
+    <string name="apply_title">Apply DarkFrame</string>
+    <string name="apply_samsung_heading">Samsung One UI</string>
+    <string name="apply_samsung_body">One UI Home does not read icon packs directly. Samsung\'s
+        Theme Park applies an icon theme across your home screen and app drawer, and DarkFrame is
+        ready for it as an icon pack.</string>
+    <string name="apply_samsung_step_open">Open Theme Park</string>
+    <string name="apply_samsung_step_goodlock">Open Good Lock</string>
+    <string name="apply_samsung_step_install">Get Good Lock</string>
+    <string name="apply_samsung_how">In Theme Park choose Icon, pick DarkFrame as the icon pack, then
+        save and apply. Samsung performs that last step, not DarkFrame.</string>
+    <string name="apply_samsung_goodlock_hint">Theme Park is a Good Lock module. Open Good Lock and
+        install Theme Park, then come back.</string>
+    <string name="apply_samsung_install_hint">Theme Park comes from Good Lock in the Galaxy Store.</string>
+    <string name="apply_samsung_unavailable">Theme Park is not available on this device.</string>
+
+    <string name="apply_iconpack_heading">%1$s</string>
+    <string name="apply_iconpack_body">Your launcher reads icon packs. Open its settings and choose
+        DarkFrame as the icon pack. DarkFrame cannot make that choice for you — no launcher offers
+        an API for it.</string>
+    <string name="apply_open_launcher_settings">Open launcher</string>
+
+    <string name="apply_shortcut_heading">%1$s</string>
+    <string name="apply_shortcut_body">This launcher does not read icon packs. DarkFrame can add a
+        themed shortcut for a single app from the app list — it sits beside the original rather than
+        replacing it, so it is offered per app and never as a bulk action.</string>
+
+    <string name="apply_export_heading">Export</string>
+    <string name="apply_export_body">You can export any themed icon as a PNG from the app list and
+        use it wherever your launcher or theme engine allows.</string>
+
+    <string name="apply_limits_heading">What Android allows</string>
+    <string name="apply_limits_body">No Android app can replace another app\'s icon by itself. The
+        launcher decides what it draws, so DarkFrame prepares the icons and hands over to whatever
+        your launcher actually supports.</string>
+    <string name="apply_preview_icons">Preview your icons</string>
+
+    <!-- Browser -->
     <string name="browser_title">Your apps</string>
     <string name="browser_search_hint">Search your apps</string>
-    <string name="browser_loading">Reading your installed apps…</string>
+    <string name="browser_loading">Reading your apps…</string>
     <string name="browser_empty">No apps match that search.</string>
     <string name="browser_icon_description">Themed icon for %1$s</string>
     <string name="browser_curated_badge">Curated</string>
-    <string name="browser_open_browser">Browse your apps</string>
-    <string name="browser_collection_label">Collection</string>
-    <string name="browser_pro_suffix">PRO</string>
-
-    <!-- Apply -->
-    <string name="apply_title">%1$s</string>
-    <string name="apply_pin">Add themed shortcut to home screen</string>
-    <string name="apply_export">Export icon as PNG</string>
-    <string name="apply_cancel">Close</string>
-    <string name="apply_requested">Shortcut request sent to your launcher.</string>
-    <string name="apply_export_failed">Could not export this icon.</string>
-    <string name="apply_share_title">Save themed icon</string>
-
-    <!-- Guided setup -->
-    <string name="setup_title">Applying DarkFrame icons</string>
-    <string name="setup_open">How to apply these icons</string>
-    <string name="setup_launcher_heading">Your launcher</string>
-    <string name="setup_honesty_heading">What Android allows</string>
-    <string name="setup_honesty_body">Android has no way for an app to replace another app\'s icon
-        across your whole phone. The launcher decides what it draws. DarkFrame therefore does not
-        claim to restyle your home screen silently — it supports every mechanism Android actually
-        provides, and tells you which one applies to your launcher.</string>
-    <string name="setup_iconpack_heading">Icon pack</string>
-    <string name="setup_iconpack_body">Your launcher reads icon packs. Select DarkFrame in its
-        settings and it will substitute icons itself. DarkFrame cannot make that selection for you —
-        no launcher exposes an API for it.</string>
-    <string name="setup_shortcut_heading">Themed shortcuts</string>
-    <string name="setup_shortcut_body">Your launcher does not read icon packs, so DarkFrame can add
-        a themed shortcut to your home screen for each app. The shortcut opens the app normally. It
-        sits alongside the original entry rather than replacing it, your app drawer is unchanged,
-        and some launchers add their own shadow or badge to pinned shortcuts.</string>
-    <string name="setup_picker_heading">Per-app icon picker</string>
-    <string name="setup_picker_body">Your launcher lets you change one app\'s icon at a time.
-        Export the DarkFrame icon, then pick it in your launcher\'s own edit flow.</string>
-    <string name="setup_export_heading">Export</string>
-    <string name="setup_export_body">DarkFrame has not verified icon theming on your launcher. You
-        can export any themed icon as a PNG and apply it however your launcher or theme engine
-        allows.</string>
-    <string name="setup_export_extra_heading">Export</string>
-    <string name="setup_export_extra_body">Whatever your launcher supports, you can always export a
-        themed icon as a PNG from its entry in the app list, and use it wherever you need it.</string>
-    <string name="setup_visibility_heading">Which apps DarkFrame can see</string>
-    <string name="setup_visibility_body">DarkFrame asks Android only for apps that have a launcher
-        icon, which is the narrowest question that answers what it needs. It does not request
-        broad package access. Apps without a launcher icon, and work-profile or Secure Folder apps,
-        are not visible to DarkFrame — only your active home launcher may list those.</string>
-
-    <!-- Widgets -->
-    <string name="widget_battery_placeholder">—</string>
-    <string name="widget_battery_percent">%1$d%%</string>
-
-    <!-- Collections -->
-    <string name="styles_title">Collections</string>
-    <string name="styles_subtitle">Pick a collection. Every one works with both DarkFrame artwork and
-        icons generated from your installed apps.</string>
-    <string name="styles_free_suffix">FREE</string>
-    <string name="styles_select">Select and browse your apps</string>
-    <string name="styles_selected">Currently selected · browse your apps</string>
-    <string name="search_curated_title">Curated artwork</string>
-    <string name="search_curated_hint">Search DarkFrame artwork</string>
-    <string name="search_curated_note">These are the apps DarkFrame has handmade artwork for. Every
-        other app on your device is themed too, from its own icon.</string>
-
-    <!-- Home -->
-    <string name="home_engine_heading">Dynamic icon engine</string>
-    <string name="home_engine_body">DarkFrame themes every app Android exposes on this device —
-        including apps you install later. Handmade DarkFrame artwork is used where it exists;
-        everything else is generated from the app\'s own icon.</string>
-    <string name="home_rebuild_cache">Rebuild icon cache</string>
-    <string name="home_rebuild_done">Icon cache cleared.</string>
-
     <plurals name="browser_coverage">
         <item quantity="one">%1$d app themed · %2$d with DarkFrame artwork</item>
         <item quantity="other">%1$d apps themed · %2$d with DarkFrame artwork</item>
     </plurals>
+    <string name="browser_app_action_export">Export this icon</string>
+    <string name="browser_app_action_pin">Add themed shortcut</string>
+    <string name="browser_app_action_favorite">Save to favorites</string>
+    <string name="browser_app_action_unfavorite">Remove from favorites</string>
+    <string name="browser_export_failed">Could not export this icon.</string>
+    <string name="browser_share_title">Save themed icon</string>
+    <string name="browser_pin_requested">Shortcut request sent to your launcher.</string>
+    <string name="close">Close</string>
+
+    <!-- Wallpapers -->
+    <string name="wallpapers_title">Wallpapers</string>
+    <string name="wallpaper_preview_description">%1$s wallpaper</string>
+    <string name="wallpaper_apply_home">Home screen</string>
+    <string name="wallpaper_apply_lock">Lock screen</string>
+    <string name="wallpaper_apply_both">Both</string>
+    <string name="wallpaper_applied_home">Home screen wallpaper set.</string>
+    <string name="wallpaper_applied_lock">Lock screen wallpaper set.</string>
+    <string name="wallpaper_applied_both">Wallpaper set on both screens.</string>
+    <string name="wallpaper_failed">Could not set the wallpaper: %1$s</string>
+    <string name="wallpaper_lock_unsupported">This version of Android cannot set the lock screen separately.</string>
+    <string name="wallpaper_favorite">Save</string>
+    <string name="wallpaper_unfavorite">Saved</string>
+
+    <!-- Widgets -->
+    <string name="widgets_title">Widgets</string>
+    <string name="widgets_body">DarkFrame widgets follow the collection you picked. Android does not
+        let an app place a widget for you, so add them the usual way: long-press your home screen,
+        choose Widgets, then DarkFrame.</string>
+    <string name="widget_clock">Clock</string>
+    <string name="widget_clock_sub">Time, in your collection\'s colours</string>
+    <string name="widget_date">Date</string>
+    <string name="widget_date_sub">Day and date</string>
+    <string name="widget_battery">Battery</string>
+    <string name="widget_battery_sub">Charge level</string>
+    <string name="widgets_resizable">All three resize on the home screen.</string>
+    <string name="widget_battery_placeholder">—</string>
+    <string name="widget_battery_percent">%1$d%%</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">Favorites</string>
+    <string name="favorites_empty">Nothing saved yet. Save a look, a wallpaper or an app icon and it
+        appears here.</string>
+    <string name="favorites_section_looks">Looks</string>
+    <string name="favorites_section_wallpapers">Wallpapers</string>
+    <string name="favorites_section_apps">Apps</string>
+
+    <!-- Pro -->
+    <string name="pro_title">DarkFrame Pro</string>
+    <string name="pro_body">A one-time purchase. Unlocks the Frost, Titanium and Glass collections
+        and every Pro wallpaper. No subscription.</string>
+    <string name="pro_buy">Unlock for %1$s</string>
+    <string name="pro_buy_unavailable">Price unavailable</string>
+    <string name="pro_restore">Restore purchase</string>
+    <string name="pro_active">Pro is active on this account.</string>
+    <string name="pro_restored">Purchase restored.</string>
+    <string name="pro_none_found">No previous purchase found on this Google account.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_pro">DarkFrame Pro</string>
+    <string name="settings_pro_sub_free">Not purchased</string>
+    <string name="settings_pro_sub_active">Active</string>
+    <string name="settings_apply_help">How to apply</string>
+    <string name="settings_apply_help_sub">What your launcher supports</string>
+    <string name="settings_rebuild">Rebuild icon cache</string>
+    <string name="settings_rebuild_sub">Re-render every themed icon</string>
+    <string name="settings_rebuild_done">Icon cache cleared.</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_privacy_sub">What DarkFrame reads, and what it does not</string>
+    <string name="settings_privacy_body">DarkFrame reads the list of apps that have a launcher icon,
+        so it can theme them. That happens on your phone and nothing is transmitted — DarkFrame has
+        no network code outside Google Play billing. It does not request broad package access, and
+        it runs no background service.</string>
+    <string name="settings_licenses">Open-source licenses</string>
+    <string name="settings_licenses_sub">Libraries DarkFrame uses</string>
+    <string name="settings_about">About</string>
+    <string name="settings_version">Version %1$s</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Continue</string>
+    <string name="onboarding_done">Start</string>
+    <string name="onboarding_1_title">Pick a look</string>
+    <string name="onboarding_1_body">Six complete looks. Each one themes every app on your phone,
+        with a matching wallpaper and widgets.</string>
+    <string name="onboarding_2_title">Apply it</string>
+    <string name="onboarding_2_body">DarkFrame prepares the icons and hands over to whatever your
+        launcher supports — Theme Park on Samsung, the icon-pack setting elsewhere.</string>
+    <string name="onboarding_3_title">Make it yours</string>
+    <string name="onboarding_3_body">Set the wallpaper, add the widgets, and save the looks you
+        like.</string>
 </resources>

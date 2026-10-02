@@ -86,6 +86,16 @@ class IconSourceLoader(private val context: Context) {
         return null
     }
 
+    /**
+     * Loads a curated drawable directly, with no installed app behind it.
+     *
+     * Used by look previews, which show DarkFrame's own artwork in a collection rather than the
+     * user's apps — so a preview costs no PackageManager work at all.
+     */
+    @WorkerThread
+    fun loadCuratedArtwork(drawableId: Int, targetPx: Int): SourceArtwork? =
+        loadCurated(drawableId, workSizeFor(targetPx))
+
     private fun loadCurated(drawableId: Int, workSize: Int): SourceArtwork? {
         val drawable = runCatching { AppCompatResources.getDrawable(context, drawableId) }
             .getOrNull() ?: return null

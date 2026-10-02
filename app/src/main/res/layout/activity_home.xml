@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/home_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/df_bg"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:id="@+id/home_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/df_screen_margin"
+        android:paddingEnd="@dimen/df_screen_margin"
+        android:paddingBottom="@dimen/df_space_6">
+
+        <!-- Brand -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/df_space_5"
+            android:paddingBottom="@dimen/df_space_5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/app_brand"
+                style="@style/DF.Text.Display"/>
+
+            <TextView
+                android:id="@+id/home_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:background="@drawable/df_pill"
+                android:gravity="center"
+                android:minWidth="88dp"
+                android:paddingStart="@dimen/df_space_4"
+                android:paddingEnd="@dimen/df_space_4"
+                android:text="@string/home_settings"
+                style="@style/DF.Text.Caption"/>
+        </LinearLayout>
+
+        <!-- Featured look: the product, shown rather than described -->
+        <FrameLayout
+            android:id="@+id/home_hero"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/df_hero_height"
+            android:background="@drawable/df_card">
+
+            <ImageView
+                android:id="@+id/home_hero_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/home_hero_description"
+                android:scaleType="centerCrop"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/df_hero_scrim"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:padding="@dimen/df_space_4">
+
+                <TextView
+                    android:id="@+id/home_hero_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home_current_look"
+                    style="@style/DF.Text.Label"/>
+
+                <TextView
+                    android:id="@+id/home_hero_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/df_space_1"
+                    style="@style/DF.Text.Title"/>
+
+                <TextView
+                    android:id="@+id/home_hero_tagline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    style="@style/DF.Text.Body"/>
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- The one action -->
+        <TextView
+            android:id="@+id/home_apply"
+            android:layout_marginTop="@dimen/df_space_4"
+            style="@style/DF.Button.Primary"/>
+
+        <TextView
+            android:id="@+id/home_apply_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_2"
+            android:gravity="center"
+            style="@style/DF.Text.Caption"/>
+
+        <!-- Collections -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_6"
+            android:text="@string/home_collections"
+            style="@style/DF.Text.Title"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_collections"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_3"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:scrollbars="none"/>
+
+        <!-- Everything else, compact -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_6"
+            android:text="@string/home_more"
+            style="@style/DF.Text.Title"/>
+
+        <!-- Span count is derived from the measured width at runtime, so a fold or a tablet gets
+             more columns without a separate layout. -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_tiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_3"
+            android:nestedScrollingEnabled="false"
+            android:scrollbars="none"/>
+
+        <TextView
+            android:id="@+id/home_pro"
+            android:layout_marginTop="@dimen/df_space_4"
+            style="@style/DF.Button.Secondary"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/df_space_5"
+            android:text="@string/home_footer"
+            style="@style/DF.Text.Caption"/>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

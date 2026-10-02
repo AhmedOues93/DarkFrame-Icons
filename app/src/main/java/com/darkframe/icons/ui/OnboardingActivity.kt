@@ -1,24 +1,96 @@
 package com.darkframe.icons.ui
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
-import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.ImageView
+import android.widget.LinearLayout
+import androidx.lifecycle.lifecycleScope
 import com.darkframe.icons.MainActivity
+import com.darkframe.icons.R
+import com.darkframe.icons.engine.DarkFrameEngine
+import com.darkframe.icons.engine.domain.LookCatalog
+import com.darkframe.icons.ui.common.DarkFrameActivity
+import com.darkframe.icons.ui.common.SectionScreen
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class OnboardingActivity:AppCompatActivity(){
-    private val pages=listOf(
-        "Choose your style" to "Icons, wallpapers and widgets designed as one visual system.",
-        "Customize your phone" to "Build a clean AMOLED, Carbon, Graphite, Titanium or Glass setup.",
-        "Create your own look" to "Preview components and apply only what Android allows."
-    )
-    private var page=0
-    override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);render()}
-    private fun render(){
-        val root=LinearLayout(this).apply{orientation=LinearLayout.VERTICAL;setPadding(48,96,48,48);setBackgroundColor(0xFF090B0E.toInt())}
-        root.addView(TextView(this).apply{text=pages[page].first;textSize=32f;setTextColor(0xFFF4F4F4.toInt())})
-        root.addView(TextView(this).apply{text=pages[page].second;textSize=17f;setPadding(0,24,0,48);setTextColor(0xFFB5B8BE.toInt())})
-        root.addView(Button(this).apply{text=if(page==2)"Enter DarkFrame" else "Continue";setOnClickListener{if(page<2){page++;render()}else{getSharedPreferences("darkframe",MODE_PRIVATE).edit().putBoolean("onboarded",true).apply();startActivity(Intent(this@OnboardingActivity,MainActivity::class.java));finish()}}})
-        setContentView(root)
+/**
+ * Three screens, each with a picture.
+ *
+ * The first one shows a real look preview rather than an illustration, because the fastest way to
+ * explain what DarkFrame does is to show it doing it.
+ */
+class OnboardingActivity : DarkFrameActivity() {
+
+    private var page = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        render()
+    }
+
+    private fun render() {
+        val content = PAGES[page]
+        val screen = SectionScreen(this)
+            .setUp(getString(content.title), getString(content.body))
+
+        if (page == 0) screen.custom(previewView())
+
+        screen.primaryButton(
+            if (page == PAGES.lastIndex) getString(R.string.onboarding_done)
+            else getString(R.string.onboarding_next),
+        ) {
+            if (page == PAGES.lastIndex) finishOnboarding() else {
+                page++
+                render()
+            }
+        }
+        if (page < PAGES.lastIndex) {
+            screen.secondaryButton(getString(R.string.onboarding_skip)) { finishOnboarding() }
+        }
+    }
+
+    private fun previewView(): ImageView {
+        val look = LookCatalog.default
+        val engine = DarkFrameEngine.get(applicationContext)
+        val height = resources.getDimensionPixelSize(R.dimen.df_hero_height)
+        val width = resources.displayMetrics.widthPixels -
+            resources.getDimensionPixelSize(R.dimen.df_screen_margin) * 2
+        val view = ImageView(this).apply {
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            setBackgroundResource(R.drawable.df_preview_clip)
+            clipToOutline = true
+            contentDescription = getString(R.string.look_preview_description, look.name)
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height)
+        }
+        val warm: Bitmap? = engine.lookPreviews.peek(look, width, height)
+        if (warm != null) {
+            view.setImageBitmap(warm)
+        } else {
+            lifecycleScope.launch {
+                val bitmap = withContext(engine.renderDispatcher) {
+                    engine.lookPreviews.get(look, width, height)
+                }
+                view.setImageBitmap(bitmap)
+            }
+        }
+        return view
+    }
+
+    private fun finishOnboarding() {
+        getSharedPreferences("darkframe", MODE_PRIVATE).edit().putBoolean("onboarded", true).apply()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
+    private data class Page(val title: Int, val body: Int)
+
+    private companion object {
+        val PAGES = listOf(
+            Page(R.string.onboarding_1_title, R.string.onboarding_1_body),
+            Page(R.string.onboarding_2_title, R.string.onboarding_2_body),
+            Page(R.string.onboarding_3_title, R.string.onboarding_3_body),
+        )
     }
 }

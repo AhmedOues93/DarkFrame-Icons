@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- DarkFrame product surface palette. Distinct from the icon collection palettes in
-     IconStyleCatalog: this is the app's own chrome, those are the rendered artwork. -->
+<!--
+  DarkFrame product surface.
+
+  Separate from the icon collection palettes in IconStyleCatalog: those are the artwork, this is the
+  app's own chrome. Neutrals carry a slight warm bias so they sit with the warm-white glyph colour
+  instead of reading as a cold default grey.
+-->
 <resources>
-    <color name="df_background">#FF07080A</color>
+    <color name="df_bg">#FF07080A</color>
     <color name="df_surface">#FF101216</color>
     <color name="df_surface_raised">#FF171A1F</color>
-    <color name="df_outline">#1FFFFFFF</color>
-    <color name="df_text_primary">#FFF4F4F2</color>
+    <color name="df_surface_pressed">#FF1F2329</color>
+    <color name="df_hairline">#1AF2F1EE</color>
+
+    <color name="df_text_primary">#FFF4F2EE</color>
     <color name="df_text_secondary">#FF9BA1AB</color>
     <color name="df_text_tertiary">#FF6E747E</color>
-    <color name="df_accent">#FFD8DCE3</color>
-    <color name="df_chip_selected">#FF2A2E35</color>
+    <color name="df_text_on_accent">#FF07080A</color>
+
+    <color name="df_accent">#FFE9E4DA</color>
     <color name="df_pro">#FFC9A227</color>
+    <color name="df_pro_dim">#33C9A227</color>
+
+    <color name="df_ripple">#1FF2F1EE</color>
+    <color name="df_scrim">#99000000</color>
 </resources>

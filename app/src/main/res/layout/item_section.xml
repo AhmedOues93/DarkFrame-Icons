@@ -2,24 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="24dp"
-    android:background="@color/df_surface"
+    android:background="@drawable/df_card"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="@dimen/df_space_4">
 
     <TextView
         android:id="@+id/section_heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/df_text_primary"
-        android:textSize="17sp" />
+        style="@style/DF.Text.Subtitle"/>
 
     <TextView
         android:id="@+id/section_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:lineSpacingExtra="3sp"
-        android:textColor="@color/df_text_secondary"
-        android:textSize="14sp" />
+        android:layout_marginTop="@dimen/df_space_2"
+        style="@style/DF.Text.Body"/>
 </LinearLayout>

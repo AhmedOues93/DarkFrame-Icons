@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A card that responds to touch: the ripple is bounded by the same radius as the card, so the
+     press state follows the shape instead of spilling past its corners. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/df_ripple">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFFFF"/>
+            <corners android:radius="@dimen/df_radius_card"/>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/df_card"/>
+</ripple>

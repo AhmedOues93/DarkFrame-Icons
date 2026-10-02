@@ -8,6 +8,8 @@ import com.darkframe.icons.engine.data.IconCache
 import com.darkframe.icons.engine.data.InstalledAppRepository
 import com.darkframe.icons.engine.domain.IconRenderPolicy
 import com.darkframe.icons.engine.render.IconSourceLoader
+import com.darkframe.icons.engine.render.LookPreviewCache
+import com.darkframe.icons.engine.wallpaper.WallpaperApplier
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
@@ -34,6 +36,8 @@ class DarkFrameEngine private constructor(context: Context) {
         cache = cache,
     )
     val apply = IconApplyService(context)
+    val wallpapers = WallpaperApplier(context)
+    val lookPreviews = LookPreviewCache(context)
 
     /**
      * The only dispatcher icon rendering may run on.

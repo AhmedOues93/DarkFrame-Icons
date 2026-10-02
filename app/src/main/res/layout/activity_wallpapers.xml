@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wallpapers_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/df_bg"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/df_screen_margin"
+        android:paddingTop="@dimen/df_space_5"
+        android:paddingEnd="@dimen/df_screen_margin"
+        android:text="@string/wallpapers_title"
+        style="@style/DF.Text.Display"/>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/df_screen_margin"
+        android:paddingTop="@dimen/df_space_4"
+        android:paddingEnd="@dimen/df_screen_margin"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/wallpaper_categories"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true"/>
+    </HorizontalScrollView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/wallpaper_grid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/df_gutter"
+        android:paddingTop="@dimen/df_space_3"
+        android:paddingEnd="@dimen/df_gutter"
+        android:paddingBottom="@dimen/df_space_5"
+        android:scrollbars="vertical"/>
+</LinearLayout>
