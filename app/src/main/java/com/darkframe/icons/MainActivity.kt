@@ -1,7 +1,6 @@
 package com.darkframe.icons
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.*
@@ -9,77 +8,73 @@ import androidx.appcompat.app.AppCompatActivity
 import com.darkframe.icons.billing.Entitlement
 import com.darkframe.icons.billing.ProEntitlementStore
 import com.darkframe.icons.data.DarkFrameCatalog
-import com.darkframe.icons.engine.DarkFrameEngine
-import com.darkframe.icons.ui.FavoritesActivity
-import com.darkframe.icons.ui.OnboardingActivity
 import com.darkframe.icons.ui.ProActivity
-import com.darkframe.icons.ui.SearchActivity
 import com.darkframe.icons.ui.StylesActivity
 import com.darkframe.icons.ui.browser.IconBrowserActivity
+import com.darkframe.icons.ui.setup.GuidedSetupActivity
 import com.darkframe.icons.wallpaper.WallpaperActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!getSharedPreferences("darkframe", MODE_PRIVATE).getBoolean("onboarded", false)) {
-            startActivity(Intent(this, OnboardingActivity::class.java)); finish(); return
+            startActivity(Intent(this, com.darkframe.icons.ui.OnboardingActivity::class.java)); finish(); return
         }
+        render()
+    }
+
+    override fun onResume() { super.onResume(); if (::root.isInitialized) render() }
+
+    private lateinit var root: LinearLayout
+
+    private fun render() {
         val scroll = ScrollView(this)
-        val root = LinearLayout(this).apply {
+        root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(40,56,40,56)
-            setBackgroundColor(0xFF090B0E.toInt())
+            setPadding(dp(24), dp(28), dp(24), dp(40))
+            setBackgroundColor(0xFF07080A.toInt())
         }
-        root.addView(TextView(this).apply{text="DARKFRAME";textSize=30f;setTextColor(0xFFF4F4F4.toInt())})
-        root.addView(TextView(this).apply{text="One-tap dark customization";textSize=15f;setTextColor(0xFF9EA3AD.toInt());setPadding(0,8,0,28)})
+        fun title(text:String,size:Float=28f,secondary:Boolean=false)=TextView(this).apply{
+            this.text=text; textSize=size; setTextColor(if(secondary)0xFF9BA1AB.toInt() else 0xFFF4F4F2.toInt())
+        }
+        fun action(text:String, click:()->Unit)=TextView(this).apply{
+            this.text=text; textSize=16f; gravity=Gravity.CENTER_VERTICAL
+            setTextColor(0xFFF4F4F2.toInt()); setBackgroundColor(0xFF171A1F.toInt())
+            setPadding(dp(18),0,dp(18),0); minHeight=dp(58)
+            setOnClickListener{click()}
+            layoutParams=LinearLayout.LayoutParams(-1,dp(58)).apply{topMargin=dp(10)}
+        }
 
-        val isPro = ProEntitlementStore(this).current() == Entitlement.PRO
-        root.addView(Button(this).apply {
-            text = if (isPro) "DarkFrame Pro active" else "Unlock DarkFrame Pro"
-            isEnabled = !isPro
-            setOnClickListener { startActivity(Intent(this@MainActivity, ProActivity::class.java)) }
+        root.addView(title("DARKFRAME",30f))
+        root.addView(title("Make One UI yours.",15f,true).apply{setPadding(0,dp(4),0,dp(24))})
+
+        val samsung = packageManager.resolveActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME),0)
+            ?.activityInfo?.packageName?.contains("sec.android.app.launcher")==true
+        root.addView(title(if(samsung)"Samsung One UI detected" else "Icon pack ready",13f,true))
+
+        root.addView(action("CHOOSE YOUR LOOK"){ startActivity(Intent(this, StylesActivity::class.java)) })
+        root.addView(action(if(samsung)"APPLY ON SAMSUNG" else "APPLY ICON PACK"){
+            startActivity(Intent(this, GuidedSetupActivity::class.java))
         })
+        root.addView(action("WALLPAPERS"){ startActivity(Intent(this, WallpaperActivity::class.java)) })
+        root.addView(action("PREVIEW ALL APPS"){ startActivity(Intent(this, IconBrowserActivity::class.java)) })
 
-        root.addView(TextView(this).apply{text=getString(R.string.home_engine_heading);textSize=22f;setTextColor(0xFFF4F4F4.toInt());setPadding(0,28,0,0)})
-        root.addView(TextView(this).apply{text=getString(R.string.home_engine_body);textSize=14f;setTextColor(0xFF9EA3AD.toInt());setPadding(0,8,0,16)})
-        root.addView(Button(this).apply{text=getString(R.string.browser_open_browser);setOnClickListener{startActivity(Intent(this@MainActivity,IconBrowserActivity::class.java))}})
-        root.addView(Button(this).apply{text=getString(R.string.styles_title);setOnClickListener{startActivity(Intent(this@MainActivity,StylesActivity::class.java))}})
-        root.addView(Button(this).apply{text="Wallpapers";setOnClickListener{startActivity(Intent(this@MainActivity,WallpaperActivity::class.java))}})
-        root.addView(Button(this).apply{text=getString(R.string.search_curated_title);setOnClickListener{startActivity(Intent(this@MainActivity,SearchActivity::class.java))}})
-        root.addView(Button(this).apply{text="Favorites";setOnClickListener{startActivity(Intent(this@MainActivity,FavoritesActivity::class.java))}})
-        root.addView(Button(this).apply{
-            text=getString(R.string.home_rebuild_cache)
-            setOnClickListener{
-                Thread{DarkFrameEngine.get(applicationContext).resolver.invalidateAll()}.start()
-                Toast.makeText(this@MainActivity,R.string.home_rebuild_done,Toast.LENGTH_SHORT).show()
-            }
-        })
-
-        root.addView(TextView(this).apply{text="Complete Looks";textSize=22f;setTextColor(0xFFF4F4F4.toInt());setPadding(0,32,0,12)})
+        root.addView(title("Complete looks",22f).apply{setPadding(0,dp(32),0,dp(8))})
         DarkFrameCatalog.styles.forEach { style ->
-            root.addView(TextView(this).apply {
-                text = style.title + (if(style.tier.name=="PRO") "  PRO" else "")
-                textSize=18f;setTextColor(0xFFE7E7E7.toInt());setPadding(4,18,4,18)
-                setOnClickListener { startActivity(Intent(this@MainActivity, StylesActivity::class.java)) }
+            root.addView(action(style.title + if(style.tier.name=="PRO") "   PRO" else ""){
+                if(style.tier.name=="PRO" && ProEntitlementStore(this).current()!=Entitlement.PRO)
+                    startActivity(Intent(this, ProActivity::class.java))
+                else startActivity(Intent(this, StylesActivity::class.java))
             })
         }
 
-        root.addView(TextView(this).apply{text="Curated DarkFrame artwork";textSize=22f;setTextColor(0xFFF4F4F4.toInt());setPadding(0,34,0,14)})
-        val grid=GridLayout(this).apply{columnCount=if(resources.configuration.smallestScreenWidthDp>=600)6 else 4}
-        DarkFrameCatalog.icons.forEach{item->
-            val box=LinearLayout(this).apply{orientation=LinearLayout.VERTICAL;gravity=Gravity.CENTER;setPadding(6,10,6,16)}
-            box.addView(ImageView(this).apply{setImageResource(item.drawable);layoutParams=LinearLayout.LayoutParams(116,116)})
-            box.addView(TextView(this).apply{text=item.label;textSize=10f;gravity=Gravity.CENTER;setTextColor(0xFFD8D8D8.toInt())})
-            grid.addView(box,GridLayout.LayoutParams().apply{width=0;columnSpec=GridLayout.spec(GridLayout.UNDEFINED,1f)})
-        }
-        root.addView(grid)
-        root.addView(Button(this).apply{text="Request missing icon";setOnClickListener{startActivity(Intent(Intent.ACTION_SENDTO,Uri.parse("mailto:darkframe.icons@gmail.com?subject=DarkFrame%20icon%20request")))}})
-        scroll.addView(root);setContentView(scroll)
+        if(ProEntitlementStore(this).current()!=Entitlement.PRO)
+            root.addView(action("UNLOCK DARKFRAME PRO"){startActivity(Intent(this,ProActivity::class.java))})
+
+        root.addView(title("DarkFrame changes appearance only. It never runs continuously in the background.",12f,true)
+            .apply{setPadding(0,dp(28),0,0)})
+        scroll.addView(root); setContentView(scroll)
     }
 
-    override fun onResume() {
-        super.onResume()
-        // Recreate so restored Play entitlement is reflected immediately after returning from Pro.
-        if (window.decorView.isAttachedToWindow && intent.getBooleanExtra("refresh", false)) recreate()
-    }
+    private fun dp(v:Int)=(v*resources.displayMetrics.density).toInt()
 }
