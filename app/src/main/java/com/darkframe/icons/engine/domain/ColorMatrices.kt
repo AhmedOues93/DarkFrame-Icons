@@ -33,23 +33,40 @@ object ColorMatrices {
     }
 
     /**
-     * Collapses colour to luma and maps it onto a single tint, preserving alpha.
+     * Maps source luma across the full span between two colours, preserving alpha.
      *
-     * Opaque white source pixels land exactly on [tint]; fully black pixels land on black. That
-     * keeps interior detail in a monochrome glyph instead of flattening it to a silhouette, which
-     * is what makes Noir and Frost read as designed rather than stamped.
+     * Source black lands on [low], source white lands on [high], everything between is a linear
+     * ramp. This is the general form of DarkFrame's monochrome treatment, and [low] is always the
+     * collection's own container colour: the darkest part of a source should *recede into the
+     * surface it sits on*, and the brightest part should become the collection's ink.
+     *
+     * The earlier version ramped from black instead of from the container, which is the same thing
+     * on a near-black container and badly wrong on a light one. On Frost — graphite ink on an
+     * off-white container — it squeezed the whole black-to-white range of a source into a narrow
+     * dark band, so a colourful app icon lost its internal structure: a mid-green field and a
+     * near-white mark came out almost the same value. Ramping from the container fixes that without
+     * touching the dark collections, where `low` is near-black either way.
      */
-    fun tintToLuma(tint: Long): FloatArray {
-        val tr = ((tint shr 16) and 0xFF) / 255f
-        val tg = ((tint shr 8) and 0xFF) / 255f
-        val tb = (tint and 0xFF) / 255f
+    fun lumaRamp(low: Long, high: Long): FloatArray {
+        val lr = ((low shr 16) and 0xFF) / 255f
+        val lg = ((low shr 8) and 0xFF) / 255f
+        val lb = (low and 0xFF) / 255f
+        val hr = ((high shr 16) and 0xFF) / 255f
+        val hg = ((high shr 8) and 0xFF) / 255f
+        val hb = (high and 0xFF) / 255f
+        val dr = hr - lr
+        val dg = hg - lg
+        val db = hb - lb
         return floatArrayOf(
-            LUMA_R * tr, LUMA_G * tr, LUMA_B * tr, 0f, 0f,
-            LUMA_R * tg, LUMA_G * tg, LUMA_B * tg, 0f, 0f,
-            LUMA_R * tb, LUMA_G * tb, LUMA_B * tb, 0f, 0f,
+            LUMA_R * dr, LUMA_G * dr, LUMA_B * dr, 0f, lr * 255f,
+            LUMA_R * dg, LUMA_G * dg, LUMA_B * dg, 0f, lg * 255f,
+            LUMA_R * db, LUMA_G * db, LUMA_B * db, 0f, lb * 255f,
             0f, 0f, 0f, 1f, 0f,
         )
     }
+
+    /** A [lumaRamp] from black, kept for the dark collections' historical behaviour and its tests. */
+    fun tintToLuma(tint: Long): FloatArray = lumaRamp(0xFF000000L, tint)
 
     /**
      * Flat tint that discards source luma entirely, keeping only alpha. Used for adaptive

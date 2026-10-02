@@ -177,7 +177,10 @@ class IconRenderer {
                 // comes out as a dim glyph.
                 ColorMatrices.flatTint(style.glyphTint)
             style.glyphMode == GlyphMode.TINT ->
-                ColorMatrices.tintToLuma(style.glyphTint)
+                // Ramped from the container, not from black: the receding end of a monochrome
+                // treatment is whatever surface the glyph sits on. On a light collection like Frost
+                // ramping from black instead crushes a colourful source into one dark value.
+                ColorMatrices.lumaRamp(opaque(style.containerColor), style.glyphTint)
             abs(style.glyphSaturation - 1f) > 0.001f ->
                 ColorMatrices.saturation(style.glyphSaturation)
             else -> return null
@@ -209,6 +212,9 @@ class IconRenderer {
                 DERIVED_LIGHT_GLYPH
             }
     }
+
+    /** Container colours may be translucent (Glass); a ramp endpoint must not be. */
+    private fun opaque(color: Long): Long = color or 0xFF000000L
 
     private fun drawKeyline(canvas: Canvas, style: IconStyle, edge: Float, radius: Float) {
         if (style.keylineWidthRatio <= 0f) return

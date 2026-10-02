@@ -35,8 +35,33 @@ class IconCache(
 
     private val root = File(context.cacheDir, "df_icons")
 
+    /**
+     * Which cache keys belong to which package, so one app changing does not cost every other app's
+     * cached icons.
+     *
+     * Kept in step with the LRU through [LruCache.entryRemoved], which fires for both eviction and
+     * explicit removal, so the index cannot outlive the entries it describes.
+     */
+    private val keysByPackage = HashMap<String, MutableSet<String>>()
+
     private val memory = object : LruCache<String, Bitmap>(memoryBudgetBytes) {
         override fun sizeOf(key: String, value: Bitmap): Int = value.byteCount
+
+        override fun entryRemoved(
+            evicted: Boolean,
+            key: String,
+            oldValue: Bitmap,
+            newValue: Bitmap?,
+        ) {
+            if (newValue != null) return
+            synchronized(keysByPackage) {
+                val iterator = keysByPackage.entries.iterator()
+                while (iterator.hasNext()) {
+                    val entry = iterator.next()
+                    if (entry.value.remove(key) && entry.value.isEmpty()) iterator.remove()
+                }
+            }
+        }
     }
 
     /** Guards disk layout mutations. Reads and writes of distinct files do not contend. */
@@ -57,12 +82,17 @@ class IconCache(
             return null
         }
         memory.put(key, decoded)
+        rememberKey(packageName, key)
         return decoded
     }
 
     @WorkerThread
     fun put(key: String, packageName: String, bitmap: Bitmap) {
+        // Memory first, index second. LruCache.entryRemoved runs under the LRU's own lock and takes
+        // the index lock; taking them in the other order here would be a lock inversion, and with
+        // two render threads that is a deadlock rather than a theoretical one.
         memory.put(key, bitmap)
+        rememberKey(packageName, key)
         val file = fileFor(key, packageName)
         runCatching {
             synchronized(diskLock) { file.parentFile?.mkdirs() }
@@ -78,21 +108,28 @@ class IconCache(
         }
     }
 
-    /** Called when a package is removed, replaced or disabled. */
+    /**
+     * Called when a package is removed, replaced or disabled.
+     *
+     * Evicts only that package's entries. This used to call `evictAll`, which meant a single app
+     * updating in the background threw away every rendered icon on the device — and the next time
+     * the browser drew, it re-rendered the whole visible grid from scratch. With Play updating apps
+     * in batches that turned into a sustained render loop, and it is one of the reasons the device
+     * ran warm.
+     */
     @WorkerThread
     fun invalidatePackage(packageName: String) {
         val shard = IconCacheKey.packageShard(packageName)
         synchronized(diskLock) {
             runCatching { File(root, shard).deleteRecursively() }
         }
-        // The memory LRU is not keyed by package, and walking it to evict one app's entries is
-        // not worth it: those entries are already unreachable by key after a reinstall or update,
-        // and the LRU evicts them in due course.
-        memory.evictAll()
+        val keys = synchronized(keysByPackage) { keysByPackage.remove(packageName)?.toList() }
+        keys?.forEach { memory.remove(it) }
     }
 
     @WorkerThread
     fun clear() {
+        synchronized(keysByPackage) { keysByPackage.clear() }
         memory.evictAll()
         synchronized(diskLock) {
             runCatching { root.deleteRecursively() }
@@ -125,6 +162,13 @@ class IconCache(
                     if (file.delete()) total -= size
                 }
             }
+        }
+    }
+
+    /** Index maintenance. Always called with no other cache lock held — see [put]. */
+    private fun rememberKey(packageName: String, key: String) {
+        synchronized(keysByPackage) {
+            keysByPackage.getOrPut(packageName) { HashSet() }.add(key)
         }
     }
 
