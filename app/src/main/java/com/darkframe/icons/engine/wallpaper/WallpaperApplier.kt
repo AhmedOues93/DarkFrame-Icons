@@ -24,7 +24,13 @@ sealed interface WallpaperOutcome {
  */
 class WallpaperApplier(private val context: Context) {
 
-    private val renderer = WallpaperRenderer()
+    /**
+     * One renderer per thread.
+     *
+     * [WallpaperRenderer] reuses its Paint, Path and RectF, so a single shared instance would be
+     * corrupted by the engine's two render threads drawing thumbnails at the same time.
+     */
+    private val renderer = ThreadLocal.withInitial { WallpaperRenderer() }
 
     /**
      * The size a wallpaper should be drawn at.
@@ -46,7 +52,7 @@ class WallpaperApplier(private val context: Context) {
     fun apply(spec: WallpaperSpec, target: WallpaperTarget): WallpaperOutcome {
         val size = desiredSize()
         return runCatching {
-            val bitmap = renderer.render(spec, size.x, size.y)
+            val bitmap = renderer.get()!!.render(spec, size.x, size.y)
             val flags = when (target) {
                 WallpaperTarget.HOME -> WallpaperManager.FLAG_SYSTEM
                 WallpaperTarget.LOCK -> WallpaperManager.FLAG_LOCK
@@ -63,7 +69,7 @@ class WallpaperApplier(private val context: Context) {
     /** Preview bitmap at thumbnail size. Cheap enough to render per visible cell. */
     @WorkerThread
     fun preview(spec: WallpaperSpec, widthPx: Int, heightPx: Int) =
-        renderer.render(spec, widthPx, heightPx)
+        renderer.get()!!.render(spec, widthPx, heightPx)
 
     /**
      * True when the lock screen can be set independently.

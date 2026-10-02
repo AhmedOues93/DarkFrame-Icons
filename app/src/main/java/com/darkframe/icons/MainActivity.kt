@@ -122,7 +122,10 @@ class MainActivity : DarkFrameActivity(), LookPreviewLoader {
     private fun bindHero(look: CompleteLook) {
         heroName.text = look.name
         heroTagline.text = look.tagline
-        val width = heroImage.width.takeIf { it > 0 } ?: resources.displayMetrics.widthPixels
+        // Derived from the window rather than from the view: a measured width is 0 on the first
+        // pass and real on the second, which would key two separate renders of the same preview.
+        val width = resources.displayMetrics.widthPixels -
+            resources.getDimensionPixelSize(R.dimen.df_screen_margin) * 2
         val height = resources.getDimensionPixelSize(R.dimen.df_hero_height)
         val warm = peek(look, width, height)
         if (warm != null) {

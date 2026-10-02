@@ -68,4 +68,12 @@ jobs:
           print(f"lint: {len(issues)} issue(s) across {len(counts)} check(s)")
           for label, count in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])):
               print(f"  x{count:<4} {label}")
+          # Errors fail the build, so print each one in full rather than making the next run guess.
+          errors = [i for i in issues if i.get("severity") == "Error"]
+          for issue in errors:
+              location = issue.find("location")
+              where = location.get("file", "?") if location is not None else "?"
+              line = location.get("line", "?") if location is not None else "?"
+              print(f"\nERROR {issue.get('id')} at {os.path.basename(where)}:{line}")
+              print(f"  {issue.get('message')}")
           PY

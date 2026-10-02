@@ -18,6 +18,16 @@ class LookPreviewCache(context: Context) {
 
     private val renderer = LookPreviewRenderer(context)
 
+    /**
+     * Preview rendering is serialised.
+     *
+     * [LookPreviewRenderer] reuses its Paint and geometry objects and is therefore not thread-safe,
+     * and the engine's render pool has two threads. Serialising also means the home screen's six
+     * cards cannot start the same preview twice: the second caller waits briefly and then finds the
+     * finished bitmap in the cache. Previews are few and large, so this costs nothing.
+     */
+    private val renderLock = Any()
+
     private val cache = object : LruCache<String, Bitmap>(BUDGET_BYTES) {
         override fun sizeOf(key: String, value: Bitmap): Int = value.byteCount
     }
@@ -33,9 +43,13 @@ class LookPreviewCache(context: Context) {
     fun get(look: CompleteLook, widthPx: Int, heightPx: Int): Bitmap {
         val key = key(look, widthPx, heightPx)
         cache.get(key)?.let { return it }
-        val rendered = renderer.render(look, widthPx, heightPx)
-        cache.put(key, rendered)
-        return rendered
+        synchronized(renderLock) {
+            // Re-checked inside the lock: whoever we waited for has very likely just produced it.
+            cache.get(key)?.let { return it }
+            val rendered = renderer.render(look, widthPx, heightPx)
+            cache.put(key, rendered)
+            return rendered
+        }
     }
 
     fun clear() = cache.evictAll()
