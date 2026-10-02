@@ -30,8 +30,12 @@ import kotlinx.coroutines.withContext
  * current search, and keeping the list in step with apps appearing and disappearing while the user
  * is looking at it.
  */
-class IconBrowserViewModel(
+class IconBrowserViewModel @JvmOverloads constructor(
     application: Application,
+    // @JvmOverloads is load-bearing, not decoration: the default ViewModel factory finds a
+    // constructor by reflection, and for an AndroidViewModel it looks for one taking exactly
+    // (Application). Kotlin default arguments alone do not emit that overload, so without this the
+    // screen fails at runtime with "Cannot create an instance of IconBrowserViewModel".
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val renderDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : AndroidViewModel(application), ThemedIconLoader {
@@ -116,20 +120,16 @@ class IconBrowserViewModel(
     /**
      * Keeps the visible list truthful while the user is on the screen.
      *
-     * An install or uninstall changes the catalog, so it is reloaded. An update does not change
-     * *which* apps exist, so the list is left alone and only the superseded cache entries are
-     * reclaimed — the new icon is picked up automatically, because the package's change stamp is
-     * part of the cache key.
+     * Every change reloads the catalog, including an update that leaves the set of apps identical.
+     * That is not redundant: the cache key is built from the [AppIdentity] the catalog is holding,
+     * so an in-memory identity carrying the *old* change stamp would keep producing the old key and
+     * the old icon. Re-reading the catalog is what picks up the new stamp, and the cache miss
+     * follows from that.
      */
     private fun onPackageChange(change: PackageChange) {
         viewModelScope.launch {
             withContext(ioDispatcher) { engine.resolver.invalidate(change.packageName) }
-            when (change) {
-                is PackageChange.Installed,
-                is PackageChange.Removed,
-                is PackageChange.Changed -> refresh()
-                is PackageChange.Updated -> refresh()
-            }
+            refresh()
         }
     }
 

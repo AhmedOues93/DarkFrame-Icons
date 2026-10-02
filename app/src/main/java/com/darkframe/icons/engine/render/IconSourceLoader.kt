@@ -13,6 +13,8 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.darkframe.icons.engine.domain.AppIdentity
 import com.darkframe.icons.engine.domain.ContentBounds
 import com.darkframe.icons.engine.domain.IconNormalizer
+import com.darkframe.icons.engine.domain.IconSourceKind
+import com.darkframe.icons.engine.domain.IconSourcePlan
 import com.darkframe.icons.engine.domain.IconStyle
 import com.darkframe.icons.engine.domain.SourceClassifier
 import com.darkframe.icons.engine.domain.SourceShape
@@ -55,14 +57,24 @@ class IconSourceLoader(private val context: Context) {
      */
     private val workSize = 288
 
+    /**
+     * Walks [IconSourcePlan]'s preference order, returning the first candidate that yields usable
+     * artwork. Returns null only for [IconSourceKind.MONOGRAM], which the renderer draws itself.
+     */
     @WorkerThread
     fun load(identity: AppIdentity, style: IconStyle, curatedDrawableId: Int?): SourceArtwork? {
-        if (curatedDrawableId != null) {
-            loadCurated(curatedDrawableId)?.let { return it }
-            // Fall through: a curated entry pointing at unusable artwork must not cost the user
-            // their icon, it must just lose the override.
+        val order = IconSourcePlan.preferenceOrder(hasCuratedOverride = curatedDrawableId != null)
+        for (kind in order) {
+            val artwork = when (kind) {
+                // A curated row naming artwork that is not in the APK must cost the override, not
+                // the user's icon, so this falls through to INSTALLED rather than failing.
+                IconSourceKind.CURATED -> curatedDrawableId?.let { loadCurated(it) }
+                IconSourceKind.INSTALLED -> loadInstalled(identity, style)
+                IconSourceKind.MONOGRAM -> return null
+            }
+            if (artwork != null) return artwork
         }
-        return loadInstalled(identity, style)
+        return null
     }
 
     private fun loadCurated(drawableId: Int): SourceArtwork? {

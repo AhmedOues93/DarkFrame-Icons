@@ -107,12 +107,18 @@ size, curated-or-not, the component, **and the installed package's `lastUpdateTi
 
 | Event | How it is handled | Needs a signal? |
 | --- | --- | --- |
-| App updated | New `lastUpdateTime` → new key → cache miss → re-render | No |
+| App updated | New `lastUpdateTime` → new key → cache miss → re-render | Only to re-read the catalog (see below) |
 | Renderer or palette changed | Bump `IconStyle.RENDER_VERSION` | No |
 | Different size or collection requested | Part of the key | No |
 | App uninstalled | `invalidatePackage()` deletes the package's shard directory | Yes, housekeeping only |
 | User asks to rebuild | `invalidateAll()` | — |
 | Disk budget exceeded | `trimToBudget()` evicts oldest files | — |
+
+The one thing a signal *is* needed for is re-reading the catalog. The key is derived from the
+`AppIdentity` held in memory, so an identity still carrying the pre-update change stamp would keep
+producing the pre-update key — and therefore the pre-update icon. `AppCatalogWatcher` reloads the
+catalog on any package change; the cache miss then follows from the fresh stamp. Nothing else about a
+stale cache entry can be served by accident.
 
 `StableHash` is FNV-1a rather than `String.hashCode()` on purpose: the hashes name files on disk and
 must still match after an app upgrade, which `hashCode()` does not contractually guarantee, and 32

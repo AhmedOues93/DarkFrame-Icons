@@ -25,6 +25,27 @@ jobs:
         run: gradle assembleDebug
       - name: Lint
         run: gradle lintDebug
+      - name: Lint summary
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import os, xml.etree.ElementTree as ET
+          from collections import Counter
+          path = "app/build/reports/lint-results-debug.xml"
+          if not os.path.exists(path):
+              print("No lint report produced.")
+              raise SystemExit(0)
+          issues = list(ET.parse(path).getroot().iter("issue"))
+          counts = Counter((i.get("severity"), i.get("id")) for i in issues)
+          print(f"{len(issues)} lint issue(s)")
+          for (severity, issue_id), count in sorted(counts.items(), key=lambda kv: -kv[1]):
+              print(f"  {severity:8} {issue_id:34} x{count}")
+              example = next(i for i in issues if i.get("id") == issue_id)
+              location = example.find("location")
+              where = location.get("file", "?") if location is not None else "?"
+              print(f"           e.g. {os.path.relpath(where, os.getcwd()) if where.startswith('/') else where}")
+              print(f"           {example.get('message')}")
+          PY
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v4
