@@ -23,8 +23,11 @@ class WidgetsActivity : DarkFrameActivity() {
             .setUp(getString(R.string.widgets_title), look.name)
             .section(getString(R.string.widgets_title), getString(R.string.widgets_body))
             .row(getString(R.string.widget_clock), getString(R.string.widget_clock_sub))
+            .row(getString(R.string.widget_analog), getString(R.string.widget_analog_sub))
             .row(getString(R.string.widget_date), getString(R.string.widget_date_sub))
+            .row(getString(R.string.widget_calendar), getString(R.string.widget_calendar_sub))
             .row(getString(R.string.widget_battery), getString(R.string.widget_battery_sub))
+            .row(getString(R.string.widget_minimal), getString(R.string.widget_minimal_sub))
             .caption(getString(R.string.widgets_resizable))
     }
 }

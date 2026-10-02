@@ -123,6 +123,10 @@
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density"
             android:exported="false" />
 
+        <receiver android:name=".widget.DarkFrameAnalogClockWidget" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/analog_widget_info" /></receiver>
+        <receiver android:name=".widget.DarkFrameCalendarWidget" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/calendar_widget_info" /></receiver>
+        <receiver android:name=".widget.DarkFrameMinimalInfoWidget" android:exported="true"><intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter><meta-data android:name="android.appwidget.provider" android:resource="@xml/minimal_info_widget_info" /></receiver>
+
         <receiver android:name=".widget.DarkFrameDateWidget" android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

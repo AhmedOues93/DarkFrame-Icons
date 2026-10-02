@@ -26,7 +26,7 @@
         <item quantity="other">%1$d wallpapers in %2$d categories</item>
     </plurals>
     <string name="home_tile_widgets">Widgets</string>
-    <string name="home_tile_widgets_sub">Clock, date and battery</string>
+    <string name="home_tile_widgets_sub">Six lightweight, resizable widgets</string>
     <string name="home_tile_apps">Your apps</string>
     <string name="home_tile_apps_sub">Preview every themed icon</string>
     <string name="home_tile_favorites">Favorites</string>
@@ -129,12 +129,21 @@
     <string name="widget_date_sub">Day and date</string>
     <string name="widget_battery">Battery</string>
     <string name="widget_battery_sub">Charge level</string>
-    <string name="widgets_resizable">All three resize on the home screen.</string>
+    <string name="widget_analog">Analog Clock</string>
+    <string name="widget_analog_sub">Classic face, zero polling</string>
+    <string name="widget_calendar">Calendar</string>
+    <string name="widget_calendar_sub">Large date at a glance</string>
+    <string name="widget_minimal">Minimal Info</string>
+    <string name="widget_minimal_sub">Time and date in one compact row</string>
+    <string name="widgets_resizable">All six resize on the home screen.</string>
     <string name="widget_battery_placeholder">—</string>
     <string name="widget_battery_percent">%1$d%%</string>
     <string name="widget_description_clock">Time and date, in your DarkFrame collection.</string>
     <string name="widget_description_date">Day and date, in your DarkFrame collection.</string>
     <string name="widget_description_battery">Charge level, in your DarkFrame collection.</string>
+    <string name="widget_description_analog">Analog clock in your DarkFrame collection.</string>
+    <string name="widget_description_calendar">Calendar date in your DarkFrame collection.</string>
+    <string name="widget_description_minimal">Compact time and date in your DarkFrame collection.</string>
 
     <!-- Favorites -->
     <string name="favorites_title">Favorites</string>
