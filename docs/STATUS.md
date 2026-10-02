@@ -32,8 +32,18 @@
 - Pinned themed shortcuts only where nothing better exists, and only per app
 - 512px PNG export through a scoped `FileProvider`
 - Per-launcher capability table, narrowed by a runtime probe and never widened
-- Guided setup driven by that capability, so it cannot describe an unavailable mechanism
+- The Apply screen is driven by that capability, so it cannot describe an unavailable
+  mechanism, and its button is disabled rather than firing an intent nothing can serve
 - No claim anywhere that DarkFrame can replace icons system-wide
+
+### Pro
+- Google Play Billing v7 against `darkframe_pro_lifetime`, a one-time purchase:
+  real `ProductDetails` for the price, acknowledgement, restore, and a persistent
+  entitlement read by every gated surface
+- Entitlement is granted only for a `PURCHASED` Play purchase — there is no debug
+  or fake Pro path anywhere in the code
+- Pro collections can be browsed freely and previewed; what the gate withholds is
+  applying a look and exporting or pinning its icons
 
 ### Package visibility
 - Narrow `<queries>` declaration: `CATEGORY_LAUNCHER` and `CATEGORY_HOME` only
@@ -49,10 +59,9 @@
 - Curated artwork re-authored as glyphs on transparency so one drawing serves all
   six collections; the original `df_*` tiles stay as icon-pack artwork
 - Icon request entry point
-- CI: unit tests, debug assemble, lint, with reports uploaded on failure
-- 76 unit tests covering the engine's domain layer
-
-## RED — remaining
+- CI: unit tests, debug assemble, lint and release bundle, with reports uploaded on failure
+- 121 unit tests covering the engine's domain layer, the catalogs, the capability
+  table and the render-scheduling policy
 
 ### Performance
 - Preview renders capped and bucketed, so browsing never produces export-resolution
@@ -78,6 +87,8 @@ generated icons. Fixed: `ColorMatrices.lumaRamp` now ramps from the collection's
 black source lands on the surface and a bright one on the ink. Tests pin the separation, pin that the
 ink end did not move, and pin that the dark collections are unaffected.
 
+## RED — remaining
+
 ### Needs a physical device
 - Visual QA of all six collections across real installed apps (the renderer is
   structurally tested; its *output* has not been looked at on a screen yet)
@@ -89,13 +100,19 @@ ink end did not move, and pin that the dark collections are unaffected.
 
 ### Product
 - Expand curated artwork well beyond the current 12 glyphs
-- Google Play Billing: `EntitlementProvider` still returns FREE by design; no
-  Pro content is gated by a fake purchase
 - Instrumented tests for the render layer (`IconRenderer`, `IconSourceLoader`,
   `ContentBoundsScanner` need a real `Canvas`)
 - Icon request form to replace the mailto intent
 
+### Needs Google Play Console
+- Billing end to end: `darkframe_pro_lifetime` has to exist as a one-time product
+  and be bought through Internal Testing. The client is finished — real
+  `ProductDetails`, acknowledgement, restore, persistent entitlement, and no debug
+  purchase path at all — but a sideloaded debug APK cannot exercise it
+- Store listing: screenshots, feature graphic, Data Safety form (answers are in
+  `docs/PRIVACY.md`), hosted privacy policy URL
+
 ### Release
-- Store screenshots, feature graphic, privacy policy
-- Release signing and AAB
+- Upload key generated outside the repository and the AAB signed with it; the build
+  reads it from properties and `docs/RELEASE_SIGNING.md` has the steps
 - Galaxy Themes submission is a separate Samsung channel; decide whether to pursue
