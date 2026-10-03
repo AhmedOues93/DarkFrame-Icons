@@ -15,9 +15,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.darkframe.icons.R
-import com.darkframe.icons.billing.Entitlement
-import com.darkframe.icons.billing.ProEntitlementStore
-import com.darkframe.icons.model.ContentTier
 import com.darkframe.icons.engine.DarkFrameEngine
 import com.darkframe.icons.engine.apply.ApplyCapability
 import com.darkframe.icons.engine.apply.ApplyOutcome
@@ -28,7 +25,6 @@ import com.darkframe.icons.engine.domain.IconStyleCatalog
 import com.darkframe.icons.ui.common.DarkFrameActivity
 import com.darkframe.icons.ui.common.applySystemBarPadding
 import com.darkframe.icons.ui.common.spanFromWidth
-import com.darkframe.icons.ui.ProActivity
 import com.darkframe.icons.ui.setup.ApplyActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -108,11 +104,7 @@ class IconBrowserActivity : DarkFrameActivity() {
         IconStyleCatalog.all.forEach { style ->
             val chip = Chip(this).apply {
                 id = View.generateViewId()
-                text = if (style.tier == ContentTier.PRO) {
-                    "${style.displayName} · ${getString(R.string.tier_pro)}"
-                } else {
-                    style.displayName
-                }
+                text = style.displayName
                 isCheckable = true
                 tag = style.id
             }
@@ -205,9 +197,9 @@ class IconBrowserActivity : DarkFrameActivity() {
             .setItems(actions.toTypedArray()) { _, which ->
                 when (actions[which]) {
                     getString(R.string.browser_app_action_export) ->
-                        if (requireTier()) exportIcon(identity)
+                        exportIcon(identity)
                     getString(R.string.browser_app_action_pin) ->
-                        if (requireTier()) pinShortcut(identity)
+                        pinShortcut(identity)
                     else -> favorites.toggle(FavoriteKind.APP, identity.componentKey)
                 }
             }
@@ -215,25 +207,6 @@ class IconBrowserActivity : DarkFrameActivity() {
             .show()
     }
 
-    /**
-     * Browsing a Pro collection is free — seeing the look is how someone decides to buy it. Taking
-     * a Pro render off the device is not: export and themed shortcuts are gated, and a free user is
-     * sent to the Pro screen rather than shown a silent failure.
-     */
-    private fun requireTier(): Boolean {
-        val style = viewModel.state.value.style
-        if (style.tier != ContentTier.PRO) return true
-        if (ProEntitlementStore(this).current() == Entitlement.PRO) return true
-        AlertDialog.Builder(this)
-            .setTitle(R.string.pro_required_title)
-            .setMessage(getString(R.string.pro_required_message, style.displayName))
-            .setPositiveButton(R.string.pro_required_open) { _, _ ->
-                startActivity(Intent(this, ProActivity::class.java))
-            }
-            .setNegativeButton(R.string.close, null)
-            .show()
-        return false
-    }
 
     /** Only reachable on a launcher where a pinned shortcut is the best available mechanism. */
     private fun pinShortcut(identity: AppIdentity) {
