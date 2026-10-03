@@ -50,7 +50,7 @@ object LookCatalog {
         collection = IconCollection.FROST,
         wallpaperId = "minimal_paper",
         widgets = listOf(WidgetKind.DATE, WidgetKind.CALENDAR),
-        tier = ContentTier.PRO,
+        tier = ContentTier.FREE,
     )
 
     val titanium = CompleteLook(
@@ -60,7 +60,7 @@ object LookCatalog {
         collection = IconCollection.TITANIUM,
         wallpaperId = "titanium_brushed",
         widgets = listOf(WidgetKind.ANALOG_CLOCK, WidgetKind.INFO),
-        tier = ContentTier.PRO,
+        tier = ContentTier.FREE,
     )
 
     val glass = CompleteLook(
@@ -70,7 +70,7 @@ object LookCatalog {
         collection = IconCollection.GLASS,
         wallpaperId = "glass_panes",
         widgets = listOf(WidgetKind.DIGITAL_CLOCK, WidgetKind.DATE),
-        tier = ContentTier.PRO,
+        tier = ContentTier.FREE,
     )
 
     /** Free looks first, so the first thing a new user sees is something they can actually use. */
