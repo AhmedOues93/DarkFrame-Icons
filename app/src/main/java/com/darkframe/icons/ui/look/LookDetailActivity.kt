@@ -7,8 +7,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.darkframe.icons.R
-import com.darkframe.icons.billing.Entitlement
-import com.darkframe.icons.billing.ProEntitlementStore
 import com.darkframe.icons.data.FavoriteKind
 import com.darkframe.icons.data.FavoritesStore
 import com.darkframe.icons.engine.DarkFrameEngine
@@ -19,8 +17,6 @@ import com.darkframe.icons.engine.domain.LookCatalog
 import com.darkframe.icons.engine.wallpaper.WallpaperCatalog
 import com.darkframe.icons.engine.wallpaper.WallpaperOutcome
 import com.darkframe.icons.engine.wallpaper.WallpaperTarget
-import com.darkframe.icons.model.ContentTier
-import com.darkframe.icons.ui.ProActivity
 import com.darkframe.icons.ui.common.DarkFrameActivity
 import com.darkframe.icons.ui.common.SectionScreen
 import com.darkframe.icons.ui.setup.ApplyActivity
@@ -51,32 +47,24 @@ class LookDetailActivity : DarkFrameActivity() {
     }
 
     private fun render() {
-        val locked = look.tier == ContentTier.PRO &&
-            ProEntitlementStore(this).current() != Entitlement.PRO
         val wallpaper = WallpaperCatalog.byId(look.wallpaperId)
         val screen = SectionScreen(this).setUp(look.name, look.tagline)
 
         screen.custom(previewView())
 
-        if (locked) {
-            screen.primaryButton(getString(R.string.look_locked)) {
-                startActivity(Intent(this, ProActivity::class.java))
-            }
-        } else {
-            val selected = lookStore.selected().id == look.id
-            screen.primaryButton(
-                if (selected) getString(R.string.look_selected) else getString(R.string.look_use_look),
-                enabled = !selected,
-            ) {
-                lookStore.select(look)
-                styleStore.setSelectedStyle(look.style)
-                startActivity(Intent(this, ApplyActivity::class.java))
-                finish()
-            }
-            if (wallpaper != null) {
-                screen.secondaryButton(getString(R.string.look_set_wallpaper)) {
-                    applyWallpaper()
-                }
+        val selected = lookStore.selected().id == look.id
+        screen.primaryButton(
+            if (selected) getString(R.string.look_selected) else getString(R.string.look_use_look),
+            enabled = !selected,
+        ) {
+            lookStore.select(look)
+            styleStore.setSelectedStyle(look.style)
+            startActivity(Intent(this, ApplyActivity::class.java))
+            finish()
+        }
+        if (wallpaper != null) {
+            screen.secondaryButton(getString(R.string.look_set_wallpaper)) {
+                applyWallpaper()
             }
         }
 
