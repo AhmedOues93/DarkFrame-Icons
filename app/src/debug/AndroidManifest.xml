@@ -1,10 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+      DEBUG-only QA screen. Keep it internal so installing a debug APK exposes exactly one
+      launcher icon (DarkFrame) and normal users cannot accidentally open the QA matrix.
+      Developers can still launch it explicitly with adb:
+      adb shell am start -n com.darkframe.icons/.debug.IconQaActivity
+    -->
     <application>
-        <activity android:name=".debug.IconQaActivity" android:exported="true" android:label="DarkFrame Icon QA">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity
+            android:name=".debug.IconQaActivity"
+            android:exported="false"
+            android:label="DarkFrame Icon QA" />
     </application>
 </manifest>
