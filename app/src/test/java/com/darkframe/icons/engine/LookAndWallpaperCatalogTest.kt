@@ -43,23 +43,10 @@ class LookAndWallpaperCatalogTest {
     }
 
     @Test
-    fun aLookIsNeverHalfLocked() {
-        // A Pro look must not pair a Pro collection with a free wallpaper or the reverse: the user
-        // would buy half a look, or see a locked part inside something they already own.
+    fun everyIconLookIsFreeDuringIconFirstRelease() {
         LookCatalog.all.forEach { look ->
-            val wallpaper = WallpaperCatalog.byId(look.wallpaperId)!!
-            assertEquals(
-                "${look.id}: collection tier and look tier disagree",
-                look.style.tier,
-                look.tier,
-            )
-            if (look.tier == ContentTier.FREE) {
-                assertEquals(
-                    "${look.id}: a free look must not contain a Pro wallpaper",
-                    ContentTier.FREE,
-                    wallpaper.tier,
-                )
-            }
+            assertEquals("${look.id} look must be free", ContentTier.FREE, look.tier)
+            assertEquals("${look.id} icon style must be free", ContentTier.FREE, look.style.tier)
         }
     }
 
@@ -71,10 +58,8 @@ class LookAndWallpaperCatalogTest {
     }
 
     @Test
-    fun freeLooksComeFirstSoANewUserSeesSomethingUsable() {
-        val firstPro = LookCatalog.all.indexOfFirst { it.tier == ContentTier.PRO }
-        val lastFree = LookCatalog.all.indexOfLast { it.tier == ContentTier.FREE }
-        assertTrue("free and pro looks are interleaved", lastFree < firstPro)
+    fun allLooksAreImmediatelyUsableForIconTesting() {
+        assertTrue(LookCatalog.all.all { it.tier == ContentTier.FREE })
     }
 
     @Test
@@ -145,21 +130,12 @@ class LookAndWallpaperCatalogTest {
         }
     }
 
-    /**
-     * The tier of a collection is the product's pricing promise, and two separate screens gate on
-     * it (the look detail and the icon browser's export). Pinned here so a rename or a reshuffle of
-     * the catalog cannot silently move a Pro collection into the free set or the reverse.
-     */
     @Test
-    fun `collection tiers match the published free and pro split`() {
-        val tiers = IconStyleCatalog.all.associate { it.id to it.tier }
-        assertEquals(ContentTier.FREE, tiers["noir"])
-        assertEquals(ContentTier.FREE, tiers["color_pop"])
-        assertEquals(ContentTier.PRO, tiers["frost"])
-        assertEquals(ContentTier.PRO, tiers["titanium"])
-        assertEquals(ContentTier.PRO, tiers["glass"])
-        assertEquals(ContentTier.FREE, tiers["pure_amoled"])
-        assertEquals(6, tiers.size)
+    fun `all six icon collections stay free`() {
+        assertEquals(6, IconStyleCatalog.all.size)
+        IconStyleCatalog.all.forEach { style ->
+            assertEquals(style.id, ContentTier.FREE, style.tier)
+        }
     }
 
     /**
