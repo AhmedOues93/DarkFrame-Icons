@@ -5,6 +5,7 @@ import com.darkframe.icons.engine.domain.GlyphMode
 import com.darkframe.icons.engine.domain.IconStyleCatalog
 import com.darkframe.icons.engine.domain.SurfaceFinish
 import com.darkframe.icons.model.IconCollection
+import com.darkframe.icons.model.ContentTier
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertSame
@@ -29,6 +30,13 @@ class IconStyleCatalogTest {
             listOf("noir", "color_pop", "frost", "titanium", "glass", "pure_amoled"),
             ids,
         )
+    }
+
+    @Test
+    fun everyIconCollectionIsFreeAndUsable() {
+        IconStyleCatalog.all.forEach { style ->
+            assertEquals("${style.displayName} must not be paywalled", ContentTier.FREE, style.tier)
+        }
     }
 
     @Test
